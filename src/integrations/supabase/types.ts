@@ -14,7 +14,122 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          appointment_date: string
+          clinic_name: string
+          created_at: string | null
+          id: string
+          notes: string | null
+          pet_id: string | null
+          pet_owner_id: string
+          service_type: string
+          status: string | null
+          updated_at: string | null
+          vet_name: string
+        }
+        Insert: {
+          appointment_date: string
+          clinic_name: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          pet_id?: string | null
+          pet_owner_id: string
+          service_type: string
+          status?: string | null
+          updated_at?: string | null
+          vet_name: string
+        }
+        Update: {
+          appointment_date?: string
+          clinic_name?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          pet_id?: string | null
+          pet_owner_id?: string
+          service_type?: string
+          status?: string | null
+          updated_at?: string | null
+          vet_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pets: {
+        Row: {
+          breed: string | null
+          created_at: string | null
+          date_of_birth: string | null
+          id: string
+          name: string
+          notes: string | null
+          owner_id: string
+          species: string
+          updated_at: string | null
+        }
+        Insert: {
+          breed?: string | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          owner_id: string
+          species: string
+          updated_at?: string | null
+        }
+        Update: {
+          breed?: string | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          species?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string | null
+          id: string
+          is_veterinarian: boolean | null
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          is_veterinarian?: boolean | null
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          is_veterinarian?: boolean | null
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
