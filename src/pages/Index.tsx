@@ -20,33 +20,46 @@ const Index = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/5">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-20 right-0 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
-          <div className="absolute bottom-0 left-0 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
-        </div>
-        
-        <div className="container grid lg:grid-cols-2 gap-12 items-center py-16 lg:py-24">
-          <div className="space-y-8">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-              Find trusted vets near you: for every wag, purr, and feather.
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-primary/10">
+        <div className="container grid lg:grid-cols-2 gap-12 items-center py-12 lg:py-20">
+          <div className="space-y-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-foreground">
+              Find trusted vets near you
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-xl">
-              Book appointments online in seconds and keep your pet's health records in one place.
-            </p>
+            
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="h-2 w-2 rounded-full bg-primary" />
+                </div>
+                <p className="text-lg text-foreground">Book appointments online in seconds</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="h-2 w-2 rounded-full bg-primary" />
+                </div>
+                <p className="text-lg text-foreground">Trusted by pet owners across Europe</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="h-2 w-2 rounded-full bg-primary" />
+                </div>
+                <p className="text-lg text-foreground">Available for all your furry, feathered friends</p>
+              </div>
+            </div>
             
             {/* Search Bar */}
-            <form onSubmit={handleSearch} className="bg-card rounded-2xl shadow-xl p-2 flex flex-col sm:flex-row gap-2 max-w-3xl border border-border">
-              <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-xl">
+            <form onSubmit={handleSearch} className="bg-card rounded-2xl shadow-lg p-2 flex flex-col sm:flex-row gap-2 max-w-3xl border border-border">
+              <div className="flex-1 flex items-center gap-2 px-4 py-3 bg-muted rounded-xl">
                 <Search className="h-5 w-5 text-muted-foreground" />
                 <Input 
-                  placeholder="Pet type / service" 
+                  placeholder="Pet type or service" 
                   className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
                   value={petType}
                   onChange={(e) => setPetType(e.target.value)}
                 />
               </div>
-              <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-xl">
+              <div className="flex-1 flex items-center gap-2 px-4 py-3 bg-muted rounded-xl">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
                 <Input 
                   placeholder="City or postal code" 
@@ -55,54 +68,75 @@ const Index = () => {
                   onChange={(e) => setLocation(e.target.value)}
                 />
               </div>
-              <Button type="submit" size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-8">
+              <Button type="submit" size="lg" className="rounded-xl px-8 font-semibold">
                 Search
               </Button>
             </form>
+            
+            {/* Trust Indicators */}
+            <div className="flex items-center gap-8 pt-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-foreground">4.9</div>
+                <div className="text-sm text-muted-foreground">App Rating</div>
+              </div>
+              <div className="h-12 w-px bg-border" />
+              <div className="text-center">
+                <div className="text-2xl font-bold text-foreground">2,500+</div>
+                <div className="text-sm text-muted-foreground">Veterinarians</div>
+              </div>
+              <div className="h-12 w-px bg-border" />
+              <div className="text-center">
+                <div className="text-2xl font-bold text-foreground">98%</div>
+                <div className="text-sm text-muted-foreground">Satisfaction</div>
+              </div>
+            </div>
           </div>
           
           <div className="relative">
-            <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-2xl" />
-            <img src={heroImage} alt="Happy pet owner with veterinarian and dog" className="relative rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]" />
+            <div className="absolute -inset-4 bg-gradient-to-br from-primary/20 to-accent/20 rounded-3xl blur-3xl opacity-50" />
+            <img src={heroImage} alt="Happy pet owner with veterinarian and dog" className="relative rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]" />
           </div>
         </div>
       </section>
 
-      {/* For Pet Owners Section */}
-      <section className="py-20 bg-background">
+      {/* How It Works Section */}
+      <section className="py-20 bg-muted/30">
         <div className="container">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-16">
-            Your everyday partner in pet care.
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
+            In 3 simple steps to your vet
           </h2>
+          <p className="text-center text-muted-foreground text-lg mb-16 max-w-2xl mx-auto">
+            Book appointments with trusted veterinarians in your area — it's fast, easy, and secure.
+          </p>
           
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-            <div className="flex flex-col items-center text-center space-y-4 p-8 rounded-3xl bg-gradient-to-br from-primary/5 to-transparent hover:from-primary/10 transition-colors">
-              <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
-                <Calendar className="h-10 w-10 text-primary" />
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-12 max-w-6xl mx-auto">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-2">
+                <Search className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold">Book online — anytime, anywhere.</h3>
+              <h3 className="text-xl font-semibold">1. Search for vets</h3>
               <p className="text-muted-foreground">
-                Find and book appointments with trusted vets in your area, 24/7. No more phone tag.
+                Enter your location and pet type to find trusted veterinarians near you. Compare ratings and availability.
               </p>
             </div>
             
-            <div className="flex flex-col items-center text-center space-y-4 p-8 rounded-3xl bg-gradient-to-br from-accent/5 to-transparent hover:from-accent/10 transition-colors">
-              <div className="h-20 w-20 rounded-full bg-accent/10 flex items-center justify-center">
-                <Bell className="h-10 w-10 text-accent" />
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-2">
+                <Calendar className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold">Never miss a visit — get automatic reminders.</h3>
+              <h3 className="text-xl font-semibold">2. Book your appointment</h3>
               <p className="text-muted-foreground">
-                Receive timely notifications for upcoming appointments and important pet health milestones.
+                Choose a convenient time slot and book instantly. No phone calls needed — everything happens online.
               </p>
             </div>
             
-            <div className="flex flex-col items-center text-center space-y-4 p-8 rounded-3xl bg-gradient-to-br from-secondary/30 to-transparent hover:from-secondary/40 transition-colors">
-              <div className="h-20 w-20 rounded-full bg-secondary/50 flex items-center justify-center">
-                <Heart className="h-10 w-10 text-secondary-foreground" />
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-2">
+                <Heart className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold">All your pet's info in one digital health card.</h3>
+              <h3 className="text-xl font-semibold">3. Visit your vet</h3>
               <p className="text-muted-foreground">
-                Keep vaccination records, prescriptions, and visit history organized. <span className="text-sm text-accent font-medium">(Coming soon)</span>
+                Receive reminders before your appointment. After your visit, all records are saved in one place.
               </p>
             </div>
           </div>
@@ -110,33 +144,39 @@ const Index = () => {
       </section>
 
       {/* For Veterinarians Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/5 via-background to-primary/5">
+      <section className="py-20 bg-background">
         <div className="container">
-          <div className="max-w-5xl mx-auto bg-card rounded-3xl shadow-xl overflow-hidden border border-border">
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div className="p-8 lg:p-12 space-y-6">
+          <div className="max-w-5xl mx-auto bg-card rounded-2xl shadow-lg overflow-hidden border border-border">
+            <div className="grid md:grid-cols-2 gap-0 items-stretch">
+              <div className="p-8 lg:p-12 space-y-6 flex flex-col justify-center">
                 <h2 className="text-3xl lg:text-4xl font-bold">
-                  Grow your practice with PetFinder.
+                  Grow your practice with PetFinder
                 </h2>
                 <p className="text-muted-foreground text-lg">
-                  Simplify your schedule, reduce no-shows, and attract new clients. Join free for 3 months and experience the difference.
+                  Simplify your schedule, reduce no-shows, and attract new clients. Join free for 3 months.
                 </p>
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
+                <Button size="lg" className="font-semibold w-fit" asChild>
                   <Link to="/for-vets">Join as a Vet</Link>
                 </Button>
               </div>
               
-              <div className="bg-gradient-to-br from-primary/10 to-accent/10 p-8 lg:p-12 space-y-4 h-full flex flex-col justify-center">
-                <div className="flex items-start gap-3">
-                  <Users className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+              <div className="bg-muted/50 p-8 lg:p-12 space-y-6 flex flex-col justify-center">
+                <div className="flex items-start gap-4">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Users className="h-5 w-5 text-primary" />
+                  </div>
                   <p className="text-foreground">Attract new pet owners looking for trusted care nearby</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Calendar className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+                <div className="flex items-start gap-4">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Calendar className="h-5 w-5 text-primary" />
+                  </div>
                   <p className="text-foreground">Manage your schedule with automated booking and reminders</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Shield className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+                <div className="flex items-start gap-4">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Shield className="h-5 w-5 text-primary" />
+                  </div>
                   <p className="text-foreground">Reduce administrative burden and focus on patient care</p>
                 </div>
               </div>
@@ -146,95 +186,86 @@ const Index = () => {
       </section>
 
       {/* Trust & Privacy Section */}
-      <section className="py-20 bg-secondary/30">
+      <section className="py-20 bg-muted/30">
         <div className="container">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
-              <Shield className="h-8 w-8 text-primary" />
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 mb-2">
+              <Shield className="h-7 w-7 text-primary" />
             </div>
             <h2 className="text-3xl lg:text-4xl font-bold">
-              Your pet's health, your privacy.
+              Your pet's health, your privacy
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              All data is securely stored and never shared without consent. We're committed to protecting your information and your pet's medical records with industry-leading security standards.
+              All data is securely stored and never shared without consent. We're committed to protecting your information with industry-leading security standards.
             </p>
-            <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild>
-              <Link to="/privacy">Learn how we protect your privacy</Link>
+            <Button variant="outline" size="lg" className="border-border hover:bg-muted font-semibold" asChild>
+              <Link to="/privacy">Learn about our privacy practices</Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* App Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 via-background to-accent/5">
+      {/* App Download Section */}
+      <section className="py-20 bg-background">
         <div className="container">
-          <div className="max-w-5xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-8">
-                <h2 className="text-3xl lg:text-4xl font-bold">
-                  Trusted by pet lovers and clinics across Europe.
-                </h2>
-                <p className="text-lg text-muted-foreground">
-                  PetFinder makes accessing veterinary care fast and easy. Join thousands of pet owners who trust us to keep their furry, feathered, and scaled companions healthy.
-                </p>
-                
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 fill-accent text-accent" />)}
+          <div className="max-w-5xl mx-auto text-center space-y-8">
+            <h2 className="text-3xl lg:text-4xl font-bold">
+              Trusted by pet lovers across Europe
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              PetFinder makes accessing veterinary care fast and easy. Join thousands of pet owners keeping their companions healthy.
+            </p>
+            
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <div className="flex">
+                {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 fill-accent text-accent" />)}
+              </div>
+              <span className="text-muted-foreground font-medium">
+                4.9 ★ Over 100,000 reviews
+              </span>
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="bg-card hover:bg-muted border h-14 px-6"
+                onClick={() => window.open("https://apps.apple.com/", "_blank")}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 bg-foreground rounded-lg flex items-center justify-center">
+                    <span className="text-background text-xl font-bold">📱</span>
                   </div>
-                  <span className="text-sm text-muted-foreground font-medium">
-                    4.8 ★ Over 100,000+ reviews
-                  </span>
+                  <div className="text-left">
+                    <div className="text-xs text-muted-foreground">Download on the</div>
+                    <div className="text-sm font-semibold">App Store</div>
+                  </div>
                 </div>
-                
-                <div className="flex flex-wrap gap-4">
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="bg-card hover:bg-muted border-2 h-14 px-6"
-                    onClick={() => window.open("https://apps.apple.com/", "_blank")}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 bg-foreground rounded-lg flex items-center justify-center">
-                        <span className="text-background text-xl font-bold">📱</span>
-                      </div>
-                      <div className="text-left">
-                        <div className="text-xs text-muted-foreground">Download on the</div>
-                        <div className="text-sm font-semibold">App Store</div>
-                      </div>
-                    </div>
-                  </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="bg-card hover:bg-muted border-2 h-14 px-6"
-                    onClick={() => window.open("https://play.google.com/", "_blank")}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 bg-foreground rounded-lg flex items-center justify-center">
-                        <span className="text-background text-xl font-bold">▶</span>
-                      </div>
-                      <div className="text-left">
-                        <div className="text-xs text-muted-foreground">Get it on</div>
-                        <div className="text-sm font-semibold">Google Play</div>
-                      </div>
-                    </div>
-                  </Button>
-                </div>
-              </div>
+              </Button>
               
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full blur-3xl" />
-                
-              </div>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="bg-card hover:bg-muted border h-14 px-6"
+                onClick={() => window.open("https://play.google.com/", "_blank")}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 bg-foreground rounded-lg flex items-center justify-center">
+                    <span className="text-background text-xl font-bold">▶</span>
+                  </div>
+                  <div className="text-left">
+                    <div className="text-xs text-muted-foreground">Get it on</div>
+                    <div className="text-sm font-semibold">Google Play</div>
+                  </div>
+                </div>
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-card border-t py-12">
+      <footer className="bg-muted/30 border-t py-12">
         <div className="container">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
