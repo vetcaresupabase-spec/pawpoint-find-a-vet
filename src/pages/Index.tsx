@@ -1,25 +1,12 @@
 import { Search, MapPin, Calendar, Bell, Heart, Users, Shield, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Header } from "@/components/Header";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-image.jpg";
 const Index = () => {
   return <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <nav className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Heart className="h-7 w-7 text-primary fill-primary" />
-            <span className="text-2xl font-bold text-foreground">PetFinder</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" className="hidden sm:inline-flex">
-              For Veterinarians
-            </Button>
-            <Button variant="ghost">Help center</Button>
-            <Button variant="outline">Log in</Button>
-          </div>
-        </nav>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/5">
@@ -113,8 +100,8 @@ const Index = () => {
                 <p className="text-muted-foreground text-lg">
                   Simplify your schedule, reduce no-shows, and attract new clients. Join free for 3 months and experience the difference.
                 </p>
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Join as a Vet
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
+                  <Link to="/for-vets">Join as a Vet</Link>
                 </Button>
               </div>
               
