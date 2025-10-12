@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -63,6 +63,12 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
       fullName: "",
     },
   });
+
+  // Reset forms when switching between login/signup modes
+  useEffect(() => {
+    loginForm.reset();
+    signupForm.reset();
+  }, [isLogin]);
 
   const onLogin = async (values: z.infer<typeof loginSchema>) => {
     setIsSubmitting(true);
@@ -146,7 +152,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md pointer-events-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">
             {isLogin ? "Welcome Back" : "Create Your Account"}
@@ -160,7 +166,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
 
         {isLogin ? (
           <Form {...loginForm}>
-            <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
+            <form key="login-form" onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
               <FormField
                 control={loginForm.control}
                 name="email"
@@ -168,7 +174,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="your@email.com" {...field} />
+                      <Input type="email" placeholder="your@email.com" autoComplete="off" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -182,7 +188,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input type="password" placeholder="••••••••" autoComplete="off" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -196,7 +202,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
           </Form>
         ) : (
           <Form {...signupForm}>
-            <form onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-4">
+            <form key="signup-form" onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-4">
               <FormField
                 control={signupForm.control}
                 name="fullName"
@@ -204,7 +210,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" {...field} />
+                      <Input placeholder="John Doe" autoComplete="off" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -218,7 +224,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="your@email.com" {...field} />
+                      <Input type="email" placeholder="your@email.com" autoComplete="off" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -232,7 +238,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input type="password" placeholder="••••••••" autoComplete="off" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -246,7 +252,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input type="password" placeholder="••••••••" autoComplete="off" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
