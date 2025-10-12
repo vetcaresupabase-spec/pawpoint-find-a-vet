@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -74,13 +74,15 @@ const VetOnboarding = () => {
                 <Button size="lg" onClick={() => navigate("/vet-dashboard")}>
                   Go to My Dashboard
                 </Button>
-                <Button size="lg" variant="outline" onClick={() => window.open("/preview-profile", "_blank")}>
-                  Preview My Public Profile
+                <Button size="lg" variant="outline" asChild>
+                  <Link to="/search">Preview My Public Profile</Link>
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground mt-6">
                 Want to add more team members?{" "}
-                <button className="text-primary hover:underline">Invite your team</button>
+                <button className="text-primary hover:underline" onClick={() => alert("Team invitation feature coming soon!")}>
+                  Invite your team
+                </button>
               </p>
             </CardContent>
           </Card>
@@ -209,7 +211,9 @@ const VetOnboarding = () => {
                         <Upload className="h-8 w-8 text-muted-foreground" />
                       </div>
                       <div>
-                        <Button variant="outline">Upload Image</Button>
+                        <Button variant="outline" onClick={() => toast({ title: "Upload feature", description: "Image upload coming soon!" })}>
+                          Upload Image
+                        </Button>
                         <p className="text-sm text-muted-foreground mt-1">
                           JPG, PNG or GIF (max 5MB)
                         </p>
@@ -237,15 +241,27 @@ const VetOnboarding = () => {
 
                 <div className="space-y-6">
                   <div className="grid md:grid-cols-3 gap-4">
-                    <Button variant="outline" className="h-24 flex-col gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="h-24 flex-col gap-2"
+                      onClick={() => toast({ title: "Google Calendar", description: "Calendar integration coming soon!" })}
+                    >
                       <Globe className="h-8 w-8" />
                       <span>Google Calendar</span>
                     </Button>
-                    <Button variant="outline" className="h-24 flex-col gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="h-24 flex-col gap-2"
+                      onClick={() => toast({ title: "Outlook Calendar", description: "Calendar integration coming soon!" })}
+                    >
                       <Calendar className="h-8 w-8" />
                       <span>Outlook Calendar</span>
                     </Button>
-                    <Button variant="outline" className="h-24 flex-col gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="h-24 flex-col gap-2"
+                      onClick={() => toast({ title: "Manual Setup", description: "Use the working hours section below to set your availability." })}
+                    >
                       <Clock className="h-8 w-8" />
                       <span>Manual Setup</span>
                     </Button>

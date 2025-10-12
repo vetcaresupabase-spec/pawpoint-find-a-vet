@@ -1,0 +1,214 @@
+import { useState } from "react";
+import { useSearchParams, Link } from "react-router-dom";
+import { Header } from "@/components/Header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Search, MapPin, Star, Clock, Phone, Mail } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+
+const SearchResults = () => {
+  const [searchParams] = useSearchParams();
+  const petType = searchParams.get("petType") || "";
+  const location = searchParams.get("location") || "";
+
+  // Mock vet data
+  const vets = [
+    {
+      id: 1,
+      name: "Dr. Sarah Mueller",
+      clinic: "Happy Paws Veterinary Clinic",
+      specialty: "Dogs, Cats",
+      rating: 4.9,
+      reviews: 156,
+      address: "Hauptstraße 123, Berlin",
+      distance: "1.2 km",
+      image: "/placeholder.svg",
+      nextAvailable: "Today at 14:00",
+      phone: "+49 30 12345678",
+      email: "info@happypaws.de",
+    },
+    {
+      id: 2,
+      name: "Dr. Hans Schmidt",
+      clinic: "Tierklinik Berlin Mitte",
+      specialty: "All Animals",
+      rating: 4.8,
+      reviews: 203,
+      address: "Friedrichstraße 45, Berlin",
+      distance: "2.1 km",
+      image: "/placeholder.svg",
+      nextAvailable: "Tomorrow at 09:00",
+      phone: "+49 30 98765432",
+      email: "kontakt@tierklinik-berlin.de",
+    },
+    {
+      id: 3,
+      name: "Dr. Maria Rossi",
+      clinic: "Exotic Pet Care Center",
+      specialty: "Exotic Animals, Birds",
+      rating: 4.7,
+      reviews: 89,
+      address: "Alexanderplatz 7, Berlin",
+      distance: "3.5 km",
+      image: "/placeholder.svg",
+      nextAvailable: "Today at 16:30",
+      phone: "+49 30 55566677",
+      email: "info@exoticpetcare.de",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+      <Header />
+
+      {/* Search Bar */}
+      <section className="bg-primary/5 border-b py-8">
+        <div className="container">
+          <div className="bg-card rounded-2xl shadow-xl p-2 flex flex-col sm:flex-row gap-2 max-w-4xl mx-auto border border-border">
+            <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-xl">
+              <Search className="h-5 w-5 text-muted-foreground" />
+              <Input
+                placeholder="Pet type / service"
+                defaultValue={petType}
+                className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
+              />
+            </div>
+            <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-xl">
+              <MapPin className="h-5 w-5 text-muted-foreground" />
+              <Input
+                placeholder="City or postal code"
+                defaultValue={location}
+                className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
+              />
+            </div>
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-8">
+              Search
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <div className="container py-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">
+            Veterinarians {location && `in ${location}`}
+          </h1>
+          <p className="text-muted-foreground">
+            Found {vets.length} veterinarians {petType && `specializing in ${petType}`}
+          </p>
+        </div>
+
+        <div className="grid gap-6">
+          {vets.map((vet) => (
+            <Card key={vet.id} className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <div className="grid md:grid-cols-[200px_1fr_auto] gap-6">
+                  {/* Vet Image */}
+                  <div className="aspect-square rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 overflow-hidden">
+                    <img
+                      src={vet.image}
+                      alt={vet.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Vet Info */}
+                  <div className="space-y-3">
+                    <div>
+                      <h2 className="text-2xl font-bold">{vet.name}</h2>
+                      <p className="text-lg text-muted-foreground">{vet.clinic}</p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <Star className="h-5 w-5 fill-accent text-accent" />
+                        <span className="font-semibold">{vet.rating}</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        ({vet.reviews} reviews)
+                      </span>
+                      <Badge variant="secondary">{vet.distance}</Badge>
+                    </div>
+
+                    <p className="text-muted-foreground">
+                      <strong>Specialty:</strong> {vet.specialty}
+                    </p>
+
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <MapPin className="h-4 w-4" />
+                      <span>{vet.address}</span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Phone className="h-4 w-4" />
+                        <a href={`tel:${vet.phone}`} className="hover:text-primary">
+                          {vet.phone}
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Mail className="h-4 w-4" />
+                        <a href={`mailto:${vet.email}`} className="hover:text-primary">
+                          {vet.email}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Booking Info */}
+                  <div className="flex flex-col justify-between gap-4">
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">Next available:</p>
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-primary" />
+                        <p className="font-semibold">{vet.nextAvailable}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Button 
+                        className="w-full"
+                        onClick={() => toast({ 
+                          title: "Booking Appointment", 
+                          description: `Scheduling appointment with ${vet.name}` 
+                        })}
+                      >
+                        Book Appointment
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={() => toast({ 
+                          title: "View Profile", 
+                          description: "Vet profile pages coming soon!" 
+                        })}
+                      >
+                        View Profile
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* No Results */}
+        {vets.length === 0 && (
+          <Card className="p-12 text-center">
+            <h2 className="text-2xl font-bold mb-2">No results found</h2>
+            <p className="text-muted-foreground mb-6">
+              Try adjusting your search criteria or location
+            </p>
+            <Button asChild>
+              <Link to="/">Back to Home</Link>
+            </Button>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default SearchResults;

@@ -1,10 +1,21 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, MapPin, Calendar, Bell, Heart, Users, Shield, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/components/Header";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-image.jpg";
+
 const Index = () => {
+  const navigate = useNavigate();
+  const [petType, setPetType] = useState("");
+  const [location, setLocation] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate(`/search?petType=${encodeURIComponent(petType)}&location=${encodeURIComponent(location)}`);
+  };
   return <div className="min-h-screen bg-background">
       <Header />
 
@@ -25,19 +36,29 @@ const Index = () => {
             </p>
             
             {/* Search Bar */}
-            <div className="bg-card rounded-2xl shadow-xl p-2 flex flex-col sm:flex-row gap-2 max-w-3xl border border-border">
+            <form onSubmit={handleSearch} className="bg-card rounded-2xl shadow-xl p-2 flex flex-col sm:flex-row gap-2 max-w-3xl border border-border">
               <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-xl">
                 <Search className="h-5 w-5 text-muted-foreground" />
-                <Input placeholder="Pet type / service" className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0" />
+                <Input 
+                  placeholder="Pet type / service" 
+                  className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
+                  value={petType}
+                  onChange={(e) => setPetType(e.target.value)}
+                />
               </div>
               <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-xl">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
-                <Input placeholder="City or postal code" className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0" />
+                <Input 
+                  placeholder="City or postal code" 
+                  className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
               </div>
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-8">
+              <Button type="submit" size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-8">
                 Search
               </Button>
-            </div>
+            </form>
           </div>
           
           <div className="relative">
@@ -137,8 +158,8 @@ const Index = () => {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               All data is securely stored and never shared without consent. We're committed to protecting your information and your pet's medical records with industry-leading security standards.
             </p>
-            <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-              Learn how we protect your privacy
+            <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild>
+              <Link to="/privacy">Learn how we protect your privacy</Link>
             </Button>
           </div>
         </div>
@@ -167,7 +188,12 @@ const Index = () => {
                 </div>
                 
                 <div className="flex flex-wrap gap-4">
-                  <Button variant="outline" size="lg" className="bg-card hover:bg-muted border-2 h-14 px-6">
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="bg-card hover:bg-muted border-2 h-14 px-6"
+                    onClick={() => window.open("https://apps.apple.com/", "_blank")}
+                  >
                     <div className="flex items-center gap-2">
                       <div className="h-8 w-8 bg-foreground rounded-lg flex items-center justify-center">
                         <span className="text-background text-xl font-bold">📱</span>
@@ -179,7 +205,12 @@ const Index = () => {
                     </div>
                   </Button>
                   
-                  <Button variant="outline" size="lg" className="bg-card hover:bg-muted border-2 h-14 px-6">
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="bg-card hover:bg-muted border-2 h-14 px-6"
+                    onClick={() => window.open("https://play.google.com/", "_blank")}
+                  >
                     <div className="flex items-center gap-2">
                       <div className="h-8 w-8 bg-foreground rounded-lg flex items-center justify-center">
                         <span className="text-background text-xl font-bold">▶</span>

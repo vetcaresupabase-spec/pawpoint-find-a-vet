@@ -15,6 +15,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "@/hooks/use-toast";
 
 const VetDashboard = () => {
   const stats = [
@@ -104,11 +105,19 @@ const VetDashboard = () => {
               <p className="text-muted-foreground">Here's what's happening with your clinic today</p>
             </div>
             <div className="flex gap-3">
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => toast({ title: "Notifications", description: "No new notifications" })}
+              >
                 <Bell className="h-4 w-4 mr-2" />
                 Notifications
               </Button>
-              <Button size="sm" className="bg-accent hover:bg-accent/90">
+              <Button 
+                size="sm" 
+                className="bg-accent hover:bg-accent/90"
+                onClick={() => toast({ title: "Upgrade to Premium", description: "Premium features coming soon!" })}
+              >
                 Upgrade to Premium
               </Button>
             </div>
@@ -202,9 +211,9 @@ const VetDashboard = () => {
                           )}
                           {appointment.status}
                         </Badge>
-                        <Button size="sm" variant="outline">
-                          View Details
-                        </Button>
+                      <Button size="sm" variant="outline" onClick={() => toast({ title: "Appointment Details", description: "Detailed view coming soon!" })}>
+                        View Details
+                      </Button>
                       </div>
                     </div>
                   ))}
@@ -237,7 +246,7 @@ const VetDashboard = () => {
                           </p>
                         </div>
                       </div>
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" onClick={() => toast({ title: "Client Profile", description: "Profile view coming soon!" })}>
                         View Profile
                       </Button>
                     </div>
@@ -322,28 +331,36 @@ const VetDashboard = () => {
                     <p className="text-sm text-muted-foreground">
                       Manage your clinic profile, availability, and services
                     </p>
-                    <Button variant="outline">Edit Profile</Button>
+                    <Button variant="outline" onClick={() => toast({ title: "Edit Profile", description: "Profile editing coming soon!" })}>
+                      Edit Profile
+                    </Button>
                   </div>
                   <div className="space-y-2">
                     <h3 className="font-semibold">Notification Preferences</h3>
                     <p className="text-sm text-muted-foreground">
                       Choose how you want to receive booking notifications
                     </p>
-                    <Button variant="outline">Manage Notifications</Button>
+                    <Button variant="outline" onClick={() => toast({ title: "Manage Notifications", description: "Notification settings coming soon!" })}>
+                      Manage Notifications
+                    </Button>
                   </div>
                   <div className="space-y-2">
                     <h3 className="font-semibold">Team Management</h3>
                     <p className="text-sm text-muted-foreground">
                       Add and manage team members (Premium feature)
                     </p>
-                    <Button variant="outline">Invite Team Members</Button>
+                    <Button variant="outline" onClick={() => toast({ title: "Invite Team Members", description: "Team management coming soon!" })}>
+                      Invite Team Members
+                    </Button>
                   </div>
                   <div className="space-y-2">
                     <h3 className="font-semibold">Subscription</h3>
                     <p className="text-sm text-muted-foreground">
                       Free trial • 89 days remaining
                     </p>
-                    <Button>Upgrade to Premium</Button>
+                    <Button onClick={() => toast({ title: "Upgrade to Premium", description: "Premium features coming soon!" })}>
+                      Upgrade to Premium
+                    </Button>
                   </div>
                 </div>
               </CardContent>

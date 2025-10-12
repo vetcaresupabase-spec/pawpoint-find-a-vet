@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import ForVets from "./pages/ForVets";
 import VetOnboarding from "./pages/VetOnboarding";
 import VetDashboard from "./pages/VetDashboard";
+import SearchResults from "./pages/SearchResults";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,8 @@ const App = () => (
           <Route path="/for-vets" element={<ForVets />} />
           <Route path="/vet-onboarding" element={<VetOnboarding />} />
           <Route path="/vet-dashboard" element={<VetDashboard />} />
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/privacy" element={<Privacy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
