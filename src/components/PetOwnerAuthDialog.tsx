@@ -95,6 +95,8 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
   const onSignup = async (values: z.infer<typeof signupSchema>) => {
     setIsSubmitting(true);
     
+    console.log("Starting signup process...");
+    
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
@@ -106,7 +108,10 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
       },
     });
 
+    console.log("Signup response:", { data, error });
+
     if (error) {
+      console.error("Signup error:", error);
       toast({
         title: "Signup Failed",
         description: error.message,
@@ -115,6 +120,19 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
       setIsSubmitting(false);
       return;
     }
+
+    if (!data.user) {
+      console.error("No user in response:", data);
+      toast({
+        title: "Signup Failed",
+        description: "Failed to create user account. Please try again.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    console.log("User created successfully:", data.user);
 
     toast({
       title: "Account Created!",
