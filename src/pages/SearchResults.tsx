@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -7,11 +7,39 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, MapPin, Star, Clock, Phone, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { PetOwnerAuthDialog } from "@/components/PetOwnerAuthDialog";
+import { supabase } from "@/integrations/supabase/client";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const petType = searchParams.get("petType") || "";
   const location = searchParams.get("location") || "";
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleBookAppointment = (vetName: string) => {
+    if (!isLoggedIn) {
+      setAuthDialogOpen(true);
+    } else {
+      toast({ 
+        title: "Booking Appointment", 
+        description: `Scheduling appointment with ${vetName}` 
+      });
+    }
+  };
 
   // Mock vet data
   const vets = [
@@ -169,10 +197,7 @@ const SearchResults = () => {
                     <div className="space-y-2">
                       <Button 
                         className="w-full"
-                        onClick={() => toast({ 
-                          title: "Booking Appointment", 
-                          description: `Scheduling appointment with ${vet.name}` 
-                        })}
+                        onClick={() => handleBookAppointment(vet.name)}
                       >
                         Book Appointment
                       </Button>
@@ -207,6 +232,11 @@ const SearchResults = () => {
           </Card>
         )}
       </div>
+
+      <PetOwnerAuthDialog 
+        open={authDialogOpen} 
+        onOpenChange={setAuthDialogOpen}
+      />
     </div>
   );
 };

@@ -5,10 +5,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Users, BellRing, Calendar, Star, Shield, TrendingUp, Lock, FileCheck, Database, Check } from "lucide-react";
 import { VetRegistrationDialog } from "@/components/VetRegistrationDialog";
+import { VetAuthDialog } from "@/components/VetAuthDialog";
 
 const ForVets = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<"signup" | "demo">("signup");
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const benefits = [
     { icon: Users, title: "Attract new clients", description: "Be visible to local pet owners searching online." },
     { icon: BellRing, title: "Reduce no-shows", description: "Automatic reminders keep your schedule full." },
@@ -110,14 +112,14 @@ const ForVets = () => {
                 size="lg" 
                 variant="outline" 
                 className="text-lg px-8"
-                onClick={() => {
-                  setDialogMode("demo");
-                  setDialogOpen(true);
-                }}
+                onClick={() => setAuthDialogOpen(true)}
               >
-                Request a Demo
+                Login as Vet
               </Button>
             </div>
+            <p className="text-sm text-muted-foreground">
+              Already have an account? <button onClick={() => setAuthDialogOpen(true)} className="text-primary hover:underline">Log in here</button>
+            </p>
           </div>
           <div className="relative aspect-square lg:aspect-auto">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl animate-pulse" />
@@ -339,6 +341,11 @@ const ForVets = () => {
         open={dialogOpen} 
         onOpenChange={setDialogOpen}
         mode={dialogMode}
+      />
+
+      <VetAuthDialog 
+        open={authDialogOpen} 
+        onOpenChange={setAuthDialogOpen}
       />
     </div>
   );
