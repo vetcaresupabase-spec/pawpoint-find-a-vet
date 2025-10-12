@@ -1,15 +1,32 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { VetRegistrationDialog } from "./VetRegistrationDialog";
-import { toast } from "@/hooks/use-toast";
+import { PetOwnerAuthDialog } from "./PetOwnerAuthDialog";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Header = () => {
   const location = useLocation();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [vetDialogOpen, setVetDialogOpen] = useState(false);
+  const [petOwnerDialogOpen, setPetOwnerDialogOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   
   const isVetPage = location.pathname === "/for-vets";
+
+  useEffect(() => {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
   
   return (
     <>
@@ -38,23 +55,38 @@ export const Header = () => {
               For Vets
             </Link>
             
-            {isVetPage ? (
-              <Button size="sm" onClick={() => setDialogOpen(true)}>
-                Join as a Vet
+            {user ? (
+              <Button size="sm" asChild>
+                <Link to={isVetPage ? "/vet-dashboard" : "/pet-owner-dashboard"}>
+                  Dashboard
+                </Link>
               </Button>
             ) : (
-              <Button size="sm" onClick={() => toast({ title: "Login", description: "Login functionality coming soon!" })}>
-                Log in
-              </Button>
+              <>
+                {isVetPage ? (
+                  <Button size="sm" onClick={() => setVetDialogOpen(true)}>
+                    Join as a Vet
+                  </Button>
+                ) : (
+                  <Button size="sm" onClick={() => setPetOwnerDialogOpen(true)}>
+                    Log in
+                  </Button>
+                )}
+              </>
             )}
           </nav>
         </div>
       </header>
       
       <VetRegistrationDialog 
-        open={dialogOpen} 
-        onOpenChange={setDialogOpen}
+        open={vetDialogOpen} 
+        onOpenChange={setVetDialogOpen}
         mode="signup"
+      />
+
+      <PetOwnerAuthDialog 
+        open={petOwnerDialogOpen} 
+        onOpenChange={setPetOwnerDialogOpen}
       />
     </>
   );
