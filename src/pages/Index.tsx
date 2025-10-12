@@ -2,10 +2,8 @@ import { Search, MapPin, Calendar, Bell, Heart, Users, Shield, Star } from "luci
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import heroImage from "@/assets/hero-image.jpg";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <nav className="container flex h-16 items-center justify-between">
@@ -43,17 +41,11 @@ const Index = () => {
             <div className="bg-card rounded-2xl shadow-xl p-2 flex flex-col sm:flex-row gap-2 max-w-3xl border border-border">
               <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-xl">
                 <Search className="h-5 w-5 text-muted-foreground" />
-                <Input 
-                  placeholder="Pet type / service" 
-                  className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
-                />
+                <Input placeholder="Pet type / service" className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0" />
               </div>
               <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-xl">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
-                <Input 
-                  placeholder="City or postal code" 
-                  className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
-                />
+                <Input placeholder="City or postal code" className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0" />
               </div>
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-8">
                 Search
@@ -63,11 +55,7 @@ const Index = () => {
           
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-2xl" />
-            <img 
-              src={heroImage} 
-              alt="Happy pet owner with veterinarian and dog" 
-              className="relative rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]"
-            />
+            <img src={heroImage} alt="Happy pet owner with veterinarian and dog" className="relative rounded-3xl shadow-2xl w-full object-cover aspect-[4/3]" />
           </div>
         </div>
       </section>
@@ -184,9 +172,7 @@ const Index = () => {
                 
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-accent text-accent" />
-                    ))}
+                    {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 fill-accent text-accent" />)}
                   </div>
                   <span className="text-sm text-muted-foreground font-medium">
                     4.8 ★ Over 100,000+ reviews
@@ -194,11 +180,7 @@ const Index = () => {
                 </div>
                 
                 <div className="flex flex-wrap gap-4">
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    className="bg-card hover:bg-muted border-2 h-14 px-6"
-                  >
+                  <Button variant="outline" size="lg" className="bg-card hover:bg-muted border-2 h-14 px-6">
                     <div className="flex items-center gap-2">
                       <div className="h-8 w-8 bg-foreground rounded-lg flex items-center justify-center">
                         <span className="text-background text-xl font-bold">📱</span>
@@ -210,11 +192,7 @@ const Index = () => {
                     </div>
                   </Button>
                   
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    className="bg-card hover:bg-muted border-2 h-14 px-6"
-                  >
+                  <Button variant="outline" size="lg" className="bg-card hover:bg-muted border-2 h-14 px-6">
                     <div className="flex items-center gap-2">
                       <div className="h-8 w-8 bg-foreground rounded-lg flex items-center justify-center">
                         <span className="text-background text-xl font-bold">▶</span>
@@ -230,15 +208,7 @@ const Index = () => {
               
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full blur-3xl" />
-                <div className="relative bg-card rounded-3xl p-12 shadow-2xl border border-border flex items-center justify-center aspect-square">
-                  <div className="text-center space-y-4">
-                    <div className="h-32 w-32 mx-auto rounded-3xl bg-primary/10 flex items-center justify-center">
-                      <Heart className="h-16 w-16 text-primary fill-primary" />
-                    </div>
-                    <p className="text-2xl font-bold">PetFinder App</p>
-                    <p className="text-muted-foreground">Coming Soon</p>
-                  </div>
-                </div>
+                
               </div>
             </div>
           </div>
@@ -259,8 +229,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
