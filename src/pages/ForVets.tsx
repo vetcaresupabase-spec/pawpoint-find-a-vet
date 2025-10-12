@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Users, BellRing, Calendar, Star, Shield, TrendingUp, Lock, FileCheck, Database, Check } from "lucide-react";
+import { VetRegistrationDialog } from "@/components/VetRegistrationDialog";
 
 const ForVets = () => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<"signup" | "demo">("signup");
   const benefits = [
     { icon: Users, title: "Attract new clients", description: "Be visible to local pet owners searching online." },
     { icon: BellRing, title: "Reduce no-shows", description: "Automatic reminders keep your schedule full." },
@@ -92,10 +96,25 @@ const ForVets = () => {
               </p>
             </div>
             <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="text-lg px-8">
+              <Button 
+                size="lg" 
+                className="text-lg px-8"
+                onClick={() => {
+                  setDialogMode("signup");
+                  setDialogOpen(true);
+                }}
+              >
                 Start free for 3 months
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="text-lg px-8"
+                onClick={() => {
+                  setDialogMode("demo");
+                  setDialogOpen(true);
+                }}
+              >
                 Request a Demo
               </Button>
             </div>
@@ -218,7 +237,14 @@ const ForVets = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full" variant={plan.highlighted ? "default" : "outline"}>
+                  <Button 
+                    className="w-full" 
+                    variant={plan.highlighted ? "default" : "outline"}
+                    onClick={() => {
+                      setDialogMode("signup");
+                      setDialogOpen(true);
+                    }}
+                  >
                     Get Started
                   </Button>
                 </CardContent>
@@ -281,10 +307,25 @@ const ForVets = () => {
             Join hundreds of veterinarians who trust PetFinder
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-6">
-            <Button size="lg" className="text-lg px-8">
+            <Button 
+              size="lg" 
+              className="text-lg px-8"
+              onClick={() => {
+                setDialogMode("signup");
+                setDialogOpen(true);
+              }}
+            >
               Start Free for 3 Months
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="text-lg px-8"
+              onClick={() => {
+                setDialogMode("demo");
+                setDialogOpen(true);
+              }}
+            >
               Talk to Us
             </Button>
           </div>
@@ -293,6 +334,12 @@ const ForVets = () => {
           </p>
         </div>
       </section>
+
+      <VetRegistrationDialog 
+        open={dialogOpen} 
+        onOpenChange={setDialogOpen}
+        mode={dialogMode}
+      />
     </div>
   );
 };

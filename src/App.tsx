@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import ForVets from "./pages/ForVets";
+import VetOnboarding from "./pages/VetOnboarding";
+import VetDashboard from "./pages/VetDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -18,6 +20,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/for-vets" element={<ForVets />} />
+          <Route path="/vet-onboarding" element={<VetOnboarding />} />
+          <Route path="/vet-dashboard" element={<VetDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
