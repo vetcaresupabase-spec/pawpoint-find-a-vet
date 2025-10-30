@@ -1,0 +1,11 @@
+﻿{
+  "mcpServers": {
+    "supabase-postgres": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/postgres-server", "start"],
+      "env": {
+        "DATABASE_URL": "postgresql://postgres:[Vetcare@2025]@db.kfzqslaathiztowisfqd.supabase.co:5432/postgres"
+      }
+    }
+  }
+}

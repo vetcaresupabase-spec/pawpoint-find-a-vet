@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { Search, MapPin, Star, Clock, Phone, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { PetOwnerAuthDialog } from "@/components/PetOwnerAuthDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { searchClinics, Clinic } from "@/integrations/supabase/queries";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -16,6 +17,9 @@ const SearchResults = () => {
   const location = searchParams.get("location") || "";
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [clinics, setClinics] = useState<Clinic[]>([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user is logged in
@@ -40,52 +44,19 @@ const SearchResults = () => {
       });
     }
   };
-
-  // Mock vet data
-  const vets = [
-    {
-      id: 1,
-      name: "Dr. Sarah Mueller",
-      clinic: "Happy Paws Veterinary Clinic",
-      specialty: "Dogs, Cats",
-      rating: 4.9,
-      reviews: 156,
-      address: "Hauptstraße 123, Berlin",
-      distance: "1.2 km",
-      image: "/placeholder.svg",
-      nextAvailable: "Today at 14:00",
-      phone: "+49 30 12345678",
-      email: "info@happypaws.de",
-    },
-    {
-      id: 2,
-      name: "Dr. Hans Schmidt",
-      clinic: "Tierklinik Berlin Mitte",
-      specialty: "All Animals",
-      rating: 4.8,
-      reviews: 203,
-      address: "Friedrichstraße 45, Berlin",
-      distance: "2.1 km",
-      image: "/placeholder.svg",
-      nextAvailable: "Tomorrow at 09:00",
-      phone: "+49 30 98765432",
-      email: "kontakt@tierklinik-berlin.de",
-    },
-    {
-      id: 3,
-      name: "Dr. Maria Rossi",
-      clinic: "Exotic Pet Care Center",
-      specialty: "Exotic Animals, Birds",
-      rating: 4.7,
-      reviews: 89,
-      address: "Alexanderplatz 7, Berlin",
-      distance: "3.5 km",
-      image: "/placeholder.svg",
-      nextAvailable: "Today at 16:30",
-      phone: "+49 30 55566677",
-      email: "info@exoticpetcare.de",
-    },
-  ];
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const list = await searchClinics({ city: location });
+        setClinics(list);
+      } catch (e: any) {
+        toast({ title: "Search failed", description: e.message });
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [location]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
@@ -120,16 +91,12 @@ const SearchResults = () => {
 
       <div className="container py-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">
-            Veterinarians {location && `in ${location}`}
-          </h1>
-          <p className="text-muted-foreground">
-            Found {vets.length} veterinarians {petType && `specializing in ${petType}`}
-          </p>
+          <h1 className="text-3xl font-bold mb-2">Clinics {location && `in ${location}`}</h1>
+          <p className="text-muted-foreground">{loading ? "Searching..." : `Found ${clinics.length} clinics`}</p>
         </div>
 
         <div className="grid gap-6">
-          {vets.map((vet) => (
+          {clinics.map((c) => (
             <Card key={vet.id} className="hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
                 <div className="grid md:grid-cols-[200px_1fr_auto] gap-6">
@@ -145,8 +112,8 @@ const SearchResults = () => {
                   {/* Vet Info */}
                   <div className="space-y-3">
                     <div>
-                      <h2 className="text-2xl font-bold">{vet.name}</h2>
-                      <p className="text-lg text-muted-foreground">{vet.clinic}</p>
+                      <h2 className="text-2xl font-bold">{c.name}</h2>
+                      <p className="text-lg text-muted-foreground">{c.city}</p>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -160,26 +127,24 @@ const SearchResults = () => {
                       <Badge variant="secondary">{vet.distance}</Badge>
                     </div>
 
-                    <p className="text-muted-foreground">
-                      <strong>Specialty:</strong> {vet.specialty}
-                    </p>
+                    <p className="text-muted-foreground"><strong>Specialties:</strong> {(c.specialties || []).join(", ")}</p>
 
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4" />
-                      <span>{vet.address}</span>
+                      <span>{c.address_line1}</span>
                     </div>
 
                     <div className="flex flex-wrap gap-4 text-sm">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Phone className="h-4 w-4" />
-                        <a href={`tel:${vet.phone}`} className="hover:text-primary">
-                          {vet.phone}
+                        <a href={`tel:${c.phone}`} className="hover:text-primary">
+                          {c.phone}
                         </a>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Mail className="h-4 w-4" />
-                        <a href={`mailto:${vet.email}`} className="hover:text-primary">
-                          {vet.email}
+                        <a href={`mailto:${c.email}`} className="hover:text-primary">
+                          {c.email}
                         </a>
                       </div>
                     </div>
@@ -188,26 +153,19 @@ const SearchResults = () => {
                   {/* Booking Info */}
                   <div className="flex flex-col justify-between gap-4">
                     <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">Next available:</p>
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-primary" />
-                        <p className="font-semibold">{vet.nextAvailable}</p>
-                      </div>
+                      <p className="text-sm text-muted-foreground">Verified: {c.verified ? "Yes" : "No"}</p>
                     </div>
                     <div className="space-y-2">
                       <Button 
                         className="w-full"
-                        onClick={() => handleBookAppointment(vet.name)}
+                        onClick={() => handleBookAppointment(c.name)}
                       >
                         Book Appointment
                       </Button>
                       <Button 
                         variant="outline" 
                         className="w-full"
-                        onClick={() => toast({ 
-                          title: "View Profile", 
-                          description: "Vet profile pages coming soon!" 
-                        })}
+                        onClick={() => navigate(`/clinic/${c.id}`)}
                       >
                         View Profile
                       </Button>
@@ -220,7 +178,7 @@ const SearchResults = () => {
         </div>
 
         {/* No Results */}
-        {vets.length === 0 && (
+        {(!loading && clinics.length === 0) && (
           <Card className="p-12 text-center">
             <h2 className="text-2xl font-bold mb-2">No results found</h2>
             <p className="text-muted-foreground mb-6">

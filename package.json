@@ -4,11 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --mode development",
+    "dev:test": "vite --mode test --port 8081",
+    "dev:uat": "vite --mode production --port 8082",
+    "build": "vite build --mode production",
     "build:dev": "vite build --mode development",
+    "build:test": "vite build --mode test",
+    "build:uat": "vite build --mode production",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preview:test": "vite preview --port 8081",
+    "preview:uat": "vite preview --port 8082"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

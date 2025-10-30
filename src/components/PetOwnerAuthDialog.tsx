@@ -23,17 +23,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-const loginSchema = z.object({
+const emailOnlySchema = z.object({
   email: z.string().email("Valid email address is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-const signupSchema = loginSchema.extend({
-  fullName: z.string().min(2, "Full name is required"),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
 });
 
 interface PetOwnerAuthDialogProps {
@@ -46,108 +37,64 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const loginForm = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const loginForm = useForm<z.infer<typeof emailOnlySchema>>({
+    resolver: zodResolver(emailOnlySchema),
     defaultValues: {
       email: "",
-      password: "",
-    },
-  });
-
-  const signupForm = useForm<z.infer<typeof signupSchema>>({
-    resolver: zodResolver(signupSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-      fullName: "",
     },
   });
 
   // Reset forms when switching between login/signup modes
   useEffect(() => {
     loginForm.reset();
-    signupForm.reset();
   }, [isLogin]);
 
-  const onLogin = async (values: z.infer<typeof loginSchema>) => {
+  const onLogin = async (values: z.infer<typeof emailOnlySchema>) => {
     setIsSubmitting(true);
-    
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithOtp({
       email: values.email,
-      password: values.password,
+      options: { emailRedirectTo: `${window.location.origin}/pet-owner-dashboard` }
     });
-
     if (error) {
-      toast({
-        title: "Login Failed",
-        description: error.message,
-        variant: "destructive",
-      });
-      setIsSubmitting(false);
-      return;
+      toast({ title: "Login failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Check your email", description: "We sent a login link." });
     }
-
-    toast({
-      title: "Welcome back!",
-      description: "You've successfully logged in.",
-    });
-
     setIsSubmitting(false);
-    onOpenChange(false);
-    navigate("/pet-owner-dashboard");
   };
 
-  const onSignup = async (values: z.infer<typeof signupSchema>) => {
+  const onMagicLink = async (email: string) => {
     setIsSubmitting(true);
-    
-    console.log("Starting signup process...");
-    
-    const { data, error } = await supabase.auth.signUp({
-      email: values.email,
-      password: values.password,
-      options: {
-        data: {
-          full_name: values.fullName,
-        },
-        emailRedirectTo: `${window.location.origin}/pet-owner-dashboard`,
-      },
-    });
-
-    console.log("Signup response:", { data, error });
-
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: `${window.location.origin}/pet-owner-dashboard` } });
     if (error) {
-      console.error("Signup error:", error);
-      toast({
-        title: "Signup Failed",
-        description: error.message,
-        variant: "destructive",
-      });
-      setIsSubmitting(false);
-      return;
+      toast({ title: "Magic link failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Check your email", description: "We sent you a login link." });
     }
-
-    if (!data.user) {
-      console.error("No user in response:", data);
-      toast({
-        title: "Signup Failed",
-        description: "Failed to create user account. Please try again.",
-        variant: "destructive",
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    console.log("User created successfully:", data.user);
-
-    toast({
-      title: "Account Created!",
-      description: "Welcome to PetFinder. Let's set up your profile.",
-    });
-
     setIsSubmitting(false);
-    onOpenChange(false);
-    navigate("/pet-owner-dashboard");
+  };
+
+  const onGoogle = async () => {
+    setIsSubmitting(true);
+    const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/pet-owner-dashboard` } });
+    if (error) {
+      toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
+    }
+    setIsSubmitting(false);
+  };
+
+  const onSignup = async (values: z.infer<typeof emailOnlySchema>) => {
+    setIsSubmitting(true);
+    const { error } = await supabase.auth.signInWithOtp({
+      email: values.email,
+      options: { emailRedirectTo: `${window.location.origin}/pet-owner-dashboard` }
+    });
+    if (error) {
+      toast({ title: "Signup failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Check your email", description: "We sent a sign-in link." });
+    }
+    setIsSubmitting(false);
   };
 
   return (
@@ -174,93 +121,35 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="your@email.com" autoComplete="off" {...field} />
+                      <Input type="email" placeholder="you@example.com" autoComplete="off" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
-              <FormField
-                control={loginForm.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" autoComplete="off" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Logging in..." : "Log In"}
+                {isSubmitting ? "Sending..." : "Send login link"}
               </Button>
             </form>
           </Form>
         ) : (
-          <Form {...signupForm}>
-            <form key="signup-form" onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-4">
+          <Form {...loginForm}>
+            <form key="signup-form" onSubmit={loginForm.handleSubmit(onSignup)} className="space-y-4">
               <FormField
-                control={signupForm.control}
-                name="fullName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" autoComplete="off" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={signupForm.control}
+                control={loginForm.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="your@email.com" autoComplete="off" {...field} />
+                      <Input type="email" placeholder="you@example.com" autoComplete="off" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
-              <FormField
-                control={signupForm.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" autoComplete="off" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={signupForm.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" autoComplete="off" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Creating account..." : "Create Account"}
+                {isSubmitting ? "Sending..." : "Create account (email link)"}
               </Button>
             </form>
           </Form>

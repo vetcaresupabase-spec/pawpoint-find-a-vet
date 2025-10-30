@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Heart } from "lucide-react";
 import { VetRegistrationDialog } from "./VetRegistrationDialog";
 import { PetOwnerAuthDialog } from "./PetOwnerAuthDialog";
@@ -56,11 +57,24 @@ export const Header = () => {
             </Link>
             
             {user ? (
-              <Button size="sm" asChild>
-                <Link to={isVetPage ? "/vet-dashboard" : "/pet-owner-dashboard"}>
-                  Dashboard
-                </Link>
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="outline">Account</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to={isVetPage ? "/vet-dashboard" : "/pet-owner-dashboard"}>Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/account">My account</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={async () => { await supabase.auth.signOut(); }}>
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <>
                 {isVetPage ? (
