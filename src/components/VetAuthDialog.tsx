@@ -23,8 +23,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-const emailOnlySchema = z.object({
+const authSchema = z.object({
   email: z.string().email("Valid email address is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 interface VetAuthDialogProps {
@@ -37,17 +38,19 @@ export function VetAuthDialog({ open, onOpenChange }: VetAuthDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const loginForm = useForm<z.infer<typeof emailOnlySchema>>({
-    resolver: zodResolver(emailOnlySchema),
+  const loginForm = useForm<z.infer<typeof authSchema>>({
+    resolver: zodResolver(authSchema),
     defaultValues: {
       email: "",
+      password: "",
     },
   });
 
-  const signupForm = useForm<z.infer<typeof emailOnlySchema>>({
-    resolver: zodResolver(emailOnlySchema),
+  const signupForm = useForm<z.infer<typeof authSchema>>({
+    resolver: zodResolver(authSchema),
     defaultValues: {
       email: "",
+      password: "",
     },
   });
 
@@ -57,18 +60,21 @@ export function VetAuthDialog({ open, onOpenChange }: VetAuthDialogProps) {
     signupForm.reset();
   }, [isLogin]);
 
-  const onLogin = async (values: z.infer<typeof emailOnlySchema>) => {
+  const onLogin = async (values: z.infer<typeof authSchema>) => {
     setIsSubmitting(true);
-    const { error } = await supabase.auth.signInWithOtp({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: values.email,
-      options: { emailRedirectTo: `${window.location.origin}/vet-dashboard` }
+      password: values.password,
     });
     if (error) {
       toast({ title: "Login failed", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Check your email", description: "We sent a login link." });
+      setIsSubmitting(false);
+      return;
     }
+    toast({ title: "Welcome!", description: "Login successful." });
     setIsSubmitting(false);
+    onOpenChange(false);
+    navigate("/vet-dashboard");
   };
 
   const onMagicLink = async (email: string) => {
@@ -91,18 +97,30 @@ export function VetAuthDialog({ open, onOpenChange }: VetAuthDialogProps) {
     setIsSubmitting(false);
   };
 
-  const onSignup = async (values: z.infer<typeof emailOnlySchema>) => {
+  const onSignup = async (values: z.infer<typeof authSchema>) => {
     setIsSubmitting(true);
-    const { error } = await supabase.auth.signInWithOtp({
+    const { data, error } = await supabase.auth.signUp({
       email: values.email,
-      options: { emailRedirectTo: `${window.location.origin}/vet-dashboard` }
+      password: values.password,
+      options: {
+        data: { role: "vet" },
+        emailRedirectTo: `${window.location.origin}/vet-dashboard`
+      }
     });
     if (error) {
       toast({ title: "Signup failed", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Check your email", description: "We sent a sign-in link." });
+      setIsSubmitting(false);
+      return;
     }
+    if (!data.user) {
+      toast({ title: "Signup failed", description: "Could not create vet account.", variant: "destructive" });
+      setIsSubmitting(false);
+      return;
+    }
+    toast({ title: "Vet account created!", description: "Welcome to PawPoint." });
     setIsSubmitting(false);
+    onOpenChange(false);
+    navigate("/vet-dashboard");
   };
 
   return (
@@ -136,17 +154,22 @@ export function VetAuthDialog({ open, onOpenChange }: VetAuthDialogProps) {
                 )}
               />
               
+              <FormField
+                control={loginForm.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="••••••••" autoComplete="off" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Sending..." : "Send login link"}
+                {isSubmitting ? "Logging in..." : "Log in"}
               </Button>
-              <div className="grid gap-2">
-                <Button type="button" variant="outline" disabled={isSubmitting} onClick={() => onMagicLink(loginForm.getValues("email"))}>
-                  Send magic link
-                </Button>
-                <Button type="button" variant="secondary" disabled={isSubmitting} onClick={onGoogle}>
-                  Continue with Google
-                </Button>
-              </div>
             </form>
           </Form>
         ) : (
@@ -165,9 +188,21 @@ export function VetAuthDialog({ open, onOpenChange }: VetAuthDialogProps) {
                   </FormItem>
                 )}
               />
-              
+              <FormField
+                control={signupForm.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="••••••••" autoComplete="off" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Sending..." : "Create account (email link)"}
+                {isSubmitting ? "Creating..." : "Create vet account"}
               </Button>
             </form>
           </Form>

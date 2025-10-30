@@ -23,8 +23,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-const emailOnlySchema = z.object({
+const authSchema = z.object({
   email: z.string().email("Valid email address is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 interface PetOwnerAuthDialogProps {
@@ -37,10 +38,11 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const loginForm = useForm<z.infer<typeof emailOnlySchema>>({
-    resolver: zodResolver(emailOnlySchema),
+  const loginForm = useForm<z.infer<typeof authSchema>>({
+    resolver: zodResolver(authSchema),
     defaultValues: {
       email: "",
+      password: "",
     },
   });
 
@@ -49,18 +51,26 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
     loginForm.reset();
   }, [isLogin]);
 
-  const onLogin = async (values: z.infer<typeof emailOnlySchema>) => {
+  const onLogin = async (values: z.infer<typeof authSchema>) => {
     setIsSubmitting(true);
-    const { error } = await supabase.auth.signInWithOtp({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: values.email,
-      options: { emailRedirectTo: `${window.location.origin}/pet-owner-dashboard` }
+      password: values.password,
     });
     if (error) {
       toast({ title: "Login failed", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Check your email", description: "We sent a login link." });
+      setIsSubmitting(false);
+      return;
     }
+    const userRole = data.user?.user_metadata?.role || "pet_owner";
+    toast({ title: "Welcome!", description: "Login successful." });
     setIsSubmitting(false);
+    onOpenChange(false);
+    if (userRole === "vet") {
+      navigate("/vet-dashboard");
+    } else {
+      navigate("/pet-owner-dashboard");
+    }
   };
 
   const onMagicLink = async (email: string) => {
@@ -83,18 +93,30 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
     setIsSubmitting(false);
   };
 
-  const onSignup = async (values: z.infer<typeof emailOnlySchema>) => {
+  const onSignup = async (values: z.infer<typeof authSchema>) => {
     setIsSubmitting(true);
-    const { error } = await supabase.auth.signInWithOtp({
+    const { data, error } = await supabase.auth.signUp({
       email: values.email,
-      options: { emailRedirectTo: `${window.location.origin}/pet-owner-dashboard` }
+      password: values.password,
+      options: {
+        data: { role: "pet_owner" },
+        emailRedirectTo: `${window.location.origin}/pet-owner-dashboard`
+      }
     });
     if (error) {
       toast({ title: "Signup failed", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Check your email", description: "We sent a sign-in link." });
+      setIsSubmitting(false);
+      return;
     }
+    if (!data.user) {
+      toast({ title: "Signup failed", description: "Could not create account.", variant: "destructive" });
+      setIsSubmitting(false);
+      return;
+    }
+    toast({ title: "Account created!", description: "Welcome to PawPoint." });
     setIsSubmitting(false);
+    onOpenChange(false);
+    navigate("/pet-owner-dashboard");
   };
 
   return (
@@ -127,8 +149,21 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
                   </FormItem>
                 )}
               />
+              <FormField
+                control={loginForm.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="••••••••" autoComplete="off" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Sending..." : "Send login link"}
+                {isSubmitting ? "Logging in..." : "Log in"}
               </Button>
             </form>
           </Form>
@@ -148,8 +183,21 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
                   </FormItem>
                 )}
               />
+              <FormField
+                control={loginForm.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="••••••••" autoComplete="off" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Sending..." : "Create account (email link)"}
+                {isSubmitting ? "Creating..." : "Create account"}
               </Button>
             </form>
           </Form>
