@@ -17,6 +17,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 
 const PetOwnerDashboard = () => {
   const navigate = useNavigate();
@@ -59,6 +61,34 @@ const PetOwnerDashboard = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  // Fetch user's bookings
+  const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
+    queryKey: ["userBookings", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      
+      const { data, error } = await supabase
+        .from("bookings")
+        .select(`
+          *,
+          clinic:clinics(name, city, address_line1),
+          service:clinic_services(name)
+        `)
+        .eq("pet_owner_id", user.id)
+        .gte("appointment_date", format(new Date(), "yyyy-MM-dd"))
+        .order("appointment_date", { ascending: true })
+        .order("start_time", { ascending: true });
+      
+      if (error) {
+        console.error("Error fetching bookings:", error);
+        return [];
+      }
+      
+      return data || [];
+    },
+    enabled: !!user?.id,
+  });
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast({
@@ -78,47 +108,6 @@ const PetOwnerDashboard = () => {
       </div>
     );
   }
-
-  // Mock data - in real app this would come from database
-  const upcomingAppointments = [
-    {
-      id: 1,
-      date: "2025-10-15",
-      time: "10:00 AM",
-      vet: "Dr. Sarah Mueller",
-      clinic: "Happy Paws Veterinary Clinic",
-      pet: "Max",
-      service: "Annual Checkup",
-      status: "confirmed",
-    },
-    {
-      id: 2,
-      date: "2025-10-20",
-      time: "2:30 PM",
-      vet: "Dr. Hans Schmidt",
-      clinic: "Tierklinik Berlin Mitte",
-      pet: "Luna",
-      service: "Vaccination",
-      status: "pending",
-    },
-  ];
-
-  const myPets = [
-    {
-      id: 1,
-      name: "Max",
-      species: "Dog",
-      breed: "Golden Retriever",
-      age: "3 years",
-    },
-    {
-      id: 2,
-      name: "Luna",
-      species: "Cat",
-      breed: "British Shorthair",
-      age: "2 years",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
@@ -210,38 +199,60 @@ const PetOwnerDashboard = () => {
                 <CardTitle>Upcoming Appointments</CardTitle>
               </CardHeader>
               <CardContent>
-                {upcomingAppointments.length > 0 ? (
+                {bookingsLoading ? (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">Loading appointments...</p>
+                  </div>
+                ) : bookings.length > 0 ? (
                   <div className="space-y-4">
-                    {upcomingAppointments.map((appointment) => (
-                      <div
-                        key={appointment.id}
-                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-secondary/30 transition-colors"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="text-center">
-                            <Clock className="h-5 w-5 text-primary mx-auto mb-1" />
-                            <p className="text-sm font-semibold">{appointment.time}</p>
-                            <p className="text-xs text-muted-foreground">{appointment.date}</p>
-                          </div>
-                          <div>
-                            <p className="font-semibold">{appointment.pet} - {appointment.service}</p>
-                            <p className="text-sm text-muted-foreground">{appointment.vet}</p>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                              <MapPin className="h-3 w-3" />
-                              <span>{appointment.clinic}</span>
+                    {bookings.map((booking: any) => {
+                      const isDeclined = booking.status === "declined";
+                      return (
+                        <div
+                          key={booking.id}
+                          className={`flex items-center justify-between p-4 border rounded-lg hover:bg-secondary/30 transition-colors ${
+                            isDeclined ? "opacity-60" : ""
+                          }`}
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="text-center">
+                              <Clock className="h-5 w-5 text-primary mx-auto mb-1" />
+                              <p className={`text-sm font-semibold ${isDeclined ? "line-through" : ""}`}>
+                                {booking.start_time?.slice(0, 5)}
+                              </p>
+                              <p className={`text-xs text-muted-foreground ${isDeclined ? "line-through" : ""}`}>
+                                {format(new Date(booking.appointment_date), "MMM dd, yyyy")}
+                              </p>
+                            </div>
+                            <div>
+                              <p className={`font-semibold ${isDeclined ? "line-through" : ""}`}>
+                                {booking.pet_name} - {booking.service?.name || "General"}
+                              </p>
+                              <p className={`text-sm text-muted-foreground ${isDeclined ? "line-through" : ""}`}>
+                                {booking.pet_type || "Pet"}
+                              </p>
+                              <div className={`flex items-center gap-2 text-sm text-muted-foreground mt-1 ${isDeclined ? "line-through" : ""}`}>
+                                <MapPin className="h-3 w-3" />
+                                <span>{booking.clinic?.name || "Clinic"}</span>
+                              </div>
                             </div>
                           </div>
+                          <div className="flex items-center gap-3">
+                            <Badge 
+                              variant={
+                                booking.status === "confirmed" || booking.status === "checked_in" 
+                                  ? "default" 
+                                  : booking.status === "pending"
+                                  ? "secondary"
+                                  : "destructive"
+                              }
+                            >
+                              {booking.status.replace("_", " ")}
+                            </Badge>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <Badge variant={appointment.status === "confirmed" ? "default" : "secondary"}>
-                            {appointment.status}
-                          </Badge>
-                          <Button size="sm" variant="outline">
-                            Details
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-12">
@@ -267,26 +278,10 @@ const PetOwnerDashboard = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {myPets.map((pet) => (
-                    <Card key={pet.id}>
-                      <CardContent className="pt-6">
-                        <div className="flex items-center gap-4">
-                          <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
-                            <span className="text-2xl font-bold">{pet.name.charAt(0)}</span>
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-semibold text-lg">{pet.name}</p>
-                            <p className="text-sm text-muted-foreground">{pet.species} • {pet.breed}</p>
-                            <p className="text-sm text-muted-foreground">{pet.age}</p>
-                          </div>
-                        </div>
-                        <Button variant="outline" className="w-full mt-4">
-                          View Details
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
+                <div className="text-center py-12">
+                  <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground mb-4">Pet management coming soon!</p>
+                  <p className="text-sm text-muted-foreground">You'll be able to add and manage your pets here.</p>
                 </div>
               </CardContent>
             </Card>

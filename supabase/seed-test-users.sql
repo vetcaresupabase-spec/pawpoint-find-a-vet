@@ -58,3 +58,6 @@ union all select id, 'thu', '08:00', '18:00' from c
 union all select id, 'fri', '08:00', '18:00' from c
 union all select id, 'sat', '09:00', '13:00' from c;
 
+
+
+

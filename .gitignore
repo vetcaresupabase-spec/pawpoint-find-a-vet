@@ -22,3 +22,33 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Test and temporary files
+public/test*.html
+test*.html
+
+# Temporary fix/documentation files (keep migrations)
+FIX_*.sql
+ULTIMATE_*.sql
+COMPLETE_*.sql
+COPY_*.sql
+RUN_THIS_*.sql
+RESET_*.sql
+create-*.sql
+*_FIX*.sql
+*_SOLUTION.sql
+*_COMPLETE.sql
+
+# Temporary markdown documentation (keep README)
+*_FIX*.md
+*_SOLUTION.md
+*_COMPLETE.md
+*_TESTING*.md
+*_CHECKLIST.md
+*_UPDATES.md
+*_IMPLEMENTATION*.md
+DEBUG_*.md
+URGENT_*.md
+DO_THIS_*.md
+COPY_*.md
+RUN_THIS_*.md

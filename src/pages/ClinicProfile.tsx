@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { getClinicProfile, placeHold, confirmAppointment } from "@/integrations/supabase/queries";
+import { Calendar } from "lucide-react";
 
 const ClinicProfile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
   const [start, setStart] = useState("");
@@ -64,7 +66,16 @@ const ClinicProfile = () => {
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <Header />
       <div className="container py-8 space-y-6">
-        <h1 className="text-3xl font-bold">{clinic.name}</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold">{clinic.name}</h1>
+          <Button
+            size="lg"
+            onClick={() => navigate(`/book-appointment?clinicId=${id}`)}
+          >
+            <Calendar className="h-5 w-5 mr-2" />
+            Book Appointment
+          </Button>
+        </div>
 
         <Card>
           <CardContent className="p-6 space-y-2">

@@ -56,3 +56,6 @@ Or use the Supabase Dashboard:
 - Click "View Profile" → see clinic details
 - Click "Book Appointment" → redirects to booking flow
 
+
+
+

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -37,6 +37,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
   const [isLogin, setIsLogin] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const loginForm = useForm<z.infer<typeof authSchema>>({
     resolver: zodResolver(authSchema),
@@ -66,6 +67,12 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
     toast({ title: "Welcome!", description: "Login successful." });
     setIsSubmitting(false);
     onOpenChange(false);
+    
+    // Don't navigate if we're on the booking page - let the user stay there
+    if (location.pathname.includes("/book-appointment")) {
+      return;
+    }
+    
     if (userRole === "vet") {
       navigate("/vet-dashboard");
     } else {

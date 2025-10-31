@@ -1,96 +1,108 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { TodayTab } from "@/components/vet/TodayTab";
+import { ServicesTab } from "@/components/vet/ServicesTab";
+import { OpeningHoursTab } from "@/components/vet/OpeningHoursTab";
+import { StaffTab } from "@/components/vet/StaffTab";
+import { AnalyticsTab } from "@/components/vet/AnalyticsTab";
 import {
   Calendar,
-  Users,
-  Star,
-  TrendingUp,
-  Settings,
   Bell,
   DollarSign,
   Clock,
-  CheckCircle2,
-  XCircle,
+  Briefcase,
+  Users,
+  BarChart3,
+  MapPin,
+  Phone,
+  Mail,
+  Edit,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 
+interface ClinicData {
+  id: string;
+  name: string;
+  city: string;
+  address_line1: string;
+  phone: string;
+  email: string;
+  specialties: string[];
+}
+
 const VetDashboard = () => {
-  const stats = [
-    { label: "Today's Appointments", value: "8", icon: Calendar, color: "text-primary" },
-    { label: "Total Clients", value: "234", icon: Users, color: "text-secondary" },
-    { label: "Average Rating", value: "4.8", icon: Star, color: "text-accent" },
-    { label: "Monthly Revenue", value: "€4,200", icon: DollarSign, color: "text-primary" },
-  ];
+  const navigate = useNavigate();
+  const [clinicId, setClinicId] = useState<string | null>(null);
+  const [clinic, setClinic] = useState<ClinicData | null>(null);
+  const [vetName, setVetName] = useState<string>("");
+  const [loading, setLoading] = useState(true);
 
-  const upcomingAppointments = [
-    {
-      id: 1,
-      time: "09:00",
-      petOwner: "Sarah Mueller",
-      petName: "Max",
-      petType: "Dog",
-      service: "General Checkup",
-      status: "confirmed",
-    },
-    {
-      id: 2,
-      time: "10:30",
-      petOwner: "Hans Schmidt",
-      petName: "Luna",
-      petType: "Cat",
-      service: "Vaccination",
-      status: "confirmed",
-    },
-    {
-      id: 3,
-      time: "14:00",
-      petOwner: "Maria Rossi",
-      petName: "Charlie",
-      petType: "Dog",
-      service: "Dental Care",
-      status: "pending",
-    },
-    {
-      id: 4,
-      time: "15:30",
-      petOwner: "Jean Dupont",
-      petName: "Bella",
-      petType: "Cat",
-      service: "General Checkup",
-      status: "confirmed",
-    },
-  ];
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        navigate("/");
+        return;
+      }
 
-  const recentClients = [
-    { name: "Max Mueller", lastVisit: "2 days ago", visits: 12 },
-    { name: "Luna Schmidt", lastVisit: "1 week ago", visits: 8 },
-    { name: "Charlie Rossi", lastVisit: "2 weeks ago", visits: 15 },
-    { name: "Bella Dupont", lastVisit: "3 days ago", visits: 6 },
-  ];
+      // Check if user is a vet
+      const userRole = user.user_metadata?.role;
+      if (userRole !== "vet") {
+        toast({
+          title: "Access Denied",
+          description: "You must be a vet to access this page.",
+          variant: "destructive",
+        });
+        navigate("/");
+        return;
+      }
 
-  const recentReviews = [
-    {
-      author: "Sarah M.",
-      rating: 5,
-      date: "Yesterday",
-      text: "Excellent care for my dog Max. Very professional and caring.",
-    },
-    {
-      author: "Hans S.",
-      rating: 5,
-      date: "3 days ago",
-      text: "Luna felt comfortable right away. Highly recommend!",
-    },
-    {
-      author: "Maria R.",
-      rating: 4,
-      date: "1 week ago",
-      text: "Good service, but wait time was a bit long.",
-    },
-  ];
+      // Get vet name from user metadata or profile
+      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || "Doctor";
+      setVetName(fullName);
+
+      // Fetch user's clinic with details
+      const { data: clinicData, error } = await supabase
+        .from("clinics")
+        .select("id, name, city, address_line1, phone, email, specialties")
+        .eq("owner_id", user.id)
+        .single();
+
+      if (error || !clinicData) {
+        toast({
+          title: "No Clinic Found",
+          description: "Please complete clinic onboarding first.",
+          variant: "destructive",
+        });
+        navigate("/vet-onboarding");
+        return;
+      }
+
+      setClinicId(clinicData.id);
+      setClinic(clinicData);
+      setLoading(false);
+    };
+
+    checkAuth();
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!clinicId) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
@@ -99,11 +111,68 @@ const VetDashboard = () => {
       {/* Dashboard Header */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container py-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold">Welcome back, Dr. Schmidt!</h1>
-              <p className="text-muted-foreground">Here's what's happening with your clinic today</p>
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold mb-2">Welcome back, {vetName}!</h1>
+              <p className="text-muted-foreground mb-3">Here's what's happening with your clinic today</p>
+              
+              {/* Clinic Details Card */}
+              {clinic && (
+                <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/50 border max-w-2xl">
+                  <div className="flex-1 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-base">{clinic.name}</h3>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={() => navigate("/vet-onboarding")}
+                        title="Edit profile"
+                      >
+                        <Edit className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                      {clinic.address_line1 && clinic.city && (
+                        <div className="flex items-center gap-1.5">
+                          <MapPin className="h-3.5 w-3.5" />
+                          <span>{clinic.address_line1}, {clinic.city}</span>
+                        </div>
+                      )}
+                      
+                      {clinic.phone && (
+                        <div className="flex items-center gap-1.5">
+                          <Phone className="h-3.5 w-3.5" />
+                          <span>{clinic.phone}</span>
+                        </div>
+                      )}
+                      
+                      {clinic.email && (
+                        <div className="flex items-center gap-1.5">
+                          <Mail className="h-3.5 w-3.5" />
+                          <span>{clinic.email}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {clinic.specialties && clinic.specialties.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {clinic.specialties.map((specialty, index) => (
+                          <span 
+                            key={index}
+                            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-primary/10 text-primary"
+                          >
+                            {specialty}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
+            
             <div className="flex gap-3">
               <Button 
                 variant="outline" 
@@ -126,245 +195,54 @@ const VetDashboard = () => {
       </div>
 
       <div className="container py-8">
-        {/* Stats Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <Card key={index}>
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">{stat.label}</p>
-                      <p className="text-3xl font-bold mt-1">{stat.value}</p>
-                    </div>
-                    <Icon className={`h-12 w-12 ${stat.color} opacity-80`} />
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
         {/* Main Content Tabs */}
-        <Tabs defaultValue="appointments" className="space-y-6">
+        <Tabs defaultValue="today" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="appointments">
+            <TabsTrigger value="today">
               <Calendar className="h-4 w-4 mr-2" />
-              Appointments
+              Today
             </TabsTrigger>
-            <TabsTrigger value="clients">
+            <TabsTrigger value="services">
+              <Briefcase className="h-4 w-4 mr-2" />
+              Services
+            </TabsTrigger>
+            <TabsTrigger value="hours">
+              <Clock className="h-4 w-4 mr-2" />
+              Opening Hours
+            </TabsTrigger>
+            <TabsTrigger value="staff">
               <Users className="h-4 w-4 mr-2" />
-              Clients
-            </TabsTrigger>
-            <TabsTrigger value="reviews">
-              <Star className="h-4 w-4 mr-2" />
-              Reviews
+              Staff
             </TabsTrigger>
             <TabsTrigger value="analytics">
-              <TrendingUp className="h-4 w-4 mr-2" />
+              <BarChart3 className="h-4 w-4 mr-2" />
               Analytics
-            </TabsTrigger>
-            <TabsTrigger value="settings">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
             </TabsTrigger>
           </TabsList>
 
-          {/* Appointments Tab */}
-          <TabsContent value="appointments" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Today's Appointments</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {upcomingAppointments.map((appointment) => (
-                    <div
-                      key={appointment.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-secondary/30 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="text-center">
-                          <Clock className="h-5 w-5 text-primary mx-auto mb-1" />
-                          <p className="text-sm font-semibold">{appointment.time}</p>
-                        </div>
-                        <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                          <span className="text-lg font-bold">
-                            {appointment.petName.charAt(0)}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="font-semibold">{appointment.petName}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {appointment.petType} • {appointment.petOwner}
-                          </p>
-                          <p className="text-sm text-muted-foreground">{appointment.service}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant={appointment.status === "confirmed" ? "default" : "secondary"}>
-                          {appointment.status === "confirmed" ? (
-                            <CheckCircle2 className="h-3 w-3 mr-1" />
-                          ) : (
-                            <Clock className="h-3 w-3 mr-1" />
-                          )}
-                          {appointment.status}
-                        </Badge>
-                      <Button size="sm" variant="outline" onClick={() => toast({ title: "Appointment Details", description: "Detailed view coming soon!" })}>
-                        View Details
-                      </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+          {/* Today Tab */}
+          <TabsContent value="today">
+            <TodayTab clinicId={clinicId} />
           </TabsContent>
 
-          {/* Clients Tab */}
-          <TabsContent value="clients" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Clients</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentClients.map((client, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-secondary/30 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                          <span className="text-lg font-bold">{client.name.charAt(0)}</span>
-                        </div>
-                        <div>
-                          <p className="font-semibold">{client.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            Last visit: {client.lastVisit} • {client.visits} total visits
-                          </p>
-                        </div>
-                      </div>
-                      <Button size="sm" variant="outline" onClick={() => toast({ title: "Client Profile", description: "Profile view coming soon!" })}>
-                        View Profile
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+          {/* Services Tab */}
+          <TabsContent value="services">
+            <ServicesTab clinicId={clinicId} />
           </TabsContent>
 
-          {/* Reviews Tab */}
-          <TabsContent value="reviews" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Reviews</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentReviews.map((review, index) => (
-                    <div key={index} className="p-4 border rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold">{review.author}</p>
-                          <div className="flex">
-                            {Array.from({ length: review.rating }).map((_, i) => (
-                              <Star key={i} className="h-4 w-4 text-primary fill-primary" />
-                            ))}
-                          </div>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{review.date}</p>
-                      </div>
-                      <p className="text-muted-foreground">{review.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+          {/* Opening Hours Tab */}
+          <TabsContent value="hours">
+            <OpeningHoursTab clinicId={clinicId} />
+          </TabsContent>
+
+          {/* Staff Tab */}
+          <TabsContent value="staff">
+            <StaffTab clinicId={clinicId} />
           </TabsContent>
 
           {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Performance Overview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div className="aspect-[2/1] bg-secondary/30 rounded-lg flex items-center justify-center">
-                    <p className="text-muted-foreground">Analytics Chart Placeholder</p>
-                  </div>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="p-4 border rounded-lg">
-                      <p className="text-sm text-muted-foreground">This Month</p>
-                      <p className="text-2xl font-bold">127 appointments</p>
-                      <p className="text-sm text-primary">+12% from last month</p>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <p className="text-sm text-muted-foreground">New Clients</p>
-                      <p className="text-2xl font-bold">34</p>
-                      <p className="text-sm text-primary">+8% from last month</p>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <p className="text-sm text-muted-foreground">Cancellation Rate</p>
-                      <p className="text-2xl font-bold">3.2%</p>
-                      <p className="text-sm text-primary">-2% from last month</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Account Settings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">Profile Settings</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Manage your clinic profile, availability, and services
-                    </p>
-                    <Button variant="outline" onClick={() => toast({ title: "Edit Profile", description: "Profile editing coming soon!" })}>
-                      Edit Profile
-                    </Button>
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">Notification Preferences</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Choose how you want to receive booking notifications
-                    </p>
-                    <Button variant="outline" onClick={() => toast({ title: "Manage Notifications", description: "Notification settings coming soon!" })}>
-                      Manage Notifications
-                    </Button>
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">Team Management</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Add and manage team members (Premium feature)
-                    </p>
-                    <Button variant="outline" onClick={() => toast({ title: "Invite Team Members", description: "Team management coming soon!" })}>
-                      Invite Team Members
-                    </Button>
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">Subscription</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Free trial • 89 days remaining
-                    </p>
-                    <Button onClick={() => toast({ title: "Upgrade to Premium", description: "Premium features coming soon!" })}>
-                      Upgrade to Premium
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="analytics">
+            <AnalyticsTab clinicId={clinicId} />
           </TabsContent>
         </Tabs>
       </div>

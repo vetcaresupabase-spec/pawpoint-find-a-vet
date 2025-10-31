@@ -1,20 +1,16 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, MapPin, Calendar, Bell, Heart, Users, Shield, Star } from "lucide-react";
+import { Search, Calendar, Bell, Heart, Users, Shield, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Header } from "@/components/Header";
+import { SearchBar } from "@/components/SearchBar";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-image.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
-  const [petType, setPetType] = useState("");
-  const [location, setLocation] = useState("");
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    navigate(`/search?petType=${encodeURIComponent(petType)}&location=${encodeURIComponent(location)}`);
+  const handleSearch = (search: string, location: string) => {
+    navigate(`/search?petType=${encodeURIComponent(search)}&location=${encodeURIComponent(location)}`);
   };
   return <div className="min-h-screen bg-background">
       <Header />
@@ -49,29 +45,9 @@ const Index = () => {
             </div>
             
             {/* Search Bar */}
-            <form onSubmit={handleSearch} className="bg-card rounded-2xl shadow-lg p-2 flex flex-col sm:flex-row gap-2 max-w-3xl border border-border">
-              <div className="flex-1 flex items-center gap-2 px-4 py-3 bg-muted rounded-xl">
-                <Search className="h-5 w-5 text-muted-foreground" />
-                <Input 
-                  placeholder="Pet type or service" 
-                  className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
-                  value={petType}
-                  onChange={(e) => setPetType(e.target.value)}
-                />
-              </div>
-              <div className="flex-1 flex items-center gap-2 px-4 py-3 bg-muted rounded-xl">
-                <MapPin className="h-5 w-5 text-muted-foreground" />
-                <Input 
-                  placeholder="City or postal code" 
-                  className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                />
-              </div>
-              <Button type="submit" size="lg" className="rounded-xl px-8 font-semibold">
-                Search
-              </Button>
-            </form>
+            <div className="max-w-3xl">
+              <SearchBar onSearch={handleSearch} />
+            </div>
             
             {/* Trust Indicators */}
             <div className="flex items-center gap-8 pt-4">
@@ -120,7 +96,10 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="flex flex-col items-center text-center space-y-4">
+            <div 
+              className="flex flex-col items-center text-center space-y-4 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => navigate("/search?petType=dog&location=berlin")}
+            >
               <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-2">
                 <Calendar className="h-8 w-8 text-primary" />
               </div>

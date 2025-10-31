@@ -12,6 +12,7 @@ export const Header = () => {
   const [vetDialogOpen, setVetDialogOpen] = useState(false);
   const [petOwnerDialogOpen, setPetOwnerDialogOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   
   const isVetPage = location.pathname === "/for-vets";
 
@@ -19,11 +20,13 @@ export const Header = () => {
     // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      setUserRole(session?.user?.user_metadata?.role ?? null);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      setUserRole(session?.user?.user_metadata?.role ?? null);
     });
 
     return () => subscription.unsubscribe();
@@ -47,25 +50,29 @@ export const Header = () => {
             >
               For Pet Owners
             </Link>
-            <Link 
-              to="/for-vets" 
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                isVetPage ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              For Vets
-            </Link>
+            
+            {/* Only show "For Vets" link if user is not logged in OR user is a vet */}
+            {(!user || userRole === "vet") && (
+              <Link 
+                to="/for-vets" 
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  isVetPage ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                For Vets
+              </Link>
+            )}
             
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="sm" variant="outline">Account</Button>
+                  <Button size="sm" variant="outline">{user.email}</Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to={isVetPage ? "/vet-dashboard" : "/pet-owner-dashboard"}>Dashboard</Link>
+                    <Link to={userRole === "vet" ? "/vet-dashboard" : "/pet-owner-dashboard"}>Dashboard</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/account">My account</Link>

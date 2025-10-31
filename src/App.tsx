@@ -10,6 +10,7 @@ import VetDashboard from "./pages/VetDashboard";
 import PetOwnerDashboard from "./pages/PetOwnerDashboard";
 import SearchResults from "./pages/SearchResults";
 import ClinicProfile from "./pages/ClinicProfile";
+import BookAppointment from "./pages/BookAppointment";
 import Account from "./pages/Account";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/pet-owner-dashboard" element={<PetOwnerDashboard />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/clinic/:id" element={<ClinicProfile />} />
+          <Route path="/book-appointment" element={<BookAppointment />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/account" element={<Account />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
