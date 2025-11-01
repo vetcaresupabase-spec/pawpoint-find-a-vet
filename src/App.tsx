@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { TranslationBanner } from "@/components/TranslationBanner";
 import Index from "./pages/Index";
 import ForVets from "./pages/ForVets";
 import VetOnboarding from "./pages/VetOnboarding";
@@ -20,6 +21,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <TranslationBanner />
       <Toaster />
       <Sonner />
       <BrowserRouter>

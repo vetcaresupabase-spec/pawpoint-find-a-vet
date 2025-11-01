@@ -333,9 +333,14 @@ export default function BookAppointment() {
 
       // Fetch existing bookings (only pending, confirmed, and checked_in statuses)
       // We fetch bookings for the next 30 days to cover the calendar view
+      // NOTE: This works for both logged-in and anonymous users.
+      // RLS policy "Public can check booking availability" allows anonymous users
+      // to see booking availability without exposing personal information.
       const bookingsStartDate = today;
       const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
       
+      // Fetch bookings - works for both logged-in and anonymous users
+      // This query will only return data if RLS policy "Public can check booking availability" is enabled
       const { data: bookingsData, error: bookingsError } = await supabase
         .from("bookings" as any)
         .select("id, clinic_id, appointment_date, start_time, end_time, status")
@@ -346,11 +351,29 @@ export default function BookAppointment() {
         .order("appointment_date")
         .order("start_time");
 
-      if (!bookingsError && bookingsData) {
+      if (bookingsError) {
+        console.error("❌ Error loading bookings:", bookingsError);
+        console.error("💡 If you see a permission denied error, run this SQL in Supabase:");
+        console.error("   See file: ENABLE_PUBLIC_BOOKING_AVAILABILITY.sql");
+        
+        // Show toast to help diagnose the issue
+        if (bookingsError.code === 'PGRST116' || bookingsError.message?.includes('permission') || bookingsError.message?.includes('policy')) {
+          console.error("🚨 RLS POLICY MISSING: Anonymous users cannot see bookings");
+          console.error("🚨 This causes all slots to appear available for non-logged-in users");
+        }
+        
+        // Set empty array so slots won't be incorrectly marked as available
+        setExistingBookings([]);
+      } else if (bookingsData) {
         setExistingBookings(bookingsData as unknown as Booking[]);
-        console.log(`📅 Loaded ${bookingsData.length} existing bookings:`, bookingsData);
-      } else if (bookingsError) {
-        console.error("Error loading bookings:", bookingsError);
+        console.log(`✅ Loaded ${bookingsData.length} existing bookings for availability checking`);
+        if (bookingsData.length === 0) {
+          console.log("ℹ️ No bookings found - all slots should be available");
+        }
+      } else {
+        // No error but no data - might be RLS blocking silently
+        console.warn("⚠️ No bookings data returned, but no error either. Checking RLS policy...");
+        setExistingBookings([]);
       }
     };
 

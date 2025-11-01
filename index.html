@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="yes">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Language" content="en" />
     <title>PetFinder - Find Trusted Vets Near You</title>
     <meta name="description" content="Book veterinary appointments online in seconds. Find trusted vets near you for every wag, purr, and feather. Your everyday partner in pet care." />
     <meta name="author" content="PetFinder" />
@@ -19,10 +20,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'de,fr,es,it,nl,pl,pt,ru,ar,zh-CN,zh-TW,ja,ko,hi',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false,
+          multilanguagePage: true
+        }, 'google_translate_element');
+      }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </head>
 
   <body>
     <div id="root"></div>
+    <!-- Google Translate Element (hidden by default, shown when user clicks translate) -->
+    <div id="google_translate_element" style="display: none; position: fixed; top: 60px; right: 20px; z-index: 9999; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
