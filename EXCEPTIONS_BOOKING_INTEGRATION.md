@@ -405,3 +405,5 @@ if (exception && !exception.is_closed && exception.time_ranges) {
 
 **Ready to test! Add an exception as a vet and view the booking page as a pet owner.** 🎯
 
+
+

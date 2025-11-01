@@ -8,7 +8,17 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, Mail, CheckCircle2, Calendar } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { searchClinics, Clinic } from "@/integrations/supabase/queries";
+import { Clinic } from "@/integrations/supabase/queries";
+
+interface ClinicSearchResult {
+  id: string;
+  name: string;
+  city: string;
+  address_line1: string | null;
+  postcode: string | null;
+  distance_m: number | null;
+  specialties: string[] | null;
+}
 
 const SearchResults = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,17 +30,111 @@ const SearchResults = () => {
 
   useEffect(() => {
     (async () => {
+      // Only search if we have search criteria
+      if (!petType && !location) {
+        setClinics([]);
+        return;
+      }
+
       setLoading(true);
       try {
-        const list = await searchClinics({ city: location });
-        setClinics(list);
+        let searchResults: ClinicSearchResult[] = [];
+        const hasNameSearch = petType.trim().length >= 2;
+        const hasLocationSearch = location.trim().length >= 2;
+
+        if (hasLocationSearch) {
+          // Location-based search with radius expansion (same as SearchBar)
+          const isNearMe = location.toLowerCase() === "near me";
+          const cityOrPostcode = !isNearMe && location.trim().length >= 2 ? location.trim() : null;
+          
+          // Try to get user's geolocation if "Near me"
+          let coords: { lat: number; lng: number } | null = null;
+          if (isNearMe && "geolocation" in navigator) {
+            try {
+              const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                  enableHighAccuracy: false,
+                  maximumAge: 300000,
+                  timeout: 8000
+                });
+              });
+              coords = { lat: position.coords.latitude, lng: position.coords.longitude };
+            } catch (error) {
+              console.log("Geolocation failed, searching without coords");
+            }
+          }
+
+          // Search with radius expansion
+          const radii = [15000, 50000, 100000, 200000];
+          for (const radius of radii) {
+            const { data, error } = await (supabase as any).rpc("fn_search_clinics", {
+              in_lat: coords?.lat ?? null,
+              in_lng: coords?.lng ?? null,
+              in_city_or_postcode: cityOrPostcode,
+              in_radius_m: radius,
+              in_limit: 50,
+            });
+
+            if (!error && data && (data as any[]).length > 0) {
+              searchResults = data as ClinicSearchResult[];
+              break;
+            }
+          }
+        } else {
+          // Name-only search (no location)
+          const { data, error } = await (supabase as any)
+            .from("clinics")
+            .select("id, name, city, address_line1, postcode, specialties, phone, email, is_active")
+            .eq("is_active", true)
+            .limit(50);
+
+          if (!error && data) {
+            searchResults = (data as any[]).map((clinic: any) => ({
+              ...clinic,
+              distance_m: null,
+              specialties: clinic.specialties as string[]
+            }));
+          }
+        }
+
+        // Apply name/expertise filter if provided
+        if (hasNameSearch && searchResults.length > 0) {
+          const searchLower = petType.toLowerCase();
+          searchResults = searchResults.filter(clinic => {
+            const nameMatch = clinic.name.toLowerCase().includes(searchLower);
+            const cityMatch = clinic.city.toLowerCase().includes(searchLower);
+            const specialtyMatch = clinic.specialties?.some(s => 
+              s.toLowerCase().includes(searchLower)
+            ) ?? false;
+            
+            return nameMatch || cityMatch || specialtyMatch;
+          });
+        }
+
+        // Convert to Clinic format
+        const clinicList: Clinic[] = await Promise.all(
+          searchResults.map(async (result) => {
+            // Fetch full clinic data
+            const { data: fullClinic } = await (supabase as any)
+              .from("clinics")
+              .select("*")
+              .eq("id", result.id)
+              .single();
+
+            return (fullClinic || result) as Clinic;
+          })
+        );
+
+        setClinics(clinicList);
       } catch (e: any) {
+        console.error("Search error:", e);
         toast({ title: "Search failed", description: e.message });
+        setClinics([]);
       } finally {
         setLoading(false);
       }
     })();
-  }, [location]);
+  }, [location, petType]);
 
   const handleSearch = (search: string, loc: string) => {
     setSearchParams({ petType: search, location: loc });

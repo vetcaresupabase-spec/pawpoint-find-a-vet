@@ -19,6 +19,7 @@ import { toast } from "@/hooks/use-toast";
 import { format, addDays, startOfDay, isSameDay, setHours, setMinutes, isPast } from "date-fns";
 import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Euro } from "lucide-react";
 import { useActiveServices } from "@/hooks/useServices";
+import { PetOwnerAuthDialog } from "@/components/PetOwnerAuthDialog";
 
 // Service categories
 const ALLOWED_CATEGORIES = [
@@ -72,6 +73,15 @@ interface ClinicHours {
   time_ranges: { start: string; end: string }[];
 }
 
+interface Booking {
+  id: string;
+  clinic_id: string;
+  appointment_date: string; // YYYY-MM-DD
+  start_time: string; // HH:mm:ss
+  end_time: string; // HH:mm:ss
+  status: string;
+}
+
 // Helper functions
 const startOfToday = () => {
   const d = new Date();
@@ -116,12 +126,14 @@ export default function BookAppointment() {
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
   const [exceptions, setExceptions] = useState<ClinicException[]>([]);
   const [clinicHours, setClinicHours] = useState<ClinicHours[]>([]);
+  const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
   
   // Form state
   const [petName, setPetName] = useState("");
   const [petType, setPetType] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   // Check authentication
   useEffect(() => {
@@ -137,6 +149,133 @@ export default function BookAppointment() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Auto-continue booking after successful login
+  useEffect(() => {
+    if (user && showLoginDialog) {
+      setShowLoginDialog(false);
+      
+      // If all required fields are filled, automatically proceed with booking
+      if (selectedServiceId && selectedSlot && petName) {
+        setTimeout(() => {
+          void (async () => {
+            setSubmitting(true);
+
+            // Always use 15-minute slot duration regardless of service duration
+            const duration = 15;
+
+            // Parse ISO datetime to get date and time components
+            const slotStart = new Date(selectedSlot.start);
+            const appointmentDate = format(slotStart, "yyyy-MM-dd");
+            const startTime = format(slotStart, "HH:mm:ss");
+            
+            const slotEnd = new Date(selectedSlot.end);
+            const endTime = format(slotEnd, "HH:mm:ss");
+
+            // Double-check that the slot is still available (prevent race conditions)
+            if (isSlotBooked(selectedSlot.start, selectedSlot.end, appointmentDate)) {
+              setSubmitting(false);
+              toast({
+                title: "Slot no longer available",
+                description: "This time slot has been booked by another user. Please select a different time.",
+                variant: "destructive",
+              });
+              // Refresh bookings and update slot availability
+              const today = format(new Date(), "yyyy-MM-dd");
+              const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
+              const { data: bookingsData } = await supabase
+                .from("bookings" as any)
+                .select("id, clinic_id, appointment_date, start_time, end_time, status")
+                .eq("clinic_id", clinicId)
+                .gte("appointment_date", today)
+                .lte("appointment_date", futureDate)
+                .in("status", ["pending", "confirmed", "checked_in"])
+                .order("appointment_date")
+                .order("start_time");
+              if (bookingsData) {
+                setExistingBookings(bookingsData as unknown as Booking[]);
+              }
+              return;
+            }
+
+            const { error } = await supabase.from("bookings" as any).insert({
+              clinic_id: clinicId,
+              service_id: selectedServiceId,
+              pet_owner_id: user.id,
+              pet_name: petName,
+              pet_type: petType || null,
+              appointment_date: appointmentDate,
+              start_time: startTime,
+              end_time: endTime,
+              duration_minutes: duration,
+              status: "pending",
+              notes: notes || null,
+            });
+
+            setSubmitting(false);
+
+            if (error) {
+              console.error("Booking error:", error);
+              // Check if error is due to unique constraint violation (double booking)
+              if (error.code === '23505' || error.message?.includes('unique') || error.message?.includes('duplicate')) {
+                toast({
+                  title: "Double booking prevented",
+                  description: "This time slot has already been booked. Please select a different time.",
+                  variant: "destructive",
+                });
+              } else {
+                toast({
+                  title: "Booking failed",
+                  description: error.message || "Could not create booking. Please try again.",
+                  variant: "destructive",
+                });
+              }
+              
+              // Refresh bookings to update availability
+              const today = format(new Date(), "yyyy-MM-dd");
+              const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
+              const { data: bookingsData } = await supabase
+                .from("bookings" as any)
+                .select("id, clinic_id, appointment_date, start_time, end_time, status")
+                .eq("clinic_id", clinicId)
+                .gte("appointment_date", today)
+                .lte("appointment_date", futureDate)
+                .in("status", ["pending", "confirmed", "checked_in"])
+                .order("appointment_date")
+                .order("start_time");
+              if (bookingsData) {
+                setExistingBookings(bookingsData as unknown as Booking[]);
+              }
+              return;
+            }
+
+            // Refresh bookings after successful booking
+            const today = format(new Date(), "yyyy-MM-dd");
+            const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
+            const { data: bookingsData } = await supabase
+              .from("bookings" as any)
+              .select("id, clinic_id, appointment_date, start_time, end_time, status")
+              .eq("clinic_id", clinicId)
+              .gte("appointment_date", today)
+              .lte("appointment_date", futureDate)
+              .in("status", ["pending", "confirmed", "checked_in"])
+              .order("appointment_date")
+              .order("start_time");
+            if (bookingsData) {
+              setExistingBookings(bookingsData as unknown as Booking[]);
+            }
+
+            toast({
+              title: "Booked!",
+              description: "Check your email for confirmation.",
+            });
+
+            navigate("/pet-owner-dashboard");
+          })();
+        }, 300);
+      }
+    }
+  }, [user, showLoginDialog, selectedServiceId, selectedSlot, petName, services, clinicId, petType, notes, navigate, existingBookings]);
 
   // Fetch clinic, services, and exceptions
   useEffect(() => {
@@ -191,6 +330,28 @@ export default function BookAppointment() {
         setClinicHours(hoursData as unknown as ClinicHours[]);
         console.log("Loaded clinic hours:", hoursData);
       }
+
+      // Fetch existing bookings (only pending, confirmed, and checked_in statuses)
+      // We fetch bookings for the next 30 days to cover the calendar view
+      const bookingsStartDate = today;
+      const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
+      
+      const { data: bookingsData, error: bookingsError } = await supabase
+        .from("bookings" as any)
+        .select("id, clinic_id, appointment_date, start_time, end_time, status")
+        .eq("clinic_id", clinicId)
+        .gte("appointment_date", bookingsStartDate)
+        .lte("appointment_date", futureDate)
+        .in("status", ["pending", "confirmed", "checked_in"])
+        .order("appointment_date")
+        .order("start_time");
+
+      if (!bookingsError && bookingsData) {
+        setExistingBookings(bookingsData as unknown as Booking[]);
+        console.log(`📅 Loaded ${bookingsData.length} existing bookings:`, bookingsData);
+      } else if (bookingsError) {
+        console.error("Error loading bookings:", bookingsError);
+      }
     };
 
     fetchData();
@@ -222,6 +383,50 @@ export default function BookAppointment() {
     return dayHours.time_ranges.some(range => {
       return slotHourMin >= range.start && slotHourMin < range.end;
     });
+  };
+
+  // Helper function to check if a time slot overlaps with an existing booking
+  const isSlotBooked = (slotStart: string, slotEnd: string, appointmentDate: string): boolean => {
+    if (existingBookings.length === 0) return false;
+    
+    // Find bookings for this date
+    const dayBookings = existingBookings.filter(
+      booking => booking.appointment_date === appointmentDate
+    );
+    
+    if (dayBookings.length === 0) return false;
+    
+    // Convert slot times to minutes for easier comparison
+    const slotStartTime = new Date(slotStart);
+    const slotEndTime = new Date(slotEnd);
+    
+    // Check each booking for overlap
+    const isBooked = dayBookings.some(booking => {
+      // Parse booking start and end times
+      const [bookingStartHour, bookingStartMin] = booking.start_time.split(':').map(Number);
+      const [bookingEndHour, bookingEndMin] = booking.end_time.split(':').map(Number);
+      
+      // Create Date objects for booking times on the appointment date
+      const bookingDate = new Date(booking.appointment_date + 'T00:00:00');
+      const bookingStart = new Date(bookingDate);
+      bookingStart.setHours(bookingStartHour, bookingStartMin, 0, 0);
+      
+      const bookingEnd = new Date(bookingDate);
+      bookingEnd.setHours(bookingEndHour, bookingEndMin, 0, 0);
+      
+      // Check for overlap: two time ranges overlap if:
+      // slotStart < bookingEnd AND slotEnd > bookingStart
+      const overlap = slotStartTime.getTime() < bookingEnd.getTime() && 
+                     slotEndTime.getTime() > bookingStart.getTime();
+      
+      if (overlap) {
+        console.log(`🚫 Slot blocked - ${format(slotStartTime, 'HH:mm')} overlaps with booking ${format(bookingStart, 'HH:mm')}-${format(bookingEnd, 'HH:mm')}`);
+      }
+      
+      return overlap;
+    });
+    
+    return isBooked;
   };
 
   // Generate week days and time slots
@@ -270,7 +475,7 @@ export default function BookAppointment() {
       for (let hour = 8; hour < 18; hour++) {
         for (let minute of [0, 15, 30, 45]) {
           const slotDate = setMinutes(setHours(day, hour), minute);
-          const slotEnd = new Date(slotDate.getTime() + 30 * 60 * 1000); // 30 min duration
+          const slotEnd = new Date(slotDate.getTime() + 15 * 60 * 1000); // 15 min duration
           
           const startISO = slotDate.toISOString();
           const endISO = slotEnd.toISOString();
@@ -289,6 +494,12 @@ export default function BookAppointment() {
             }
           }
           
+          // Check if slot is already booked
+          if (available && isSlotBooked(startISO, endISO, dayKey)) {
+            available = false; // Mark as unavailable if already booked
+            console.log(`🔒 Marking slot ${formatTimeSlot(startISO)} on ${dayKey} as booked`);
+          }
+          
           slots.push({
             start: startISO,
             end: endISO,
@@ -301,7 +512,7 @@ export default function BookAppointment() {
     });
     
     setTimeSlotsByDay(slotsMap);
-  }, [currentWeekStart, exceptions, clinicHours]);
+  }, [currentWeekStart, exceptions, clinicHours, existingBookings]);
 
   // Restore state from URL params
   useEffect(() => {
@@ -362,23 +573,9 @@ export default function BookAppointment() {
   };
 
   const handleBookingAction = async () => {
-    // If not logged in, redirect to login with state
+    // If not logged in, open login dialog
     if (!user) {
-      const qs = new URLSearchParams({
-        clinicId: clinicId || '',
-        date: selectedSlot ? selectedSlot.start.slice(0, 10) : '',
-        time: selectedSlot ? selectedSlot.start.slice(11, 16) : '',
-        serviceId: selectedServiceId,
-        redirectTo: window.location.pathname + window.location.search,
-      });
-      
-      toast({
-        title: "Login required",
-        description: "Please log in to complete your booking.",
-      });
-      
-      // Open login dialog instead of navigating away
-      // The PetOwnerAuthDialog will handle the login
+      setShowLoginDialog(true);
       return;
     }
 
@@ -394,8 +591,8 @@ export default function BookAppointment() {
 
     setSubmitting(true);
 
-    const service = services.find((s) => s.id === selectedServiceId);
-    const duration = service?.duration_minutes || 30;
+    // Always use 15-minute slot duration regardless of service duration
+    const duration = 15;
 
     // Parse ISO datetime to get date and time components
     const slotStart = new Date(selectedSlot.start);
@@ -404,6 +601,32 @@ export default function BookAppointment() {
     
     const slotEnd = new Date(selectedSlot.end);
     const endTime = format(slotEnd, "HH:mm:ss");
+
+    // Double-check that the slot is still available (prevent race conditions)
+    if (isSlotBooked(selectedSlot.start, selectedSlot.end, appointmentDate)) {
+      setSubmitting(false);
+      toast({
+        title: "Slot no longer available",
+        description: "This time slot has been booked by another user. Please select a different time.",
+        variant: "destructive",
+      });
+      // Refresh bookings and update slot availability
+      const today = format(new Date(), "yyyy-MM-dd");
+      const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
+      const { data: bookingsData } = await supabase
+        .from("bookings" as any)
+        .select("id, clinic_id, appointment_date, start_time, end_time, status")
+        .eq("clinic_id", clinicId)
+        .gte("appointment_date", today)
+        .lte("appointment_date", futureDate)
+        .in("status", ["pending", "confirmed", "checked_in"])
+        .order("appointment_date")
+        .order("start_time");
+      if (bookingsData) {
+        setExistingBookings(bookingsData as unknown as Booking[]);
+      }
+      return;
+    }
 
     const { error } = await supabase.from("bookings" as any).insert({
       clinic_id: clinicId,
@@ -423,12 +646,53 @@ export default function BookAppointment() {
 
     if (error) {
       console.error("Booking error:", error);
-      toast({
-        title: "Booking failed",
-        description: error.message || "Could not create booking. Please try again.",
-        variant: "destructive",
-      });
+      // Check if error is due to unique constraint violation (double booking)
+      if (error.code === '23505' || error.message?.includes('unique') || error.message?.includes('duplicate')) {
+        toast({
+          title: "Double booking prevented",
+          description: "This time slot has already been booked. Please select a different time.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Booking failed",
+          description: error.message || "Could not create booking. Please try again.",
+          variant: "destructive",
+        });
+      }
+      
+      // Refresh bookings to update availability
+      const today = format(new Date(), "yyyy-MM-dd");
+      const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
+      const { data: bookingsData } = await supabase
+        .from("bookings" as any)
+        .select("id, clinic_id, appointment_date, start_time, end_time, status")
+        .eq("clinic_id", clinicId)
+        .gte("appointment_date", today)
+        .lte("appointment_date", futureDate)
+        .in("status", ["pending", "confirmed", "checked_in"])
+        .order("appointment_date")
+        .order("start_time");
+      if (bookingsData) {
+        setExistingBookings(bookingsData as unknown as Booking[]);
+      }
       return;
+    }
+
+    // Refresh bookings after successful booking
+    const today = format(new Date(), "yyyy-MM-dd");
+    const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
+    const { data: bookingsData } = await supabase
+      .from("bookings" as any)
+      .select("id, clinic_id, appointment_date, start_time, end_time, status")
+      .eq("clinic_id", clinicId)
+      .gte("appointment_date", today)
+      .lte("appointment_date", futureDate)
+      .in("status", ["pending", "confirmed", "checked_in"])
+      .order("appointment_date")
+      .order("start_time");
+    if (bookingsData) {
+      setExistingBookings(bookingsData as unknown as Booking[]);
     }
 
     toast({
@@ -674,7 +938,7 @@ export default function BookAppointment() {
                         )}
                       </div>
                     ) : (
-                      /* Time Slots - Show all slots normally, availability controlled by special hours */
+                      /* Time Slots - Show all slots with booked ones marked as unavailable */
                       <div className="space-y-2 flex-1 relative">
                         {slots.length === 0 ? (
                           <div className="text-xs text-gray-400 text-center py-4">
@@ -776,6 +1040,12 @@ export default function BookAppointment() {
           </Card>
         </div>
       </div>
+
+      {/* Login Dialog */}
+      <PetOwnerAuthDialog 
+        open={showLoginDialog} 
+        onOpenChange={setShowLoginDialog} 
+      />
     </div>
   );
 }

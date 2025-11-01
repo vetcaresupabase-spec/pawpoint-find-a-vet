@@ -119,3 +119,5 @@ See: `SERVICES_IMPLEMENTATION_TEST.md`
 - ✅ Inactive services hidden from pet owners
 - ✅ Unique service names per clinic
 
+
+

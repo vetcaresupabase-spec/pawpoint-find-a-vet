@@ -170,3 +170,5 @@ Then test declining again - it should work! 🎉
 
 **Most likely:** RLS policy blocking → Run `FIX_DECLINE_PERMISSIONS.sql` ✅
 
+
+

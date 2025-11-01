@@ -437,3 +437,5 @@ VALUES ([your_clinic_id], CURRENT_DATE + 1, true, 'Test');
 
 All components are correctly implemented. Just run the database migration and test!
 
+
+

@@ -496,3 +496,5 @@ if (exception) {
 ### Result:
 Veterinarians have full control over their availability, and pet owners can only book during valid hours. The system automatically enforces all rules with no manual intervention needed! 🚀
 
+
+

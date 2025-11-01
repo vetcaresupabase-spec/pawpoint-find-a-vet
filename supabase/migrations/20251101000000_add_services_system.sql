@@ -149,3 +149,5 @@ AS $$
   WHERE s.clinic_id = p_clinic_id
   ORDER BY s.category, s.name;
 $$;
+
+
