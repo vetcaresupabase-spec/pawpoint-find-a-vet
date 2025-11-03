@@ -53,3 +53,4 @@ create policy "Public can check booking availability" on public.bookings
 --    calendar with booked slots marked as unavailable (showing "—")
 -- =====================================================
 
+

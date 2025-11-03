@@ -17,14 +17,18 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { AddPetDialog } from "@/components/AddPetDialog";
+import { PetCard } from "@/components/PetCard";
 
 const PetOwnerDashboard = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showAddPetDialog, setShowAddPetDialog] = useState(false);
 
   useEffect(() => {
     // Check if user is logged in
@@ -89,6 +93,28 @@ const PetOwnerDashboard = () => {
     enabled: !!user?.id,
   });
 
+  // Fetch user's pets
+  const { data: pets = [], isLoading: petsLoading } = useQuery({
+    queryKey: ["userPets", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      
+      const { data, error } = await supabase
+        .from("pets")
+        .select("*")
+        .eq("owner_id", user.id)
+        .order("created_at", { ascending: false });
+      
+      if (error) {
+        console.error("Error fetching pets:", error);
+        return [];
+      }
+      
+      return data || [];
+    },
+    enabled: !!user?.id,
+  });
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast({
@@ -96,6 +122,39 @@ const PetOwnerDashboard = () => {
       description: "You've been successfully logged out.",
     });
     navigate("/");
+  };
+
+  const handleAddPetSuccess = () => {
+    // Refresh pets list
+    queryClient.invalidateQueries({ queryKey: ["userPets", user?.id] });
+  };
+
+  const handleDeletePet = async (petId: string) => {
+    const confirmed = window.confirm("Are you sure you want to delete this pet? This action cannot be undone.");
+    
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from("pets")
+      .delete()
+      .eq("id", petId);
+
+    if (error) {
+      toast({
+        title: "Failed to delete pet",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Pet deleted",
+      description: "Your pet has been removed from your profile",
+    });
+
+    // Refresh pets list
+    queryClient.invalidateQueries({ queryKey: ["userPets", user?.id] });
   };
 
   if (loading) {
@@ -146,7 +205,7 @@ const PetOwnerDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => toast({ title: "Add Pet", description: "Pet management coming soon!" })}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setShowAddPetDialog(true)}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center">
@@ -271,18 +330,46 @@ const PetOwnerDashboard = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>My Pets</CardTitle>
-                  <Button size="sm" onClick={() => toast({ title: "Add Pet", description: "Pet management coming soon!" })}>
+                  <Button size="sm" onClick={() => setShowAddPetDialog(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     Add Pet
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground mb-4">Pet management coming soon!</p>
-                  <p className="text-sm text-muted-foreground">You'll be able to add and manage your pets here.</p>
-                </div>
+                {petsLoading ? (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">Loading pets...</p>
+                  </div>
+                ) : pets.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {pets.map((pet: any) => (
+                      <PetCard
+                        key={pet.id}
+                        pet={pet}
+                        onEdit={(pet) => {
+                          toast({
+                            title: "Edit Pet",
+                            description: "Pet editing coming soon!",
+                          });
+                        }}
+                        onDelete={handleDeletePet}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground mb-4">No pets added yet</p>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Add your first pet to start managing their health records and appointments.
+                    </p>
+                    <Button onClick={() => setShowAddPetDialog(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Your First Pet
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -315,6 +402,13 @@ const PetOwnerDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Add Pet Dialog */}
+      <AddPetDialog
+        open={showAddPetDialog}
+        onOpenChange={setShowAddPetDialog}
+        onSuccess={handleAddPetSuccess}
+      />
     </div>
   );
 };

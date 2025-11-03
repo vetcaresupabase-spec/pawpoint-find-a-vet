@@ -320,3 +320,4 @@ This enables:
 
 The search is now fully functional with location-based filtering! 🎉
 
+

@@ -164,3 +164,4 @@ Search across multiple fields and combine results from both search boxes.
 - Geolocation is optional - search works with city/postcode too
 - All results go to booking page: `/book-appointment?clinicId=XXX`
 
+

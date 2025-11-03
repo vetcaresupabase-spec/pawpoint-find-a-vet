@@ -326,3 +326,4 @@ pawpoint-find-a-vet/supabase/migrations/20251101000002_add_postgis_geolocation.s
 
 The search now intelligently finds the closest clinics, even in rural areas! 🎉
 
+

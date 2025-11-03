@@ -215,3 +215,4 @@ This enables:
 - `fn_search_clinics` RPC function
 - Sample data for Berlin, Munich, Hamburg
 
+

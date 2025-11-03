@@ -61,3 +61,4 @@ See `GEOLOCATION_SEARCH_SETUP.md` for detailed documentation.
 
 **Note:** This migration is safe to run multiple times. It only adds new features and doesn't delete any existing data.
 
+

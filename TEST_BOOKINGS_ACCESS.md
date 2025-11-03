@@ -59,3 +59,4 @@ testBookings();
 3. **Re-run the test** in browser console
 4. **Check browser console logs** on the booking page for: `✅ Loaded X existing bookings`
 
+

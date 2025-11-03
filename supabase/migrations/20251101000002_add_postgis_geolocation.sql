@@ -206,3 +206,4 @@ end $$;
 -- 9) Grant execute permission on the function
 grant execute on function public.fn_search_clinics to anon, authenticated;
 
+
