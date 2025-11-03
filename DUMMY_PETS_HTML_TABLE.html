@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dummy Pet Data - Table Format</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: white;
+        }
+        h1 {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #1e40af;
+            margin-top: 40px;
+            border-left: 4px solid #2563eb;
+            padding-left: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11px;
+            page-break-inside: avoid;
+        }
+        th {
+            background-color: #2563eb;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #1e40af;
+        }
+        td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        tr:hover {
+            background-color: #e0e7ff;
+        }
+        .field-name {
+            font-weight: bold;
+            color: #1e293b;
+            width: 250px;
+        }
+        .field-value {
+            color: #334155;
+        }
+        .section-header {
+            background-color: #3b82f6 !important;
+            color: white !important;
+            font-weight: bold;
+        }
+        .empty-field {
+            color: #94a3b8;
+            font-style: italic;
+        }
+        @media print {
+            body {
+                padding: 0;
+            }
+            h2 {
+                page-break-before: always;
+            }
+            table {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Dummy Pet Data - PDF Table Format</h1>
+    <p><strong>Instructions:</strong> Use Ctrl+P (Cmd+P on Mac) to print this page to PDF. All 10 pets are included below.</p>
+    
+    <h2>PET 1: BUDDY - Golden Retriever (Full Profile)</h2>
+    <table>
+        <tr class="section-header"><th colspan="2">BASICS</th></tr>
+        <tr><td class="field-name">Owner Name</td><td class="field-value">John Smith</td></tr>
+        <tr><td class="field-name">Pet Type</td><td class="field-value">Dog</td></tr>
+        <tr><td class="field-name">Breed</td><td class="field-value">Golden Retriever</td></tr>
+        <tr><td class="field-name">Pet Name</td><td class="field-value">Buddy</td></tr>
+        <tr><td class="field-name">Date of Birth</td><td class="field-value">2020-05-15</td></tr>
+        <tr><td class="field-name">Sex</td><td class="field-value">Male</td></tr>
+        <tr><td class="field-name">Neutered/Spayed</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Notes</td><td class="field-value">Very friendly and energetic dog. Loves playing fetch and swimming.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">ID & PASSPORT</th></tr>
+        <tr><td class="field-name">Microchip Number</td><td class="field-value">982000123456789</td></tr>
+        <tr><td class="field-name">Microchip Implantation Date</td><td class="field-value">2020-06-10</td></tr>
+        <tr><td class="field-name">Microchip Location</td><td class="field-value">neck/shoulder</td></tr>
+        <tr><td class="field-name">EU Passport Number</td><td class="field-value">DE-12345-2020</td></tr>
+        <tr><td class="field-name">Passport Issuing Country</td><td class="field-value">DE</td></tr>
+        <tr><td class="field-name">Passport Issue Date</td><td class="field-value">2020-06-15</td></tr>
+        <tr><td class="field-name">Primary Vet/Issuing Authority</td><td class="field-value">Happy Paws Berlin</td></tr>
+        <tr><td class="field-name">Vet Contact</td><td class="field-value">+49 30 11111111</td></tr>
+        
+        <tr class="section-header"><th colspan="2">HEALTH & WELLNESS</th></tr>
+        <tr><td class="field-name">Species-Specific ID</td><td class="field-value">FCI-GR-2020-001</td></tr>
+        <tr><td class="field-name">Color/Markings</td><td class="field-value">Golden, white chest marking</td></tr>
+        <tr><td class="field-name">Weight (kg)</td><td class="field-value">28.5</td></tr>
+        <tr><td class="field-name">Weight Date</td><td class="field-value">2024-10-15</td></tr>
+        <tr><td class="field-name">Height/Withers (cm)</td><td class="field-value">58.0</td></tr>
+        <tr><td class="field-name">Known Conditions</td><td class="field-value">Hip Dysplasia, Seasonal Allergies</td></tr>
+        <tr><td class="field-name">Conditions Notes</td><td class="field-value">Mild hip dysplasia, managed with exercise. Seasonal allergies in spring.</td></tr>
+        <tr><td class="field-name">Allergies</td><td class="field-value">Pollen, Dust</td></tr>
+        <tr><td class="field-name">Diet Brand</td><td class="field-value">Royal Canin</td></tr>
+        <tr><td class="field-name">Diet Type</td><td class="field-value">Dry</td></tr>
+        <tr><td class="field-name">Feeding Schedule</td><td class="field-value">Twice daily: 7am (2 cups), 6pm (2 cups)</td></tr>
+        <tr><td class="field-name">Behavior/Temperament</td><td class="field-value">Very friendly, energetic, loves people and other dogs</td></tr>
+        <tr><td class="field-name">Behavior Triggers</td><td class="field-value">Loud noises, fireworks</td></tr>
+        <tr><td class="field-name">Bite History</td><td class="field-value">No</td></tr>
+        
+        <tr class="section-header"><th colspan="2">OWNERSHIP & PROVENANCE</th></tr>
+        <tr><td class="field-name">Acquired From</td><td class="field-value">breeder</td></tr>
+        <tr><td class="field-name">Breeder Name</td><td class="field-value">Golden Dreams Kennel</td></tr>
+        <tr><td class="field-name">Breeder Country</td><td class="field-value">DE</td></tr>
+        <tr><td class="field-name">Breeder Contact</td><td class="field-value">+49 30 99999999, info@goldendreams.de</td></tr>
+        <tr><td class="field-name">Acquisition Date</td><td class="field-value">2020-06-01</td></tr>
+        <tr><td class="field-name">Registration Registry</td><td class="field-value">VDH</td></tr>
+        <tr><td class="field-name">Registration Number</td><td class="field-value">VDH-2020-GR-001234</td></tr>
+        <tr><td class="field-name">Insurance Provider</td><td class="field-value">PetCare Insurance</td></tr>
+        <tr><td class="field-name">Insurance Policy Number</td><td class="field-value">PCI-2020-123456</td></tr>
+        <tr><td class="field-name">Insurance Emergency Hotline</td><td class="field-value">+49 800 1234567</td></tr>
+        
+        <tr class="section-header"><th colspan="2">CONTACTS & EMERGENCIES</th></tr>
+        <tr><td class="field-name">Primary Vet Clinic Name</td><td class="field-value">Happy Paws Berlin</td></tr>
+        <tr><td class="field-name">Primary Vet Phone</td><td class="field-value">+49 30 11111111</td></tr>
+        <tr><td class="field-name">Primary Vet Address</td><td class="field-value">Alexanderplatz 1, 10178 Berlin</td></tr>
+        <tr><td class="field-name">Primary Vet Email</td><td class="field-value">info@happypaws.de</td></tr>
+        <tr><td class="field-name">Emergency Clinic Name</td><td class="field-value">Berlin Animal Emergency</td></tr>
+        <tr><td class="field-name">Emergency Clinic Phone</td><td class="field-value">+49 30 88888888</td></tr>
+        <tr><td class="field-name">Emergency Clinic Address</td><td class="field-value">Friedrichstraße 100, 10117 Berlin</td></tr>
+        <tr><td class="field-name">Microchip Registry Name</td><td class="field-value">Tasso</td></tr>
+        <tr><td class="field-name">Microchip Registry ID</td><td class="field-value">TS-2020-001234</td></tr>
+        <tr><td class="field-name">Microchip Registry URL</td><td class="field-value">https://www.tasso.net</td></tr>
+        
+        <tr class="section-header"><th colspan="2">TRAVEL & COMPLIANCE</th></tr>
+        <tr><td class="field-name">Countries Visited</td><td class="field-value">DE, FR, IT, ES</td></tr>
+        <tr><td class="field-name">Intended Travel Countries</td><td class="field-value">PT, GR</td></tr>
+        <tr><td class="field-name">Travel Notes</td><td class="field-value">Requires large crate (size 4). Prefers window seat. Well-behaved on flights.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">PRIVACY & CONSENT</th></tr>
+        <tr><td class="field-name">Data Processing Consent</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Emergency Sharing Enabled</td><td class="field-value">Yes</td></tr>
+    </table>
+
+    <h2>PET 2: PRINCESS - Persian Cat (Full Profile)</h2>
+    <table>
+        <tr class="section-header"><th colspan="2">BASICS</th></tr>
+        <tr><td class="field-name">Owner Name</td><td class="field-value">Emma Johnson</td></tr>
+        <tr><td class="field-name">Pet Type</td><td class="field-value">Cat</td></tr>
+        <tr><td class="field-name">Breed</td><td class="field-value">Persian</td></tr>
+        <tr><td class="field-name">Pet Name</td><td class="field-value">Princess</td></tr>
+        <tr><td class="field-name">Date of Birth</td><td class="field-value">2019-03-22</td></tr>
+        <tr><td class="field-name">Sex</td><td class="field-value">Female</td></tr>
+        <tr><td class="field-name">Neutered/Spayed</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Notes</td><td class="field-value">Calm and gentle. Prefers quiet environments. Requires daily grooming.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">ID & PASSPORT</th></tr>
+        <tr><td class="field-name">Microchip Number</td><td class="field-value">982000234567890</td></tr>
+        <tr><td class="field-name">Microchip Implantation Date</td><td class="field-value">2019-04-05</td></tr>
+        <tr><td class="field-name">Microchip Location</td><td class="field-value">neck/shoulder</td></tr>
+        <tr><td class="field-name">EU Passport Number</td><td class="field-value">FR-54321-2019</td></tr>
+        <tr><td class="field-name">Passport Issuing Country</td><td class="field-value">FR</td></tr>
+        <tr><td class="field-name">Passport Issue Date</td><td class="field-value">2019-04-10</td></tr>
+        <tr><td class="field-name">Primary Vet/Issuing Authority</td><td class="field-value">Cat Care Clinic</td></tr>
+        <tr><td class="field-name">Vet Contact</td><td class="field-value">+33 1 23456789</td></tr>
+        
+        <tr class="section-header"><th colspan="2">HEALTH & WELLNESS</th></tr>
+        <tr><td class="field-name">Color/Markings</td><td class="field-value">White with blue eyes</td></tr>
+        <tr><td class="field-name">Weight (kg)</td><td class="field-value">4.2</td></tr>
+        <tr><td class="field-name">Weight Date</td><td class="field-value">2024-09-20</td></tr>
+        <tr><td class="field-name">Height/Withers (cm)</td><td class="field-value">25.0</td></tr>
+        <tr><td class="field-name">Known Conditions</td><td class="field-value">Respiratory issues</td></tr>
+        <tr><td class="field-name">Allergies</td><td class="field-value">Certain fish proteins</td></tr>
+        <tr><td class="field-name">Diet Brand</td><td class="field-value">Hills Science Diet</td></tr>
+        <tr><td class="field-name">Diet Type</td><td class="field-value">Wet</td></tr>
+        <tr><td class="field-name">Feeding Schedule</td><td class="field-value">Three times daily: small portions</td></tr>
+        <tr><td class="field-name">Behavior/Temperament</td><td class="field-value">Calm, gentle, affectionate, shy around strangers</td></tr>
+        <tr><td class="field-name">Behavior Triggers</td><td class="field-value">Loud noises, other cats, sudden movements</td></tr>
+        <tr><td class="field-name">Bite History</td><td class="field-value">No</td></tr>
+        
+        <tr class="section-header"><th colspan="2">OWNERSHIP & PROVENANCE</th></tr>
+        <tr><td class="field-name">Acquired From</td><td class="field-value">rescue</td></tr>
+        <tr><td class="field-name">Rescue Name</td><td class="field-value">Paris Animal Rescue</td></tr>
+        <tr><td class="field-name">Rescue Country</td><td class="field-value">FR</td></tr>
+        <tr><td class="field-name">Rescue Contact</td><td class="field-value">+33 1 98765432, contact@parisanimalrescue.fr</td></tr>
+        <tr><td class="field-name">Acquisition Date</td><td class="field-value">2019-06-15</td></tr>
+        <tr><td class="field-name">Insurance Provider</td><td class="field-value">PetSecure</td></tr>
+        <tr><td class="field-name">Insurance Policy Number</td><td class="field-value">PS-2019-789012</td></tr>
+        
+        <tr class="section-header"><th colspan="2">CONTACTS & EMERGENCIES</th></tr>
+        <tr><td class="field-name">Primary Vet Clinic Name</td><td class="field-value">Cat Care Clinic</td></tr>
+        <tr><td class="field-name">Primary Vet Phone</td><td class="field-value">+33 1 23456789</td></tr>
+        <tr><td class="field-name">Primary Vet Address</td><td class="field-value">12 Rue de la Paix, 75002 Paris</td></tr>
+        <tr><td class="field-name">Primary Vet Email</td><td class="field-value">catcare@example.fr</td></tr>
+        <tr><td class="field-name">Emergency Clinic Name</td><td class="field-value">Paris Emergency Vet</td></tr>
+        <tr><td class="field-name">Emergency Clinic Phone</td><td class="field-value">+33 1 98765432</td></tr>
+        <tr><td class="field-name">Emergency Clinic Address</td><td class="field-value">50 Avenue des Champs-Élysées, 75008 Paris</td></tr>
+        
+        <tr class="section-header"><th colspan="2">TRAVEL & COMPLIANCE</th></tr>
+        <tr><td class="field-name">Countries Visited</td><td class="field-value">FR, BE</td></tr>
+        
+        <tr class="section-header"><th colspan="2">PRIVACY & CONSENT</th></tr>
+        <tr><td class="field-name">Data Processing Consent</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Emergency Sharing Enabled</td><td class="field-value">No</td></tr>
+    </table>
+
+    <h2>PET 3: MAX - Mixed Breed (Minimal Profile)</h2>
+    <table>
+        <tr class="section-header"><th colspan="2">BASICS</th></tr>
+        <tr><td class="field-name">Owner Name</td><td class="field-value">Michael Brown</td></tr>
+        <tr><td class="field-name">Pet Type</td><td class="field-value">Dog</td></tr>
+        <tr><td class="field-name">Breed</td><td class="field-value">Mixed Breed</td></tr>
+        <tr><td class="field-name">Pet Name</td><td class="field-value">Max</td></tr>
+        <tr><td class="field-name">Date of Birth</td><td class="field-value">2021-08-10</td></tr>
+        <tr><td class="field-name">Sex</td><td class="field-value">Male</td></tr>
+        <tr><td class="field-name">Neutered/Spayed</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Notes</td><td class="field-value">Rescued from shelter. Very playful and energetic.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">HEALTH & WELLNESS</th></tr>
+        <tr><td class="field-name">Color/Markings</td><td class="field-value">Brown and white, medium-sized</td></tr>
+        <tr><td class="field-name">Weight (kg)</td><td class="field-value">18.0</td></tr>
+        <tr><td class="field-name">Weight Date</td><td class="field-value">2024-10-01</td></tr>
+        <tr><td class="field-name">Behavior/Temperament</td><td class="field-value">Playful, energetic, loves kids</td></tr>
+        <tr><td class="field-name">Bite History</td><td class="field-value">No</td></tr>
+        
+        <tr class="section-header"><th colspan="2">OWNERSHIP & PROVENANCE</th></tr>
+        <tr><td class="field-name">Acquired From</td><td class="field-value">rescue</td></tr>
+        <tr><td class="field-name">Acquisition Date</td><td class="field-value">2021-09-01</td></tr>
+        
+        <tr class="section-header"><th colspan="2">CONTACTS & EMERGENCIES</th></tr>
+        <tr><td class="field-name">Primary Vet Clinic Name</td><td class="field-value">City Animal Hospital</td></tr>
+        <tr><td class="field-name">Primary Vet Phone</td><td class="field-value">+49 30 55555555</td></tr>
+        
+        <tr class="section-header"><th colspan="2">PRIVACY & CONSENT</th></tr>
+        <tr><td class="field-name">Data Processing Consent</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Emergency Sharing Enabled</td><td class="field-value">No</td></tr>
+    </table>
+
+    <h2>PET 4: REX - German Shepherd (Full Profile with Medications)</h2>
+    <table>
+        <tr class="section-header"><th colspan="2">BASICS</th></tr>
+        <tr><td class="field-name">Owner Name</td><td class="field-value">Sarah Miller</td></tr>
+        <tr><td class="field-name">Pet Type</td><td class="field-value">Dog</td></tr>
+        <tr><td class="field-name">Breed</td><td class="field-value">German Shepherd</td></tr>
+        <tr><td class="field-name">Pet Name</td><td class="field-value">Rex</td></tr>
+        <tr><td class="field-name">Date of Birth</td><td class="field-value">2018-11-05</td></tr>
+        <tr><td class="field-name">Sex</td><td class="field-value">Male</td></tr>
+        <tr><td class="field-name">Neutered/Spayed</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Notes</td><td class="field-value">Trained police dog (retired). Very obedient and protective.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">ID & PASSPORT</th></tr>
+        <tr><td class="field-name">Microchip Number</td><td class="field-value">982000345678901</td></tr>
+        <tr><td class="field-name">Microchip Implantation Date</td><td class="field-value">2018-11-15</td></tr>
+        <tr><td class="field-name">Microchip Location</td><td class="field-value">neck/shoulder</td></tr>
+        <tr><td class="field-name">EU Passport Number</td><td class="field-value">DE-67890-2018</td></tr>
+        <tr><td class="field-name">Passport Issuing Country</td><td class="field-value">DE</td></tr>
+        <tr><td class="field-name">Passport Issue Date</td><td class="field-value">2018-11-20</td></tr>
+        <tr><td class="field-name">Primary Vet/Issuing Authority</td><td class="field-value">Berlin Veterinary Center</td></tr>
+        <tr><td class="field-name">Vet Contact</td><td class="field-value">+49 30 22222222</td></tr>
+        
+        <tr class="section-header"><th colspan="2">HEALTH & WELLNESS</th></tr>
+        <tr><td class="field-name">Color/Markings</td><td class="field-value">Black and tan, traditional</td></tr>
+        <tr><td class="field-name">Weight (kg)</td><td class="field-value">35.0</td></tr>
+        <tr><td class="field-name">Weight Date</td><td class="field-value">2024-10-10</td></tr>
+        <tr><td class="field-name">Height/Withers (cm)</td><td class="field-value">65.0</td></tr>
+        <tr><td class="field-name">Known Conditions</td><td class="field-value">Hip Dysplasia</td></tr>
+        <tr><td class="field-name">Current Medications</td><td class="field-value">Joint supplements - 2 tablets daily - Morning with food</td></tr>
+        <tr><td class="field-name">Past Surgeries</td><td class="field-value">Hip surgery - 2022-03-15 - Successful procedure, full recovery</td></tr>
+        <tr><td class="field-name">Diet Brand</td><td class="field-value">Royal Canin Large Breed</td></tr>
+        <tr><td class="field-name">Diet Type</td><td class="field-value">Dry</td></tr>
+        <tr><td class="field-name">Feeding Schedule</td><td class="field-value">Twice daily: 8am (1.5 cups), 7pm (1.5 cups)</td></tr>
+        <tr><td class="field-name">Behavior/Temperament</td><td class="field-value">Obedient, protective, intelligent, loyal</td></tr>
+        <tr><td class="field-name">Behavior Notes</td><td class="field-value">Excellent with commands. Needs regular mental stimulation.</td></tr>
+        <tr><td class="field-name">Bite History</td><td class="field-value">No</td></tr>
+        
+        <tr class="section-header"><th colspan="2">OWNERSHIP & PROVENANCE</th></tr>
+        <tr><td class="field-name">Acquired From</td><td class="field-value">breeder</td></tr>
+        <tr><td class="field-name">Breeder Name</td><td class="field-value">Elite German Shepherds</td></tr>
+        <tr><td class="field-name">Breeder Country</td><td class="field-value">DE</td></tr>
+        <tr><td class="field-name">Breeder Contact</td><td class="field-value">+49 30 77777777, contact@elitegs.de</td></tr>
+        <tr><td class="field-name">Acquisition Date</td><td class="field-value">2018-12-01</td></tr>
+        <tr><td class="field-name">Registration Registry</td><td class="field-value">VDH</td></tr>
+        <tr><td class="field-name">Registration Number</td><td class="field-value">VDH-2018-GS-005678</td></tr>
+        <tr><td class="field-name">Insurance Provider</td><td class="field-value">Comprehensive Pet Insurance</td></tr>
+        <tr><td class="field-name">Insurance Policy Number</td><td class="field-value">CPI-2018-456789</td></tr>
+        
+        <tr class="section-header"><th colspan="2">CONTACTS & EMERGENCIES</th></tr>
+        <tr><td class="field-name">Primary Vet Clinic Name</td><td class="field-value">Berlin Veterinary Center</td></tr>
+        <tr><td class="field-name">Primary Vet Phone</td><td class="field-value">+49 30 22222222</td></tr>
+        <tr><td class="field-name">Primary Vet Address</td><td class="field-value">Karl-Marx-Allee 45, 10178 Berlin</td></tr>
+        <tr><td class="field-name">Emergency Clinic Name</td><td class="field-value">Berlin Emergency Veterinary</td></tr>
+        <tr><td class="field-name">Emergency Clinic Phone</td><td class="field-value">+49 30 33333333</td></tr>
+        <tr><td class="field-name">Microchip Registry Name</td><td class="field-value">Tasso</td></tr>
+        <tr><td class="field-name">Microchip Registry ID</td><td class="field-value">TS-2018-005678</td></tr>
+        
+        <tr class="section-header"><th colspan="2">TRAVEL & COMPLIANCE</th></tr>
+        <tr><td class="field-name">Countries Visited</td><td class="field-value">DE, AT, CH, CZ</td></tr>
+        <tr><td class="field-name">Travel Notes</td><td class="field-value">Experienced traveler. Well-behaved. Needs large crate.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">PRIVACY & CONSENT</th></tr>
+        <tr><td class="field-name">Data Processing Consent</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Emergency Sharing Enabled</td><td class="field-value">Yes</td></tr>
+    </table>
+
+    <h2>PET 5: WINSTON - British Shorthair Cat</h2>
+    <table>
+        <tr class="section-header"><th colspan="2">BASICS</th></tr>
+        <tr><td class="field-name">Owner Name</td><td class="field-value">David Wilson</td></tr>
+        <tr><td class="field-name">Pet Type</td><td class="field-value">Cat</td></tr>
+        <tr><td class="field-name">Breed</td><td class="field-value">British Shorthair</td></tr>
+        <tr><td class="field-name">Pet Name</td><td class="field-value">Winston</td></tr>
+        <tr><td class="field-name">Date of Birth</td><td class="field-value">2020-01-20</td></tr>
+        <tr><td class="field-name">Sex</td><td class="field-value">Male</td></tr>
+        <tr><td class="field-name">Neutered/Spayed</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Notes</td><td class="field-value">Calm and dignified. Loves attention on his own terms.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">ID & PASSPORT</th></tr>
+        <tr><td class="field-name">Microchip Number</td><td class="field-value">982000456789012</td></tr>
+        <tr><td class="field-name">Microchip Implantation Date</td><td class="field-value">2020-02-01</td></tr>
+        <tr><td class="field-name">Microchip Location</td><td class="field-value">neck/shoulder</td></tr>
+        <tr><td class="field-name">EU Passport Number</td><td class="field-value">UK-98765-2020</td></tr>
+        <tr><td class="field-name">Passport Issuing Country</td><td class="field-value">GB</td></tr>
+        <tr><td class="field-name">Passport Issue Date</td><td class="field-value">2020-02-05</td></tr>
+        <tr><td class="field-name">Primary Vet/Issuing Authority</td><td class="field-value">London Cat Clinic</td></tr>
+        <tr><td class="field-name">Vet Contact</td><td class="field-value">+44 20 12345678</td></tr>
+        
+        <tr class="section-header"><th colspan="2">HEALTH & WELLNESS</th></tr>
+        <tr><td class="field-name">Color/Markings</td><td class="field-value">Blue (gray), round face</td></tr>
+        <tr><td class="field-name">Weight (kg)</td><td class="field-value">5.8</td></tr>
+        <tr><td class="field-name">Weight Date</td><td class="field-value">2024-09-15</td></tr>
+        <tr><td class="field-name">Diet Brand</td><td class="field-value">Purina Pro Plan</td></tr>
+        <tr><td class="field-name">Diet Type</td><td class="field-value">Dry</td></tr>
+        <tr><td class="field-name">Feeding Schedule</td><td class="field-value">Free feeding (measured amount)</td></tr>
+        <tr><td class="field-name">Behavior/Temperament</td><td class="field-value">Calm, independent, affectionate when he wants</td></tr>
+        <tr><td class="field-name">Bite History</td><td class="field-value">No</td></tr>
+        
+        <tr class="section-header"><th colspan="2">OWNERSHIP & PROVENANCE</th></tr>
+        <tr><td class="field-name">Acquired From</td><td class="field-value">breeder</td></tr>
+        <tr><td class="field-name">Breeder Name</td><td class="field-value">British Elegance Cattery</td></tr>
+        <tr><td class="field-name">Breeder Country</td><td class="field-value">GB</td></tr>
+        <tr><td class="field-name">Acquisition Date</td><td class="field-value">2020-03-01</td></tr>
+        <tr><td class="field-name">Insurance Provider</td><td class="field-value">UK Pet Insurance</td></tr>
+        
+        <tr class="section-header"><th colspan="2">CONTACTS & EMERGENCIES</th></tr>
+        <tr><td class="field-name">Primary Vet Clinic Name</td><td class="field-value">London Cat Clinic</td></tr>
+        <tr><td class="field-name">Primary Vet Phone</td><td class="field-value">+44 20 12345678</td></tr>
+        <tr><td class="field-name">Emergency Clinic Name</td><td class="field-value">London Emergency Vet</td></tr>
+        <tr><td class="field-name">Emergency Clinic Phone</td><td class="field-value">+44 20 98765432</td></tr>
+        
+        <tr class="section-header"><th colspan="2">PRIVACY & CONSENT</th></tr>
+        <tr><td class="field-name">Data Processing Consent</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Emergency Sharing Enabled</td><td class="field-value">No</td></tr>
+    </table>
+
+    <h2>PET 6: LUNA - Border Collie</h2>
+    <table>
+        <tr class="section-header"><th colspan="2">BASICS</th></tr>
+        <tr><td class="field-name">Owner Name</td><td class="field-value">Lisa Anderson</td></tr>
+        <tr><td class="field-name">Pet Type</td><td class="field-value">Dog</td></tr>
+        <tr><td class="field-name">Breed</td><td class="field-value">Border Collie</td></tr>
+        <tr><td class="field-name">Pet Name</td><td class="field-value">Luna</td></tr>
+        <tr><td class="field-name">Date of Birth</td><td class="field-value">2022-04-12</td></tr>
+        <tr><td class="field-name">Sex</td><td class="field-value">Female</td></tr>
+        <tr><td class="field-name">Neutered/Spayed</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Notes</td><td class="field-value">Highly intelligent and energetic. Requires lots of mental and physical exercise.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">ID & PASSPORT</th></tr>
+        <tr><td class="field-name">Microchip Number</td><td class="field-value">982000567890123</td></tr>
+        <tr><td class="field-name">Microchip Implantation Date</td><td class="field-value">2022-04-25</td></tr>
+        <tr><td class="field-name">Microchip Location</td><td class="field-value">neck/shoulder</td></tr>
+        
+        <tr class="section-header"><th colspan="2">HEALTH & WELLNESS</th></tr>
+        <tr><td class="field-name">Color/Markings</td><td class="field-value">Black and white, merle pattern</td></tr>
+        <tr><td class="field-name">Weight (kg)</td><td class="field-value">20.0</td></tr>
+        <tr><td class="field-name">Weight Date</td><td class="field-value">2024-10-05</td></tr>
+        <tr><td class="field-name">Height/Withers (cm)</td><td class="field-value">52.0</td></tr>
+        <tr><td class="field-name">Allergies</td><td class="field-value">Chicken</td></tr>
+        <tr><td class="field-name">Diet Brand</td><td class="field-value">Eukanuba</td></tr>
+        <tr><td class="field-name">Feeding Schedule</td><td class="field-value">Three times daily: 7am, 1pm, 7pm</td></tr>
+        <tr><td class="field-name">Behavior/Temperament</td><td class="field-value">Highly intelligent, energetic, eager to please, herding instinct</td></tr>
+        <tr><td class="field-name">Behavior Triggers</td><td class="field-value">Boredom, being alone too long</td></tr>
+        <tr><td class="field-name">Behavior Notes</td><td class="field-value">Needs at least 2 hours exercise daily. Enjoys agility training.</td></tr>
+        <tr><td class="field-name">Bite History</td><td class="field-value">No</td></tr>
+        
+        <tr class="section-header"><th colspan="2">OWNERSHIP & PROVENANCE</th></tr>
+        <tr><td class="field-name">Acquired From</td><td class="field-value">rescue</td></tr>
+        <tr><td class="field-name">Rescue Name</td><td class="field-value">Border Collie Rescue Network</td></tr>
+        <tr><td class="field-name">Rescue Country</td><td class="field-value">DE</td></tr>
+        <tr><td class="field-name">Acquisition Date</td><td class="field-value">2022-05-15</td></tr>
+        
+        <tr class="section-header"><th colspan="2">CONTACTS & EMERGENCIES</th></tr>
+        <tr><td class="field-name">Primary Vet Clinic Name</td><td class="field-value">Munich Animal Clinic</td></tr>
+        <tr><td class="field-name">Primary Vet Phone</td><td class="field-value">+49 89 12345678</td></tr>
+        <tr><td class="field-name">Emergency Clinic Name</td><td class="field-value">Munich Emergency</td></tr>
+        <tr><td class="field-name">Emergency Clinic Phone</td><td class="field-value">+49 89 98765432</td></tr>
+        
+        <tr class="section-header"><th colspan="2">TRAVEL & COMPLIANCE</th></tr>
+        <tr><td class="field-name">Countries Visited</td><td class="field-value">DE, AT</td></tr>
+        
+        <tr class="section-header"><th colspan="2">PRIVACY & CONSENT</th></tr>
+        <tr><td class="field-name">Data Processing Consent</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Emergency Sharing Enabled</td><td class="field-value">Yes</td></tr>
+    </table>
+
+    <h2>PET 7: MIMI - Siamese Cat</h2>
+    <table>
+        <tr class="section-header"><th colspan="2">BASICS</th></tr>
+        <tr><td class="field-name">Owner Name</td><td class="field-value">Robert Taylor</td></tr>
+        <tr><td class="field-name">Pet Type</td><td class="field-value">Cat</td></tr>
+        <tr><td class="field-name">Breed</td><td class="field-value">Siamese</td></tr>
+        <tr><td class="field-name">Pet Name</td><td class="field-value">Mimi</td></tr>
+        <tr><td class="field-name">Date of Birth</td><td class="field-value">2021-07-08</td></tr>
+        <tr><td class="field-name">Sex</td><td class="field-value">Female</td></tr>
+        <tr><td class="field-name">Neutered/Spayed</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Notes</td><td class="field-value">Very vocal and social. Demands attention.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">ID & PASSPORT</th></tr>
+        <tr><td class="field-name">Microchip Number</td><td class="field-value">982000678901234</td></tr>
+        
+        <tr class="section-header"><th colspan="2">HEALTH & WELLNESS</th></tr>
+        <tr><td class="field-name">Color/Markings</td><td class="field-value">Seal point (cream body, dark face, ears, paws, tail)</td></tr>
+        <tr><td class="field-name">Weight (kg)</td><td class="field-value">4.5</td></tr>
+        <tr><td class="field-name">Weight Date</td><td class="field-value">2024-09-25</td></tr>
+        <tr><td class="field-name">Known Conditions</td><td class="field-value">Asthma</td></tr>
+        <tr><td class="field-name">Allergies</td><td class="field-value">Dust, Strong perfumes</td></tr>
+        <tr><td class="field-name">Diet Brand</td><td class="field-value">Royal Canin Siamese</td></tr>
+        <tr><td class="field-name">Diet Type</td><td class="field-value">Wet</td></tr>
+        <tr><td class="field-name">Behavior/Temperament</td><td class="field-value">Very vocal, social, affectionate, talkative</td></tr>
+        <tr><td class="field-name">Behavior Triggers</td><td class="field-value">Being ignored, closed doors, other cats</td></tr>
+        <tr><td class="field-name">Bite History</td><td class="field-value">No</td></tr>
+        
+        <tr class="section-header"><th colspan="2">OWNERSHIP & PROVENANCE</th></tr>
+        <tr><td class="field-name">Acquired From</td><td class="field-value">breeder</td></tr>
+        <tr><td class="field-name">Breeder Name</td><td class="field-value">Siamese Elegance</td></tr>
+        <tr><td class="field-name">Breeder Country</td><td class="field-value">IT</td></tr>
+        <tr><td class="field-name">Acquisition Date</td><td class="field-value">2021-08-01</td></tr>
+        <tr><td class="field-name">Insurance Provider</td><td class="field-value">PetLife Insurance</td></tr>
+        <tr><td class="field-name">Insurance Policy Number</td><td class="field-value">PLI-2021-345678</td></tr>
+        
+        <tr class="section-header"><th colspan="2">CONTACTS & EMERGENCIES</th></tr>
+        <tr><td class="field-name">Primary Vet Clinic Name</td><td class="field-value">Milan Cat Hospital</td></tr>
+        <tr><td class="field-name">Primary Vet Phone</td><td class="field-value">+39 02 12345678</td></tr>
+        
+        <tr class="section-header"><th colspan="2">PRIVACY & CONSENT</th></tr>
+        <tr><td class="field-name">Data Processing Consent</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Emergency Sharing Enabled</td><td class="field-value">No</td></tr>
+    </table>
+
+    <h2>PET 8: BELLA - French Bulldog</h2>
+    <table>
+        <tr class="section-header"><th colspan="2">BASICS</th></tr>
+        <tr><td class="field-name">Owner Name</td><td class="field-value">Jennifer Martinez</td></tr>
+        <tr><td class="field-name">Pet Type</td><td class="field-value">Dog</td></tr>
+        <tr><td class="field-name">Breed</td><td class="field-value">French Bulldog</td></tr>
+        <tr><td class="field-name">Pet Name</td><td class="field-value">Bella</td></tr>
+        <tr><td class="field-name">Date of Birth</td><td class="field-value">2023-02-14</td></tr>
+        <tr><td class="field-name">Sex</td><td class="field-value">Female</td></tr>
+        <tr><td class="field-name">Neutered/Spayed</td><td class="field-value">No</td></tr>
+        <tr><td class="field-name">Notes</td><td class="field-value">Sweet and playful. Loves to cuddle. Can be stubborn.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">ID & PASSPORT</th></tr>
+        <tr><td class="field-name">Microchip Number</td><td class="field-value">982000789012345</td></tr>
+        <tr><td class="field-name">Microchip Implantation Date</td><td class="field-value">2023-02-28</td></tr>
+        <tr><td class="field-name">Microchip Location</td><td class="field-value">neck/shoulder</td></tr>
+        <tr><td class="field-name">EU Passport Number</td><td class="field-value">FR-11111-2023</td></tr>
+        <tr><td class="field-name">Passport Issuing Country</td><td class="field-value">FR</td></tr>
+        
+        <tr class="section-header"><th colspan="2">HEALTH & WELLNESS</th></tr>
+        <tr><td class="field-name">Color/Markings</td><td class="field-value">Brindle (brown with black stripes)</td></tr>
+        <tr><td class="field-name">Weight (kg)</td><td class="field-value">12.5</td></tr>
+        <tr><td class="field-name">Weight Date</td><td class="field-value">2024-10-12</td></tr>
+        <tr><td class="field-name">Known Conditions</td><td class="field-value">Brachycephalic syndrome, Allergies</td></tr>
+        <tr><td class="field-name">Diet Brand</td><td class="field-value">Hills Science Plan Small Breed</td></tr>
+        <tr><td class="field-name">Diet Type</td><td class="field-value">Dry</td></tr>
+        <tr><td class="field-name">Feeding Schedule</td><td class="field-value">Three small meals: 8am, 2pm, 8pm</td></tr>
+        <tr><td class="field-name">Behavior/Temperament</td><td class="field-value">Sweet, playful, sometimes stubborn, loves attention</td></tr>
+        <tr><td class="field-name">Bite History</td><td class="field-value">No</td></tr>
+        
+        <tr class="section-header"><th colspan="2">OWNERSHIP & PROVENANCE</th></tr>
+        <tr><td class="field-name">Acquired From</td><td class="field-value">breeder</td></tr>
+        <tr><td class="field-name">Breeder Name</td><td class="field-value">French Bulldog Paris</td></tr>
+        <tr><td class="field-name">Breeder Country</td><td class="field-value">FR</td></tr>
+        <tr><td class="field-name">Acquisition Date</td><td class="field-value">2023-03-10</td></tr>
+        <tr><td class="field-name">Insurance Provider</td><td class="field-value">PetAssure</td></tr>
+        <tr><td class="field-name">Insurance Policy Number</td><td class="field-value">PA-2023-789012</td></tr>
+        <tr><td class="field-name">Insurance Emergency Hotline</td><td class="field-value">+33 800 123456</td></tr>
+        
+        <tr class="section-header"><th colspan="2">CONTACTS & EMERGENCIES</th></tr>
+        <tr><td class="field-name">Primary Vet Clinic Name</td><td class="field-value">Paris Pet Clinic</td></tr>
+        <tr><td class="field-name">Primary Vet Phone</td><td class="field-value">+33 1 55555555</td></tr>
+        <tr><td class="field-name">Primary Vet Address</td><td class="field-value">15 Rue de Rivoli, 75001 Paris</td></tr>
+        <tr><td class="field-name">Emergency Clinic Name</td><td class="field-value">Paris Emergency</td></tr>
+        <tr><td class="field-name">Emergency Clinic Phone</td><td class="field-value">+33 1 66666666</td></tr>
+        
+        <tr class="section-header"><th colspan="2">TRAVEL & COMPLIANCE</th></tr>
+        <tr><td class="field-name">Countries Visited</td><td class="field-value">FR</td></tr>
+        
+        <tr class="section-header"><th colspan="2">PRIVACY & CONSENT</th></tr>
+        <tr><td class="field-name">Data Processing Consent</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Emergency Sharing Enabled</td><td class="field-value">No</td></tr>
+    </table>
+
+    <h2>PET 9: CHARLIE - Labrador Retriever</h2>
+    <table>
+        <tr class="section-header"><th colspan="2">BASICS</th></tr>
+        <tr><td class="field-name">Owner Name</td><td class="field-value">Christopher Lee</td></tr>
+        <tr><td class="field-name">Pet Type</td><td class="field-value">Dog</td></tr>
+        <tr><td class="field-name">Breed</td><td class="field-value">Labrador Retriever</td></tr>
+        <tr><td class="field-name">Pet Name</td><td class="field-value">Charlie</td></tr>
+        <tr><td class="field-name">Date of Birth</td><td class="field-value">2019-09-30</td></tr>
+        <tr><td class="field-name">Sex</td><td class="field-value">Male</td></tr>
+        <tr><td class="field-name">Neutered/Spayed</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Notes</td><td class="field-value">Very friendly and gentle. Great with children. Loves water.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">ID & PASSPORT</th></tr>
+        <tr><td class="field-name">Microchip Number</td><td class="field-value">982000890123456</td></tr>
+        <tr><td class="field-name">Microchip Implantation Date</td><td class="field-value">2019-10-10</td></tr>
+        
+        <tr class="section-header"><th colspan="2">HEALTH & WELLNESS</th></tr>
+        <tr><td class="field-name">Color/Markings</td><td class="field-value">Black, shiny coat</td></tr>
+        <tr><td class="field-name">Weight (kg)</td><td class="field-value">32.0</td></tr>
+        <tr><td class="field-name">Weight Date</td><td class="field-value">2024-10-08</td></tr>
+        <tr><td class="field-name">Height/Withers (cm)</td><td class="field-value">57.0</td></tr>
+        <tr><td class="field-name">Allergies</td><td class="field-value">Certain grains</td></tr>
+        <tr><td class="field-name">Diet Brand</td><td class="field-value">Purina Pro Plan</td></tr>
+        <tr><td class="field-name">Feeding Schedule</td><td class="field-value">Twice daily: 7am, 6pm</td></tr>
+        <tr><td class="field-name">Behavior/Temperament</td><td class="field-value">Very friendly, gentle, loves people and water</td></tr>
+        <tr><td class="field-name">Behavior Notes</td><td class="field-value">Excellent with kids. Loves swimming and retrieving.</td></tr>
+        <tr><td class="field-name">Bite History</td><td class="field-value">No</td></tr>
+        
+        <tr class="section-header"><th colspan="2">OWNERSHIP & PROVENANCE</th></tr>
+        <tr><td class="field-name">Acquired From</td><td class="field-value">private</td></tr>
+        <tr><td class="field-name">Acquisition Date</td><td class="field-value">2019-11-01</td></tr>
+        
+        <tr class="section-header"><th colspan="2">CONTACTS & EMERGENCIES</th></tr>
+        <tr><td class="field-name">Primary Vet Clinic Name</td><td class="field-value">Hamburg Animal Care</td></tr>
+        <tr><td class="field-name">Primary Vet Phone</td><td class="field-value">+49 40 12345678</td></tr>
+        <tr><td class="field-name">Emergency Clinic Name</td><td class="field-value">Hamburg Emergency Vet</td></tr>
+        
+        <tr class="section-header"><th colspan="2">TRAVEL & COMPLIANCE</th></tr>
+        <tr><td class="field-name">Countries Visited</td><td class="field-value">DE, DK, NL</td></tr>
+        
+        <tr class="section-header"><th colspan="2">PRIVACY & CONSENT</th></tr>
+        <tr><td class="field-name">Data Processing Consent</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Emergency Sharing Enabled</td><td class="field-value">Yes</td></tr>
+    </table>
+
+    <h2>PET 10: BANDIT - Ferret</h2>
+    <table>
+        <tr class="section-header"><th colspan="2">BASICS</th></tr>
+        <tr><td class="field-name">Owner Name</td><td class="field-value">Amanda White</td></tr>
+        <tr><td class="field-name">Pet Type</td><td class="field-value">Ferret</td></tr>
+        <tr><td class="field-name">Breed</td><td class="field-value">Standard</td></tr>
+        <tr><td class="field-name">Pet Name</td><td class="field-value">Bandit</td></tr>
+        <tr><td class="field-name">Date of Birth</td><td class="field-value">2022-11-05</td></tr>
+        <tr><td class="field-name">Sex</td><td class="field-value">Male</td></tr>
+        <tr><td class="field-name">Neutered/Spayed</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Notes</td><td class="field-value">Very playful and curious. Requires daily exercise and stimulation.</td></tr>
+        
+        <tr class="section-header"><th colspan="2">ID & PASSPORT</th></tr>
+        <tr><td class="field-name">Microchip Number</td><td class="field-value">982000901234567</td></tr>
+        <tr><td class="field-name">Microchip Implantation Date</td><td class="field-value">2022-11-15</td></tr>
+        
+        <tr class="section-header"><th colspan="2">HEALTH & WELLNESS</th></tr>
+        <tr><td class="field-name">Color/Markings</td><td class="field-value">Sable (brown with dark mask)</td></tr>
+        <tr><td class="field-name">Weight (kg)</td><td class="field-value">1.2</td></tr>
+        <tr><td class="field-name">Weight Date</td><td class="field-value">2024-09-30</td></tr>
+        <tr><td class="field-name">Known Conditions</td><td class="field-value">Insulinoma (monitored)</td></tr>
+        <tr><td class="field-name">Diet Brand</td><td class="field-value">Marshall Premium Ferret Diet</td></tr>
+        <tr><td class="field-name">Diet Type</td><td class="field-value">Dry pellets</td></tr>
+        <tr><td class="field-name">Feeding Schedule</td><td class="field-value">Free feeding (small portions, multiple times)</td></tr>
+        <tr><td class="field-name">Behavior/Temperament</td><td class="field-value">Playful, curious, energetic, mischievous</td></tr>
+        <tr><td class="field-name">Behavior Notes</td><td class="field-value">Needs at least 4 hours out-of-cage time daily. Loves tunnels and toys.</td></tr>
+        <tr><td class="field-name">Bite History</td><td class="field-value">No</td></tr>
+        
+        <tr class="section-header"><th colspan="2">OWNERSHIP & PROVENANCE</th></tr>
+        <tr><td class="field-name">Acquired From</td><td class="field-value">breeder</td></tr>
+        <tr><td class="field-name">Acquisition Date</td><td class="field-value">2022-12-01</td></tr>
+        
+        <tr class="section-header"><th colspan="2">CONTACTS & EMERGENCIES</th></tr>
+        <tr><td class="field-name">Primary Vet Clinic Name</td><td class="field-value">Exotic Pet Clinic</td></tr>
+        <tr><td class="field-name">Primary Vet Phone</td><td class="field-value">+49 30 44444444</td></tr>
+        <tr><td class="field-name">Emergency Clinic Name</td><td class="field-value">Berlin Exotic Emergency</td></tr>
+        <tr><td class="field-name">Emergency Clinic Phone</td><td class="field-value">+49 30 55555555</td></tr>
+        
+        <tr class="section-header"><th colspan="2">PRIVACY & CONSENT</th></tr>
+        <tr><td class="field-name">Data Processing Consent</td><td class="field-value">Yes</td></tr>
+        <tr><td class="field-name">Emergency Sharing Enabled</td><td class="field-value">No</td></tr>
+    </table>
+
+    <hr style="margin-top: 40px; border: 2px solid #2563eb;">
+    <p style="text-align: center; color: #64748b; margin-top: 20px;">
+        <strong>Instructions:</strong> Press Ctrl+P (Windows) or Cmd+P (Mac) to print/save as PDF.<br>
+        All 10 pets included above. Copy individual field values as needed.
+    </p>
+</body>
+</html>
+

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Sharing Demo - PetFinder</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .demo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .demo-section {
+            margin: 32px 0;
+        }
+        .sharing-demo {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .sharing-demo.logged-out {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .sharing-demo.logged-in {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+        .toggle {
+            width: 44px;
+            height: 24px;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .toggle.disabled {
+            background: #e2e8f0;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .toggle.enabled {
+            background: #3b82f6;
+        }
+        .toggle.enabled.on {
+            background: #1d4ed8;
+        }
+        .toggle-thumb {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .toggle.on .toggle-thumb {
+            transform: translateX(20px);
+        }
+        .share-icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .text-gray { color: #6b7280; }
+        .text-blue { color: #1d4ed8; }
+        .text-sm { font-size: 14px; }
+        .text-xs { font-size: 12px; }
+        .font-medium { font-weight: 500; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 8px; }
+        .mt-2 { margin-top: 8px; }
+        .pl-6 { padding-left: 24px; }
+        h1 { color: #1f2937; margin-bottom: 8px; }
+        h2 { color: #374151; margin-bottom: 16px; font-size: 20px; }
+        h3 { color: #4b5563; margin-bottom: 12px; font-size: 16px; }
+        .status { 
+            display: inline-block; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 12px; 
+            font-weight: 500;
+        }
+        .status.success { background: #dcfce7; color: #166534; }
+        .status.info { background: #dbeafe; color: #1e40af; }
+    </style>
+</head>
+<body>
+    <div class="demo-card">
+        <h1>🐾 Pet Information Sharing - Demo</h1>
+        <p>This demo shows how the pet sharing functionality works for both logged-in and non-logged-in users.</p>
+    </div>
+
+    <div class="demo-section">
+        <h2>📱 Non-Logged-In User Experience</h2>
+        <div class="demo-card">
+            <div class="sharing-demo logged-out">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <svg class="share-icon text-gray" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-gray">Share Pet Details with Vet</p>
+                            <p class="text-xs text-gray">Allow the vet to view your pet's complete profile during the appointment</p>
+                        </div>
+                    </div>
+                    <div class="toggle disabled" onclick="showLoginPrompt()">
+                        <div class="toggle-thumb"></div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray mt-2 pl-6">
+                    Please log in to share your pet's details with the vet
+                </p>
+            </div>
+            <div class="status info">Status: Disabled - Login Required</div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>👤 Logged-In User Experience</h2>
+        <div class="demo-card">
+            <div class="sharing-demo logged-in">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <svg class="share-icon text-blue" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-blue">Share Pet Details with Vet</p>
+                            <p class="text-xs text-blue">Allow the vet to view your pet's complete profile during the appointment</p>
+                        </div>
+                    </div>
+                    <div class="toggle enabled" id="loggedInToggle" onclick="toggleSharing()">
+                        <div class="toggle-thumb"></div>
+                    </div>
+                </div>
+                <p class="text-xs text-blue mt-2 pl-6" id="sharingMessage" style="display: none;">
+                    ✓ Vet will have access to medical history, allergies, and other important details
+                </p>
+            </div>
+            <div class="status success">Status: Active - Can Enable Sharing</div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🩺 Vet Dashboard View</h2>
+        <div class="demo-card">
+            <h3>Today's Appointments</h3>
+            
+            <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 12px 0;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <strong>10:00 - 10:15</strong>
+                            <span style="background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px; font-size: 12px;">Confirmed</span>
+                        </div>
+                        <div style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <div class="text-xs text-gray">Pet</div>
+                                <div class="font-medium flex items-center gap-1">
+                                    Max
+                                    <svg width="12" height="12" fill="#3b82f6" viewBox="0 0 20 20">
+                                        <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray">Owner</div>
+                                <div class="font-medium">John Doe</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button style="padding: 6px 12px; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 14px; cursor: pointer;" onclick="showPetDetails()">
+                            👁️ Pet Details
+                        </button>
+                        <button style="padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer;">
+                            ✓ Check In
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 12px 0;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <strong>11:30 - 11:45</strong>
+                            <span style="background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-size: 12px;">Pending</span>
+                        </div>
+                        <div style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <div class="text-xs text-gray">Pet</div>
+                                <div class="font-medium">Luna</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray">Owner</div>
+                                <div class="font-medium">Jane Smith</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button style="padding: 6px 12px; background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; cursor: not-allowed;" disabled>
+                            👁️ Pet Details
+                        </button>
+                        <button style="padding: 6px 12px; background: #f87171; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer;">
+                            ❌ Decline
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status info">Pet Details button only appears when information is shared</div>
+        </div>
+    </div>
+
+    <div class="demo-card">
+        <h2>🔧 Implementation Features</h2>
+        <ul style="line-height: 1.6;">
+            <li><strong>Non-Logged-In Users:</strong> See disabled toggle, prompted to login when clicked</li>
+            <li><strong>Logged-In Users:</strong> Active toggle with visual feedback and confirmation</li>
+            <li><strong>Vet Dashboard:</strong> Share icons and Pet Details buttons for shared information</li>
+            <li><strong>Security:</strong> Consent-based sharing with proper RLS policies</li>
+            <li><strong>UX:</strong> Clear visual states and smooth login flow</li>
+        </ul>
+    </div>
+
+    <script>
+        let sharingEnabled = false;
+
+        function showLoginPrompt() {
+            alert('🔐 Login Required\n\nPlease log in to share your pet\'s details with the vet.\n\n(In the real app, this opens the login dialog)');
+        }
+
+        function toggleSharing() {
+            const toggle = document.getElementById('loggedInToggle');
+            const message = document.getElementById('sharingMessage');
+            
+            sharingEnabled = !sharingEnabled;
+            
+            if (sharingEnabled) {
+                toggle.classList.add('on');
+                message.style.display = 'block';
+            } else {
+                toggle.classList.remove('on');
+                message.style.display = 'none';
+            }
+        }
+
+        function showPetDetails() {
+            alert('🐕 Pet Details - Max\n\n• Type: Golden Retriever\n• Age: 3 years old\n• Weight: 30kg\n• Allergies: Chicken\n• Conditions: Hip dysplasia\n• Insurance: PetSure Policy #12345\n• Emergency Contact: +49 123 456 789\n\n(In the real app, this opens a comprehensive dialog with tabs)');
+        }
+    </script>
+</body>
+</html>

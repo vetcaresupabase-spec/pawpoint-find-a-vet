@@ -1,0 +1,41 @@
+Pet Number,Field Category,Field Name,Pet 1 - Buddy (Golden Retriever),Pet 2 - Princess (Persian),Pet 3 - Max (Mixed),Pet 4 - Rex (German Shepherd),Pet 5 - Winston (British Shorthair),Pet 6 - Luna (Border Collie),Pet 7 - Mimi (Siamese),Pet 8 - Bella (French Bulldog),Pet 9 - Charlie (Labrador),Pet 10 - Bandit (Ferret)
+1,BASICS,Owner Name,John Smith,Emma Johnson,Michael Brown,Sarah Miller,David Wilson,Lisa Anderson,Robert Taylor,Jennifer Martinez,Christopher Lee,Amanda White
+1,BASICS,Pet Type,Dog,Cat,Dog,Dog,Cat,Dog,Cat,Dog,Dog,Ferret
+1,BASICS,Breed,Golden Retriever,Persian,Mixed Breed,German Shepherd,British Shorthair,Border Collie,Siamese,French Bulldog,Labrador Retriever,Standard
+1,BASICS,Pet Name,Buddy,Princess,Max,Rex,Winston,Luna,Mimi,Bella,Charlie,Bandit
+1,BASICS,Date of Birth,2020-05-15,2019-03-22,2021-08-10,2018-11-05,2020-01-20,2022-04-12,2021-07-08,2023-02-14,2019-09-30,2022-11-05
+1,BASICS,Sex,Male,Female,Male,Male,Male,Female,Female,Female,Male,Male
+1,BASICS,Neutered/Spayed,Yes,Yes,Yes,Yes,Yes,Yes,Yes,No,Yes,Yes
+1,BASICS,Notes,Very friendly and energetic dog. Loves playing fetch and swimming.,Calm and gentle. Prefers quiet environments. Requires daily grooming.,Rescued from shelter. Very playful and energetic.,Trained police dog (retired). Very obedient and protective.,Calm and dignified. Loves attention on his own terms.,Highly intelligent and energetic. Requires lots of mental and physical exercise.,Very vocal and social. Demands attention.,Sweet and playful. Loves to cuddle. Can be stubborn.,Very friendly and gentle. Great with children. Loves water.,Very playful and curious. Requires daily exercise and stimulation.
+1,ID & PASSPORT,Microchip Number,982000123456789,982000234567890,,982000345678901,982000456789012,982000567890123,982000678901234,982000789012345,982000890123456,982000901234567
+1,ID & PASSPORT,Microchip Implantation Date,2020-06-10,2019-04-05,,2018-11-15,2020-02-01,2022-04-25,,2023-02-28,2019-10-10,2022-11-15
+1,ID & PASSPORT,Microchip Location,neck/shoulder,neck/shoulder,,neck/shoulder,neck/shoulder,neck/shoulder,,neck/shoulder,,,
+1,ID & PASSPORT,EU Passport Number,DE-12345-2020,FR-54321-2019,,DE-67890-2018,UK-98765-2020,,,FR-11111-2023,,,
+1,ID & PASSPORT,Passport Issuing Country,DE,FR,,DE,GB,,,FR,,,
+1,ID & PASSPORT,Passport Issue Date,2020-06-15,2019-04-10,,2018-11-20,2020-02-05,,,,,,
+1,ID & PASSPORT,Primary Vet/Issuing Authority,Happy Paws Berlin,Cat Care Clinic,,Berlin Veterinary Center,London Cat Clinic,,,,,,
+1,ID & PASSPORT,Vet Contact,+49 30 11111111,+33 1 23456789,,+49 30 22222222,+44 20 12345678,,,,,,
+1,HEALTH,Color/Markings,Golden white chest marking,White with blue eyes,Brown and white medium-sized,Black and tan traditional,Blue (gray) round face,Black and white merle pattern,Seal point (cream body dark face ears paws tail),Brindle (brown with black stripes),Black shiny coat,Sable (brown with dark mask)
+1,HEALTH,Weight (kg),28.5,4.2,18.0,35.0,5.8,20.0,4.5,12.5,32.0,1.2
+1,HEALTH,Weight Date,2024-10-15,2024-09-20,2024-10-01,2024-10-10,2024-09-15,2024-10-05,2024-09-25,2024-10-12,2024-10-08,2024-09-30
+1,HEALTH,Height/Withers (cm),58.0,25.0,,65.0,,52.0,,,57.0,
+1,HEALTH,Known Conditions,"Hip Dysplasia, Seasonal Allergies",Respiratory issues,,Hip Dysplasia,,,,Asthma,"Brachycephalic syndrome, Allergies",,Insulinoma (monitored)
+1,HEALTH,Allergies,"Pollen, Dust","Certain fish proteins",,,,Chicken,"Dust, Strong perfumes",,Certain grains,
+1,HEALTH,Diet Brand,Royal Canin,Hills Science Diet,,Royal Canin Large Breed,Purina Pro Plan,Eukanuba,Royal Canin Siamese,Hills Science Plan Small Breed,Purina Pro Plan,Marshall Premium Ferret Diet
+1,HEALTH,Diet Type,Dry,Wet,,Dry,Dry,,Wet,Dry,,Dry pellets
+1,HEALTH,Feeding Schedule,"Twice daily: 7am (2 cups), 6pm (2 cups)",Three times daily: small portions,,Twice daily: 8am (1.5 cups) 7pm (1.5 cups),Free feeding (measured amount),Three times daily: 7am 1pm 7pm,,Three small meals: 8am 2pm 8pm,Twice daily: 7am 6pm,Free feeding (small portions multiple times)
+1,HEALTH,Behavior/Temperament,"Very friendly, energetic, loves people and other dogs","Calm, gentle, affectionate, shy around strangers",Playful energetic loves kids,"Obedient, protective, intelligent, loyal",Calm independent affectionate when he wants,"Highly intelligent, energetic, eager to please, herding instinct","Very vocal, social, affectionate, talkative",Sweet playful sometimes stubborn loves attention,"Very friendly, gentle, loves people and water","Playful, curious, energetic, mischievous"
+1,OWNERSHIP,Acquired From,breeder,rescue,rescue,breeder,breeder,rescue,breeder,breeder,private,breeder
+1,OWNERSHIP,Breeder Name,Golden Dreams Kennel,,,Elite German Shepherds,British Elegance Cattery,,Siamese Elegance,French Bulldog Paris,,,
+1,OWNERSHIP,Breeder Country,DE,,,DE,GB,,IT,FR,,,
+1,OWNERSHIP,Acquisition Date,2020-06-01,2019-06-15,2021-09-01,2018-12-01,2020-03-01,2022-05-15,2021-08-01,2023-03-10,2019-11-01,2022-12-01
+1,OWNERSHIP,Insurance Provider,PetCare Insurance,PetSecure,,Comprehensive Pet Insurance,UK Pet Insurance,,PetLife Insurance,PetAssure,,,
+1,OWNERSHIP,Insurance Policy Number,PCI-2020-123456,PS-2019-789012,,CPI-2018-456789,,,,PLI-2021-345678,PA-2023-789012,,,
+1,CONTACTS,Primary Vet Clinic Name,Happy Paws Berlin,Cat Care Clinic,City Animal Hospital,Berlin Veterinary Center,London Cat Clinic,Munich Animal Clinic,Milan Cat Hospital,Paris Pet Clinic,Hamburg Animal Care,Exotic Pet Clinic
+1,CONTACTS,Primary Vet Phone,+49 30 11111111,+33 1 23456789,+49 30 55555555,+49 30 22222222,+44 20 12345678,+49 89 12345678,+39 02 12345678,+33 1 55555555,+49 40 12345678,+49 30 44444444
+1,CONTACTS,Emergency Clinic Name,Berlin Animal Emergency,Paris Emergency Vet,,Berlin Emergency Veterinary,London Emergency Vet,Munich Emergency,,Paris Emergency,Hamburg Emergency Vet,Berlin Exotic Emergency
+1,CONTACTS,Emergency Clinic Phone,+49 30 88888888,+33 1 98765432,,+49 30 33333333,+44 20 98765432,+49 89 98765432,,+33 1 66666666,,+49 30 55555555
+1,TRAVEL,Countries Visited,"DE, FR, IT, ES","FR, BE",,"DE, AT, CH, CZ",,"DE, AT",,"FR","DE, DK, NL",
+1,PRIVACY,Data Processing Consent,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
+1,PRIVACY,Emergency Sharing Enabled,Yes,No,No,Yes,No,Yes,No,No,Yes,No
+

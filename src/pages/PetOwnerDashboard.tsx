@@ -19,8 +19,11 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { AddPetDialog } from "@/components/AddPetDialog";
+import { AddPetDialogComprehensive } from "@/components/AddPetDialogComprehensive";
+import { EditPetDialog } from "@/components/EditPetDialog";
 import { PetCard } from "@/components/PetCard";
+import { TreatmentRecords } from "@/components/vet/TreatmentRecords";
+import { ExportMedicalRecordsPDF } from "@/components/pet-owner/ExportMedicalRecordsPDF";
 
 const PetOwnerDashboard = () => {
   const navigate = useNavigate();
@@ -29,6 +32,10 @@ const PetOwnerDashboard = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showAddPetDialog, setShowAddPetDialog] = useState(false);
+  const [showEditPetDialog, setShowEditPetDialog] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<any>(null);
+  const [selectedPetForRecords, setSelectedPetForRecords] = useState<any>(null);
+  const [showMedicalRecords, setShowMedicalRecords] = useState(false);
 
   useEffect(() => {
     // Check if user is logged in
@@ -219,7 +226,7 @@ const PetOwnerDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => toast({ title: "Medical Records", description: "Records management coming soon!" })}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setShowMedicalRecords(!showMedicalRecords)}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-full bg-secondary/30 flex items-center justify-center">
@@ -233,6 +240,86 @@ const PetOwnerDashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Medical Records Section */}
+        {showMedicalRecords && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Medical Records</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {petsLoading ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Loading pets...</p>
+                </div>
+              ) : pets.length > 0 ? (
+                <div className="space-y-6">
+                  {/* Pet Selector */}
+                  <div className="flex flex-wrap gap-2">
+                    {pets.map((pet: any) => (
+                      <Button
+                        key={pet.id}
+                        variant={selectedPetForRecords?.id === pet.id ? "default" : "outline"}
+                        onClick={() => setSelectedPetForRecords(pet)}
+                        className="flex items-center gap-2"
+                      >
+                        {pet.photo_url && (
+                          <img
+                            src={pet.photo_url}
+                            alt={pet.name}
+                            className="w-6 h-6 rounded-full object-cover"
+                          />
+                        )}
+                        <span>{pet.name}</span>
+                      </Button>
+                    ))}
+                  </div>
+
+                  {/* Display Treatment Records for Selected Pet */}
+                  {selectedPetForRecords ? (
+                    <div className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold">
+                          Medical History for {selectedPetForRecords.name}
+                        </h3>
+                        <ExportMedicalRecordsPDF
+                          petId={selectedPetForRecords.id}
+                          petName={selectedPetForRecords.name}
+                          variant="outline"
+                          size="sm"
+                        />
+                      </div>
+                      <TreatmentRecords 
+                        petId={selectedPetForRecords.id}
+                        petName={selectedPetForRecords.name}
+                        readOnly={true}
+                      />
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">
+                        Select a pet above to view their medical history
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground mb-4">No pets added yet</p>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Add your first pet to start tracking their medical records.
+                  </p>
+                  <Button onClick={() => setShowAddPetDialog(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Your First Pet
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="appointments" className="space-y-6">
@@ -342,18 +429,20 @@ const PetOwnerDashboard = () => {
                     <p className="text-muted-foreground">Loading pets...</p>
                   </div>
                 ) : pets.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 gap-4">
                     {pets.map((pet: any) => (
                       <PetCard
                         key={pet.id}
                         pet={pet}
                         onEdit={(pet) => {
-                          toast({
-                            title: "Edit Pet",
-                            description: "Pet editing coming soon!",
-                          });
+                          setSelectedPet(pet);
+                          setShowEditPetDialog(true);
                         }}
                         onDelete={handleDeletePet}
+                        onSharingChange={(petId, enabled) => {
+                          // Invalidate queries to refresh pet data
+                          queryClient.invalidateQueries({ queryKey: ["userPets"] });
+                        }}
                       />
                     ))}
                   </div>
@@ -403,10 +492,18 @@ const PetOwnerDashboard = () => {
         </Tabs>
       </div>
 
-      {/* Add Pet Dialog */}
-      <AddPetDialog
+      {/* Add Pet Dialog - Comprehensive */}
+      <AddPetDialogComprehensive
         open={showAddPetDialog}
         onOpenChange={setShowAddPetDialog}
+        onSuccess={handleAddPetSuccess}
+      />
+
+      {/* Edit Pet Dialog */}
+      <EditPetDialog
+        open={showEditPetDialog}
+        onOpenChange={setShowEditPetDialog}
+        pet={selectedPet}
         onSuccess={handleAddPetSuccess}
       />
     </div>

@@ -15,7 +15,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Calendar, Clock, User, UserCheck, UserX, XCircle } from "lucide-react";
+import { Calendar, Clock, User, UserCheck, UserX, XCircle, Eye, Share2, Stethoscope } from "lucide-react";
+import { PetDetailsDialog } from "./PetDetailsDialog";
+import { TreatmentForm } from "./TreatmentForm";
 
 interface TodayAppointment {
   id: string;
@@ -28,12 +30,31 @@ interface TodayAppointment {
   status: string;
   checked_in_at: string | null;
   no_show_at: string | null;
+  pet_info_shared?: boolean;
+  shared_pet_id?: string;
+  pet_id?: string; // From booking, will need to fetch
 }
 
 export const TodayTab = ({ clinicId }: { clinicId: string }) => {
   const [filter, setFilter] = useState<string>("all");
   const [noShowDialog, setNoShowDialog] = useState<string | null>(null);
   const [declineDialog, setDeclineDialog] = useState<string | null>(null);
+  const [petDetailsDialog, setPetDetailsDialog] = useState<{ open: boolean; bookingId: string; petName: string }>({ 
+    open: false, 
+    bookingId: "", 
+    petName: "" 
+  });
+  const [treatmentDialog, setTreatmentDialog] = useState<{ 
+    open: boolean; 
+    bookingId: string; 
+    petId: string; 
+    petName: string 
+  }>({ 
+    open: false, 
+    bookingId: "", 
+    petId: "",
+    petName: "" 
+  });
   const queryClient = useQueryClient();
 
   // Fetch today's appointments
@@ -53,7 +74,9 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
           status,
           notes,
           appointment_date,
-          pet_owner_id
+          pet_owner_id,
+          pet_info_shared,
+          shared_pet_id
         `)
         .eq("clinic_id", clinicId)
         .eq("appointment_date", today)
@@ -65,7 +88,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
       }
 
       // Map to expected format
-      return (data || []).map((booking: any) => ({
+      const mapped = (data || []).map((booking: any) => ({
         id: booking.id,
         pet_name: booking.pet_name,
         pet_owner_name: "Pet Owner", // We'll fetch this separately if needed
@@ -76,7 +99,17 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
         status: booking.status || "pending",
         checked_in_at: null,
         no_show_at: null,
+        pet_info_shared: booking.pet_info_shared === true || booking.pet_info_shared === 'true',
+        shared_pet_id: booking.shared_pet_id,
       })) as TodayAppointment[];
+      
+      // Debug logging
+      const sharedCount = mapped.filter(apt => apt.pet_info_shared || apt.shared_pet_id).length;
+      if (sharedCount > 0) {
+        console.log(`✅ Found ${sharedCount} appointment(s) with shared pet information`);
+      }
+      
+      return mapped;
     },
   });
 
@@ -95,7 +128,9 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
           start_time,
           end_time,
           status,
-          appointment_date
+          appointment_date,
+          pet_info_shared,
+          shared_pet_id
         `)
         .eq("clinic_id", clinicId)
         .gt("appointment_date", today)
@@ -108,11 +143,21 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
         throw error;
       }
 
-      return (data || []).map((booking: any) => ({
+      const mapped = (data || []).map((booking: any) => ({
         ...booking,
         pet_owner_name: "Pet Owner",
         service_name: null,
+        pet_info_shared: booking.pet_info_shared === true || booking.pet_info_shared === 'true',
+        shared_pet_id: booking.shared_pet_id,
       }));
+      
+      // Debug logging
+      const sharedCount = mapped.filter((apt: any) => apt.pet_info_shared || apt.shared_pet_id).length;
+      if (sharedCount > 0) {
+        console.log(`✅ Found ${sharedCount} upcoming appointment(s) with shared pet information`);
+      }
+      
+      return mapped;
     },
   });
 
@@ -318,7 +363,12 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
 
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <div className="text-muted-foreground">Pet</div>
+                      <div className="text-muted-foreground flex items-center gap-1">
+                        Pet
+                        {apt.pet_info_shared && (
+                          <Share2 className="h-3 w-3 text-blue-600" title="Pet information shared" />
+                        )}
+                      </div>
                       <div className="font-medium">{apt.pet_name}</div>
                     </div>
                     <div>
@@ -342,37 +392,98 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                   </div>
                 </div>
 
-                <div className="flex gap-2 ml-4">
-                  {apt.status === "confirmed" && (
+                <div className="flex flex-col gap-2 ml-4">
+                  {/* Pet Details Button - Always show first if pet information is shared */}
+                  {(apt.pet_info_shared || apt.shared_pet_id) && (
                     <Button
                       size="sm"
-                      onClick={() => checkInMutation.mutate(apt.id)}
-                      disabled={checkInMutation.isPending}
+                      variant="default"
+                      onClick={() => setPetDetailsDialog({ 
+                        open: true, 
+                        bookingId: apt.id, 
+                        petName: apt.pet_name 
+                      })}
+                      className="bg-blue-600 hover:bg-blue-700 text-white border-0 shadow-sm"
                     >
-                      <UserCheck className="h-4 w-4 mr-2" />
-                      Check In
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Pet Details
                     </Button>
                   )}
-                  {(apt.status === "confirmed" || apt.status === "pending") && (
-                    <>
+                  
+                  {/* Start Treatment Button - Available for all appointments */}
+                  <Button
+                    size="sm"
+                    variant="default"
+                    onClick={async () => {
+                      // Get pet_id - use shared_pet_id if available, otherwise we'll need to find it
+                      let petId = apt.shared_pet_id;
+                      
+                      if (!petId) {
+                        // Try to find pet by name and owner
+                        const { data: pets } = await supabase
+                          .from("pets")
+                          .select("id")
+                          .eq("name", apt.pet_name)
+                          .limit(1);
+                        
+                        if (pets && pets.length > 0) {
+                          petId = pets[0].id;
+                        } else {
+                          toast({
+                            title: "Pet Not Found",
+                            description: "Please ensure the pet is linked to this appointment. You may need to view pet details first.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                      }
+                      
+                      setTreatmentDialog({
+                        open: true,
+                        bookingId: apt.id,
+                        petId: petId,
+                        petName: apt.pet_name,
+                      });
+                    }}
+                    className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm"
+                  >
+                    <Stethoscope className="h-4 w-4 mr-2" />
+                    Start Treatment
+                  </Button>
+                  
+                  {/* Action Buttons Row */}
+                  <div className="flex gap-2 flex-wrap">
+                    {apt.status === "confirmed" && (
                       <Button
                         size="sm"
-                        variant="outline"
-                        onClick={() => setNoShowDialog(apt.id)}
+                        onClick={() => checkInMutation.mutate(apt.id)}
+                        disabled={checkInMutation.isPending}
                       >
-                        <UserX className="h-4 w-4 mr-2" />
-                        No Show
+                        <UserCheck className="h-4 w-4 mr-2" />
+                        Check In
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setDeclineDialog(apt.id)}
-                      >
-                        <XCircle className="h-4 w-4 mr-2" />
-                        Decline
-                      </Button>
-                    </>
-                  )}
+                    )}
+                    {(apt.status === "confirmed" || apt.status === "pending") && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setNoShowDialog(apt.id)}
+                        >
+                          <UserX className="h-4 w-4 mr-2" />
+                          No Show
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setDeclineDialog(apt.id)}
+                        >
+                          <XCircle className="h-4 w-4 mr-2" />
+                          Decline
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </Card>
@@ -465,7 +576,12 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
 
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <div className="text-muted-foreground">Pet</div>
+                        <div className="text-muted-foreground flex items-center gap-1">
+                          Pet
+                          {(apt.pet_info_shared || apt.shared_pet_id) && (
+                            <Share2 className="h-3 w-3 text-blue-600" title="Pet information shared" />
+                          )}
+                        </div>
                         <div className="font-medium">{apt.pet_name}</div>
                       </div>
                       {apt.pet_type && (
@@ -476,8 +592,65 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                       )}
                     </div>
                   </div>
-                  {(apt.status === "confirmed" || apt.status === "pending") && (
-                    <div className="flex gap-2 ml-4">
+                  <div className="flex flex-col gap-2 ml-4">
+                    {/* Pet Details Button - Always show first if pet information is shared */}
+                    {(apt.pet_info_shared || apt.shared_pet_id) && (
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => setPetDetailsDialog({ 
+                          open: true, 
+                          bookingId: apt.id, 
+                          petName: apt.pet_name 
+                        })}
+                        className="bg-blue-600 hover:bg-blue-700 text-white border-0 shadow-sm"
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Pet Details
+                      </Button>
+                    )}
+                    
+                    {/* Start Treatment Button - Available for all appointments */}
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={async () => {
+                        let petId = apt.shared_pet_id;
+                        
+                        if (!petId) {
+                          const { data: pets } = await supabase
+                            .from("pets")
+                            .select("id")
+                            .eq("name", apt.pet_name)
+                            .limit(1);
+                          
+                          if (pets && pets.length > 0) {
+                            petId = pets[0].id;
+                          } else {
+                            toast({
+                              title: "Pet Not Found",
+                              description: "Please ensure the pet is linked to this appointment.",
+                              variant: "destructive",
+                            });
+                            return;
+                          }
+                        }
+                        
+                        setTreatmentDialog({
+                          open: true,
+                          bookingId: apt.id,
+                          petId: petId,
+                          petName: apt.pet_name,
+                        });
+                      }}
+                      className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm"
+                    >
+                      <Stethoscope className="h-4 w-4 mr-2" />
+                      Start Treatment
+                    </Button>
+                    
+                    {/* Action Buttons */}
+                    {(apt.status === "confirmed" || apt.status === "pending") && (
                       <Button
                         size="sm"
                         variant="outline"
@@ -486,14 +659,37 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                         <XCircle className="h-4 w-4 mr-2" />
                         Decline
                       </Button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </Card>
             ))}
           </div>
         )}
       </div>
+
+      {/* Pet Details Dialog */}
+      <PetDetailsDialog
+        open={petDetailsDialog.open}
+        onOpenChange={(open) => setPetDetailsDialog(prev => ({ ...prev, open }))}
+        bookingId={petDetailsDialog.bookingId}
+        petName={petDetailsDialog.petName}
+      />
+
+      {/* Treatment Form Dialog */}
+      <TreatmentForm
+        open={treatmentDialog.open}
+        onOpenChange={(open) => setTreatmentDialog(prev => ({ ...prev, open }))}
+        bookingId={treatmentDialog.bookingId}
+        petId={treatmentDialog.petId}
+        clinicId={clinicId}
+        petName={treatmentDialog.petName}
+        onSuccess={() => {
+          // Refresh appointments after treatment is created
+          queryClient.invalidateQueries({ queryKey: ["todayAppointments", clinicId] });
+          queryClient.invalidateQueries({ queryKey: ["upcomingAppointments", clinicId] });
+        }}
+      />
     </div>
   );
 };

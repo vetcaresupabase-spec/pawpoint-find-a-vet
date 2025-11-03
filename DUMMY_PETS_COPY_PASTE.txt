@@ -1,0 +1,844 @@
+================================================================================
+DUMMY PET DATA - COPY & PASTE FORMAT
+================================================================================
+Copy individual field values from the sections below
+All 10 pets with comprehensive data included
+================================================================================
+
+═══════════════════════════════════════════════════════════════════════════════
+PET 1: BUDDY - Golden Retriever (Full Profile)
+═══════════════════════════════════════════════════════════════════════════════
+
+BASICS:
+Owner Name: John Smith
+Pet Type: Dog
+Breed: Golden Retriever
+Pet Name: Buddy
+Date of Birth: 2020-05-15
+Sex: Male
+Neutered/Spayed: Yes
+Notes: Very friendly and energetic dog. Loves playing fetch and swimming.
+
+ID & PASSPORT:
+Microchip Number: 982000123456789
+Microchip Implantation Date: 2020-06-10
+Microchip Location: neck/shoulder
+EU Passport Number: DE-12345-2020
+Passport Issuing Country: DE
+Passport Issue Date: 2020-06-15
+Primary Vet/Issuing Authority: Happy Paws Berlin
+Vet Contact: +49 30 11111111
+Tattoo ID: (leave empty)
+Tattoo Date: (leave empty)
+
+HEALTH & WELLNESS:
+Species-Specific ID: FCI-GR-2020-001
+Color/Markings: Golden, white chest marking
+Weight (kg): 28.5
+Weight Date: 2024-10-15
+Height/Withers (cm): 58.0
+Known Conditions: Hip Dysplasia, Seasonal Allergies
+Conditions Notes: Mild hip dysplasia, managed with exercise. Seasonal allergies in spring.
+Allergies: Pollen, Dust
+Current Medications: (leave empty - add via UI later)
+Past Surgeries: (leave empty - add via UI later)
+Diet Brand: Royal Canin
+Diet Type: Dry
+Feeding Schedule: Twice daily: 7am (2 cups), 6pm (2 cups)
+Behavior/Temperament: Very friendly, energetic, loves people and other dogs
+Behavior Triggers: Loud noises, fireworks
+Bite History: No
+Behavior Notes: (leave empty)
+
+OWNERSHIP & PROVENANCE:
+Acquired From: breeder
+Breeder Name: Golden Dreams Kennel
+Breeder Country: DE
+Breeder Contact: +49 30 99999999, info@goldendreams.de
+Rescue Name: (leave empty)
+Rescue Country: (leave empty)
+Rescue Contact: (leave empty)
+Acquisition Date: 2020-06-01
+Registration Registry: VDH
+Registration Number: VDH-2020-GR-001234
+Insurance Provider: PetCare Insurance
+Insurance Policy Number: PCI-2020-123456
+Insurance Emergency Hotline: +49 800 1234567
+
+CONTACTS & EMERGENCIES:
+Primary Vet Clinic Name: Happy Paws Berlin
+Primary Vet Phone: +49 30 11111111
+Primary Vet Address: Alexanderplatz 1, 10178 Berlin
+Primary Vet Email: info@happypaws.de
+Emergency Clinic Name: Berlin Animal Emergency
+Emergency Clinic Phone: +49 30 88888888
+Emergency Clinic Address: Friedrichstraße 100, 10117 Berlin
+Alternate Emergency Contact Name: (leave empty)
+Alternate Emergency Contact Phone: (leave empty)
+Microchip Registry Name: Tasso
+Microchip Registry ID: TS-2020-001234
+Microchip Registry URL: https://www.tasso.net
+
+TRAVEL & COMPLIANCE:
+Countries Visited: DE, FR, IT, ES
+Intended Travel Countries: PT, GR
+Travel Notes: Requires large crate (size 4). Prefers window seat. Well-behaved on flights.
+
+PRIVACY & CONSENT:
+Data Processing Consent: Yes
+Emergency Sharing Enabled: Yes
+
+═══════════════════════════════════════════════════════════════════════════════
+PET 2: PRINCESS - Persian Cat (Full Profile)
+═══════════════════════════════════════════════════════════════════════════════
+
+BASICS:
+Owner Name: Emma Johnson
+Pet Type: Cat
+Breed: Persian
+Pet Name: Princess
+Date of Birth: 2019-03-22
+Sex: Female
+Neutered/Spayed: Yes
+Notes: Calm and gentle. Prefers quiet environments. Requires daily grooming.
+
+ID & PASSPORT:
+Microchip Number: 982000234567890
+Microchip Implantation Date: 2019-04-05
+Microchip Location: neck/shoulder
+EU Passport Number: FR-54321-2019
+Passport Issuing Country: FR
+Passport Issue Date: 2019-04-10
+Primary Vet/Issuing Authority: Cat Care Clinic
+Vet Contact: +33 1 23456789
+Tattoo ID: (leave empty)
+Tattoo Date: (leave empty)
+
+HEALTH & WELLNESS:
+Species-Specific ID: (leave empty)
+Color/Markings: White with blue eyes
+Weight (kg): 4.2
+Weight Date: 2024-09-20
+Height/Withers (cm): 25.0
+Known Conditions: Respiratory issues
+Conditions Notes: (leave empty)
+Allergies: Certain fish proteins
+Current Medications: (leave empty)
+Past Surgeries: (leave empty)
+Diet Brand: Hills Science Diet
+Diet Type: Wet
+Feeding Schedule: Three times daily: small portions
+Behavior/Temperament: Calm, gentle, affectionate, shy around strangers
+Behavior Triggers: Loud noises, other cats, sudden movements
+Bite History: No
+Behavior Notes: (leave empty)
+
+OWNERSHIP & PROVENANCE:
+Acquired From: rescue
+Breeder Name: (leave empty)
+Breeder Country: (leave empty)
+Breeder Contact: (leave empty)
+Rescue Name: Paris Animal Rescue
+Rescue Country: FR
+Rescue Contact: +33 1 98765432, contact@parisanimalrescue.fr
+Acquisition Date: 2019-06-15
+Registration Registry: (leave empty)
+Registration Number: (leave empty)
+Insurance Provider: PetSecure
+Insurance Policy Number: PS-2019-789012
+Insurance Emergency Hotline: (leave empty)
+
+CONTACTS & EMERGENCIES:
+Primary Vet Clinic Name: Cat Care Clinic
+Primary Vet Phone: +33 1 23456789
+Primary Vet Address: 12 Rue de la Paix, 75002 Paris
+Primary Vet Email: catcare@example.fr
+Emergency Clinic Name: Paris Emergency Vet
+Emergency Clinic Phone: +33 1 98765432
+Emergency Clinic Address: 50 Avenue des Champs-Élysées, 75008 Paris
+Alternate Emergency Contact Name: (leave empty)
+Alternate Emergency Contact Phone: (leave empty)
+Microchip Registry Name: (leave empty)
+Microchip Registry ID: (leave empty)
+Microchip Registry URL: (leave empty)
+
+TRAVEL & COMPLIANCE:
+Countries Visited: FR, BE
+Intended Travel Countries: (leave empty)
+Travel Notes: (leave empty)
+
+PRIVACY & CONSENT:
+Data Processing Consent: Yes
+Emergency Sharing Enabled: No
+
+═══════════════════════════════════════════════════════════════════════════════
+PET 3: MAX - Mixed Breed (Minimal Profile)
+═══════════════════════════════════════════════════════════════════════════════
+
+BASICS:
+Owner Name: Michael Brown
+Pet Type: Dog
+Breed: Mixed Breed
+Pet Name: Max
+Date of Birth: 2021-08-10
+Sex: Male
+Neutered/Spayed: Yes
+Notes: Rescued from shelter. Very playful and energetic.
+
+ID & PASSPORT:
+Microchip Number: (leave empty)
+Microchip Implantation Date: (leave empty)
+Microchip Location: (leave empty)
+EU Passport Number: (leave empty)
+Passport Issuing Country: (leave empty)
+Passport Issue Date: (leave empty)
+Primary Vet/Issuing Authority: (leave empty)
+Vet Contact: (leave empty)
+Tattoo ID: (leave empty)
+Tattoo Date: (leave empty)
+
+HEALTH & WELLNESS:
+Species-Specific ID: (leave empty)
+Color/Markings: Brown and white, medium-sized
+Weight (kg): 18.0
+Weight Date: 2024-10-01
+Height/Withers (cm): (leave empty)
+Known Conditions: (leave empty)
+Conditions Notes: (leave empty)
+Allergies: (leave empty)
+Current Medications: (leave empty)
+Past Surgeries: (leave empty)
+Diet Brand: (leave empty)
+Diet Type: (leave empty)
+Feeding Schedule: (leave empty)
+Behavior/Temperament: Playful, energetic, loves kids
+Behavior Triggers: (leave empty)
+Bite History: No
+Behavior Notes: (leave empty)
+
+OWNERSHIP & PROVENANCE:
+Acquired From: rescue
+Breeder Name: (leave empty)
+Breeder Country: (leave empty)
+Breeder Contact: (leave empty)
+Rescue Name: (leave empty)
+Rescue Country: (leave empty)
+Rescue Contact: (leave empty)
+Acquisition Date: 2021-09-01
+Registration Registry: (leave empty)
+Registration Number: (leave empty)
+Insurance Provider: (leave empty)
+Insurance Policy Number: (leave empty)
+Insurance Emergency Hotline: (leave empty)
+
+CONTACTS & EMERGENCIES:
+Primary Vet Clinic Name: City Animal Hospital
+Primary Vet Phone: +49 30 55555555
+Primary Vet Address: (leave empty)
+Primary Vet Email: (leave empty)
+Emergency Clinic Name: (leave empty)
+Emergency Clinic Phone: (leave empty)
+Emergency Clinic Address: (leave empty)
+Alternate Emergency Contact Name: (leave empty)
+Alternate Emergency Contact Phone: (leave empty)
+Microchip Registry Name: (leave empty)
+Microchip Registry ID: (leave empty)
+Microchip Registry URL: (leave empty)
+
+TRAVEL & COMPLIANCE:
+Countries Visited: (leave empty)
+Intended Travel Countries: (leave empty)
+Travel Notes: (leave empty)
+
+PRIVACY & CONSENT:
+Data Processing Consent: Yes
+Emergency Sharing Enabled: No
+
+═══════════════════════════════════════════════════════════════════════════════
+PET 4: REX - German Shepherd (Full Profile with Medications)
+═══════════════════════════════════════════════════════════════════════════════
+
+BASICS:
+Owner Name: Sarah Miller
+Pet Type: Dog
+Breed: German Shepherd
+Pet Name: Rex
+Date of Birth: 2018-11-05
+Sex: Male
+Neutered/Spayed: Yes
+Notes: Trained police dog (retired). Very obedient and protective.
+
+ID & PASSPORT:
+Microchip Number: 982000345678901
+Microchip Implantation Date: 2018-11-15
+Microchip Location: neck/shoulder
+EU Passport Number: DE-67890-2018
+Passport Issuing Country: DE
+Passport Issue Date: 2018-11-20
+Primary Vet/Issuing Authority: Berlin Veterinary Center
+Vet Contact: +49 30 22222222
+Tattoo ID: (leave empty)
+Tattoo Date: (leave empty)
+
+HEALTH & WELLNESS:
+Species-Specific ID: (leave empty)
+Color/Markings: Black and tan, traditional
+Weight (kg): 35.0
+Weight Date: 2024-10-10
+Height/Withers (cm): 65.0
+Known Conditions: Hip Dysplasia
+Conditions Notes: (leave empty)
+Allergies: (leave empty)
+Current Medications: Joint supplements - 2 tablets daily - Morning with food
+Past Surgeries: Hip surgery - 2022-03-15 - Successful procedure, full recovery
+Diet Brand: Royal Canin Large Breed
+Diet Type: Dry
+Feeding Schedule: Twice daily: 8am (1.5 cups), 7pm (1.5 cups)
+Behavior/Temperament: Obedient, protective, intelligent, loyal
+Behavior Triggers: (leave empty)
+Bite History: No
+Behavior Notes: Excellent with commands. Needs regular mental stimulation.
+
+OWNERSHIP & PROVENANCE:
+Acquired From: breeder
+Breeder Name: Elite German Shepherds
+Breeder Country: DE
+Breeder Contact: +49 30 77777777, contact@elitegs.de
+Rescue Name: (leave empty)
+Rescue Country: (leave empty)
+Rescue Contact: (leave empty)
+Acquisition Date: 2018-12-01
+Registration Registry: VDH
+Registration Number: VDH-2018-GS-005678
+Insurance Provider: Comprehensive Pet Insurance
+Insurance Policy Number: CPI-2018-456789
+Insurance Emergency Hotline: (leave empty)
+
+CONTACTS & EMERGENCIES:
+Primary Vet Clinic Name: Berlin Veterinary Center
+Primary Vet Phone: +49 30 22222222
+Primary Vet Address: Karl-Marx-Allee 45, 10178 Berlin
+Primary Vet Email: (leave empty)
+Emergency Clinic Name: Berlin Emergency Veterinary
+Emergency Clinic Phone: +49 30 33333333
+Emergency Clinic Address: (leave empty)
+Alternate Emergency Contact Name: (leave empty)
+Alternate Emergency Contact Phone: (leave empty)
+Microchip Registry Name: Tasso
+Microchip Registry ID: TS-2018-005678
+Microchip Registry URL: (leave empty)
+
+TRAVEL & COMPLIANCE:
+Countries Visited: DE, AT, CH, CZ
+Intended Travel Countries: (leave empty)
+Travel Notes: Experienced traveler. Well-behaved. Needs large crate.
+
+PRIVACY & CONSENT:
+Data Processing Consent: Yes
+Emergency Sharing Enabled: Yes
+
+═══════════════════════════════════════════════════════════════════════════════
+PET 5: WINSTON - British Shorthair Cat
+═══════════════════════════════════════════════════════════════════════════════
+
+BASICS:
+Owner Name: David Wilson
+Pet Type: Cat
+Breed: British Shorthair
+Pet Name: Winston
+Date of Birth: 2020-01-20
+Sex: Male
+Neutered/Spayed: Yes
+Notes: Calm and dignified. Loves attention on his own terms.
+
+ID & PASSPORT:
+Microchip Number: 982000456789012
+Microchip Implantation Date: 2020-02-01
+Microchip Location: neck/shoulder
+EU Passport Number: UK-98765-2020
+Passport Issuing Country: GB
+Passport Issue Date: 2020-02-05
+Primary Vet/Issuing Authority: London Cat Clinic
+Vet Contact: +44 20 12345678
+Tattoo ID: (leave empty)
+Tattoo Date: (leave empty)
+
+HEALTH & WELLNESS:
+Species-Specific ID: (leave empty)
+Color/Markings: Blue (gray), round face
+Weight (kg): 5.8
+Weight Date: 2024-09-15
+Height/Withers (cm): (leave empty)
+Known Conditions: (leave empty)
+Conditions Notes: (leave empty)
+Allergies: (leave empty)
+Current Medications: (leave empty)
+Past Surgeries: (leave empty)
+Diet Brand: Purina Pro Plan
+Diet Type: Dry
+Feeding Schedule: Free feeding (measured amount)
+Behavior/Temperament: Calm, independent, affectionate when he wants
+Behavior Triggers: (leave empty)
+Bite History: No
+Behavior Notes: (leave empty)
+
+OWNERSHIP & PROVENANCE:
+Acquired From: breeder
+Breeder Name: British Elegance Cattery
+Breeder Country: GB
+Breeder Contact: (leave empty)
+Rescue Name: (leave empty)
+Rescue Country: (leave empty)
+Rescue Contact: (leave empty)
+Acquisition Date: 2020-03-01
+Registration Registry: (leave empty)
+Registration Number: (leave empty)
+Insurance Provider: UK Pet Insurance
+Insurance Policy Number: (leave empty)
+Insurance Emergency Hotline: (leave empty)
+
+CONTACTS & EMERGENCIES:
+Primary Vet Clinic Name: London Cat Clinic
+Primary Vet Phone: +44 20 12345678
+Primary Vet Address: (leave empty)
+Primary Vet Email: (leave empty)
+Emergency Clinic Name: London Emergency Vet
+Emergency Clinic Phone: +44 20 98765432
+Emergency Clinic Address: (leave empty)
+Alternate Emergency Contact Name: (leave empty)
+Alternate Emergency Contact Phone: (leave empty)
+Microchip Registry Name: (leave empty)
+Microchip Registry ID: (leave empty)
+Microchip Registry URL: (leave empty)
+
+TRAVEL & COMPLIANCE:
+Countries Visited: (leave empty)
+Intended Travel Countries: (leave empty)
+Travel Notes: (leave empty)
+
+PRIVACY & CONSENT:
+Data Processing Consent: Yes
+Emergency Sharing Enabled: No
+
+═══════════════════════════════════════════════════════════════════════════════
+PET 6: LUNA - Border Collie
+═══════════════════════════════════════════════════════════════════════════════
+
+BASICS:
+Owner Name: Lisa Anderson
+Pet Type: Dog
+Breed: Border Collie
+Pet Name: Luna
+Date of Birth: 2022-04-12
+Sex: Female
+Neutered/Spayed: Yes
+Notes: Highly intelligent and energetic. Requires lots of mental and physical exercise.
+
+ID & PASSPORT:
+Microchip Number: 982000567890123
+Microchip Implantation Date: 2022-04-25
+Microchip Location: neck/shoulder
+EU Passport Number: (leave empty)
+Passport Issuing Country: (leave empty)
+Passport Issue Date: (leave empty)
+Primary Vet/Issuing Authority: (leave empty)
+Vet Contact: (leave empty)
+Tattoo ID: (leave empty)
+Tattoo Date: (leave empty)
+
+HEALTH & WELLNESS:
+Species-Specific ID: (leave empty)
+Color/Markings: Black and white, merle pattern
+Weight (kg): 20.0
+Weight Date: 2024-10-05
+Height/Withers (cm): 52.0
+Known Conditions: (leave empty)
+Conditions Notes: (leave empty)
+Allergies: Chicken
+Current Medications: (leave empty)
+Past Surgeries: (leave empty)
+Diet Brand: Eukanuba
+Diet Type: (leave empty)
+Feeding Schedule: Three times daily: 7am, 1pm, 7pm
+Behavior/Temperament: Highly intelligent, energetic, eager to please, herding instinct
+Behavior Triggers: Boredom, being alone too long
+Bite History: No
+Behavior Notes: Needs at least 2 hours exercise daily. Enjoys agility training.
+
+OWNERSHIP & PROVENANCE:
+Acquired From: rescue
+Breeder Name: (leave empty)
+Breeder Country: (leave empty)
+Breeder Contact: (leave empty)
+Rescue Name: Border Collie Rescue Network
+Rescue Country: DE
+Rescue Contact: (leave empty)
+Acquisition Date: 2022-05-15
+Registration Registry: (leave empty)
+Registration Number: (leave empty)
+Insurance Provider: (leave empty)
+Insurance Policy Number: (leave empty)
+Insurance Emergency Hotline: (leave empty)
+
+CONTACTS & EMERGENCIES:
+Primary Vet Clinic Name: Munich Animal Clinic
+Primary Vet Phone: +49 89 12345678
+Primary Vet Address: (leave empty)
+Primary Vet Email: (leave empty)
+Emergency Clinic Name: Munich Emergency
+Emergency Clinic Phone: +49 89 98765432
+Emergency Clinic Address: (leave empty)
+Alternate Emergency Contact Name: (leave empty)
+Alternate Emergency Contact Phone: (leave empty)
+Microchip Registry Name: (leave empty)
+Microchip Registry ID: (leave empty)
+Microchip Registry URL: (leave empty)
+
+TRAVEL & COMPLIANCE:
+Countries Visited: DE, AT
+Intended Travel Countries: (leave empty)
+Travel Notes: (leave empty)
+
+PRIVACY & CONSENT:
+Data Processing Consent: Yes
+Emergency Sharing Enabled: Yes
+
+═══════════════════════════════════════════════════════════════════════════════
+PET 7: MIMI - Siamese Cat
+═══════════════════════════════════════════════════════════════════════════════
+
+BASICS:
+Owner Name: Robert Taylor
+Pet Type: Cat
+Breed: Siamese
+Pet Name: Mimi
+Date of Birth: 2021-07-08
+Sex: Female
+Neutered/Spayed: Yes
+Notes: Very vocal and social. Demands attention.
+
+ID & PASSPORT:
+Microchip Number: 982000678901234
+Microchip Implantation Date: (leave empty)
+Microchip Location: (leave empty)
+EU Passport Number: (leave empty)
+Passport Issuing Country: (leave empty)
+Passport Issue Date: (leave empty)
+Primary Vet/Issuing Authority: (leave empty)
+Vet Contact: (leave empty)
+Tattoo ID: (leave empty)
+Tattoo Date: (leave empty)
+
+HEALTH & WELLNESS:
+Species-Specific ID: (leave empty)
+Color/Markings: Seal point (cream body, dark face, ears, paws, tail)
+Weight (kg): 4.5
+Weight Date: 2024-09-25
+Height/Withers (cm): (leave empty)
+Known Conditions: Asthma
+Conditions Notes: (leave empty)
+Allergies: Dust, Strong perfumes
+Current Medications: (leave empty)
+Past Surgeries: (leave empty)
+Diet Brand: Royal Canin Siamese
+Diet Type: Wet
+Feeding Schedule: (leave empty)
+Behavior/Temperament: Very vocal, social, affectionate, talkative
+Behavior Triggers: Being ignored, closed doors, other cats
+Bite History: No
+Behavior Notes: (leave empty)
+
+OWNERSHIP & PROVENANCE:
+Acquired From: breeder
+Breeder Name: Siamese Elegance
+Breeder Country: IT
+Breeder Contact: (leave empty)
+Rescue Name: (leave empty)
+Rescue Country: (leave empty)
+Rescue Contact: (leave empty)
+Acquisition Date: 2021-08-01
+Registration Registry: (leave empty)
+Registration Number: (leave empty)
+Insurance Provider: PetLife Insurance
+Insurance Policy Number: PLI-2021-345678
+Insurance Emergency Hotline: (leave empty)
+
+CONTACTS & EMERGENCIES:
+Primary Vet Clinic Name: Milan Cat Hospital
+Primary Vet Phone: +39 02 12345678
+Primary Vet Address: (leave empty)
+Primary Vet Email: (leave empty)
+Emergency Clinic Name: (leave empty)
+Emergency Clinic Phone: (leave empty)
+Emergency Clinic Address: (leave empty)
+Alternate Emergency Contact Name: (leave empty)
+Alternate Emergency Contact Phone: (leave empty)
+Microchip Registry Name: (leave empty)
+Microchip Registry ID: (leave empty)
+Microchip Registry URL: (leave empty)
+
+TRAVEL & COMPLIANCE:
+Countries Visited: (leave empty)
+Intended Travel Countries: (leave empty)
+Travel Notes: (leave empty)
+
+PRIVACY & CONSENT:
+Data Processing Consent: Yes
+Emergency Sharing Enabled: No
+
+═══════════════════════════════════════════════════════════════════════════════
+PET 8: BELLA - French Bulldog
+═══════════════════════════════════════════════════════════════════════════════
+
+BASICS:
+Owner Name: Jennifer Martinez
+Pet Type: Dog
+Breed: French Bulldog
+Pet Name: Bella
+Date of Birth: 2023-02-14
+Sex: Female
+Neutered/Spayed: No
+Notes: Sweet and playful. Loves to cuddle. Can be stubborn.
+
+ID & PASSPORT:
+Microchip Number: 982000789012345
+Microchip Implantation Date: 2023-02-28
+Microchip Location: neck/shoulder
+EU Passport Number: FR-11111-2023
+Passport Issuing Country: FR
+Passport Issue Date: (leave empty)
+Primary Vet/Issuing Authority: (leave empty)
+Vet Contact: (leave empty)
+Tattoo ID: (leave empty)
+Tattoo Date: (leave empty)
+
+HEALTH & WELLNESS:
+Species-Specific ID: (leave empty)
+Color/Markings: Brindle (brown with black stripes)
+Weight (kg): 12.5
+Weight Date: 2024-10-12
+Height/Withers (cm): (leave empty)
+Known Conditions: Brachycephalic syndrome, Allergies
+Conditions Notes: (leave empty)
+Allergies: (leave empty)
+Current Medications: (leave empty)
+Past Surgeries: (leave empty)
+Diet Brand: Hills Science Plan Small Breed
+Diet Type: Dry
+Feeding Schedule: Three small meals: 8am, 2pm, 8pm
+Behavior/Temperament: Sweet, playful, sometimes stubborn, loves attention
+Behavior Triggers: (leave empty)
+Bite History: No
+Behavior Notes: (leave empty)
+
+OWNERSHIP & PROVENANCE:
+Acquired From: breeder
+Breeder Name: French Bulldog Paris
+Breeder Country: FR
+Breeder Contact: (leave empty)
+Rescue Name: (leave empty)
+Rescue Country: (leave empty)
+Rescue Contact: (leave empty)
+Acquisition Date: 2023-03-10
+Registration Registry: (leave empty)
+Registration Number: (leave empty)
+Insurance Provider: PetAssure
+Insurance Policy Number: PA-2023-789012
+Insurance Emergency Hotline: +33 800 123456
+
+CONTACTS & EMERGENCIES:
+Primary Vet Clinic Name: Paris Pet Clinic
+Primary Vet Phone: +33 1 55555555
+Primary Vet Address: 15 Rue de Rivoli, 75001 Paris
+Primary Vet Email: (leave empty)
+Emergency Clinic Name: Paris Emergency
+Emergency Clinic Phone: +33 1 66666666
+Emergency Clinic Address: (leave empty)
+Alternate Emergency Contact Name: (leave empty)
+Alternate Emergency Contact Phone: (leave empty)
+Microchip Registry Name: (leave empty)
+Microchip Registry ID: (leave empty)
+Microchip Registry URL: (leave empty)
+
+TRAVEL & COMPLIANCE:
+Countries Visited: FR
+Intended Travel Countries: (leave empty)
+Travel Notes: (leave empty)
+
+PRIVACY & CONSENT:
+Data Processing Consent: Yes
+Emergency Sharing Enabled: No
+
+═══════════════════════════════════════════════════════════════════════════════
+PET 9: CHARLIE - Labrador Retriever
+═══════════════════════════════════════════════════════════════════════════════
+
+BASICS:
+Owner Name: Christopher Lee
+Pet Type: Dog
+Breed: Labrador Retriever
+Pet Name: Charlie
+Date of Birth: 2019-09-30
+Sex: Male
+Neutered/Spayed: Yes
+Notes: Very friendly and gentle. Great with children. Loves water.
+
+ID & PASSPORT:
+Microchip Number: 982000890123456
+Microchip Implantation Date: 2019-10-10
+Microchip Location: (leave empty)
+EU Passport Number: (leave empty)
+Passport Issuing Country: (leave empty)
+Passport Issue Date: (leave empty)
+Primary Vet/Issuing Authority: (leave empty)
+Vet Contact: (leave empty)
+Tattoo ID: (leave empty)
+Tattoo Date: (leave empty)
+
+HEALTH & WELLNESS:
+Species-Specific ID: (leave empty)
+Color/Markings: Black, shiny coat
+Weight (kg): 32.0
+Weight Date: 2024-10-08
+Height/Withers (cm): 57.0
+Known Conditions: (leave empty)
+Conditions Notes: (leave empty)
+Allergies: Certain grains
+Current Medications: (leave empty)
+Past Surgeries: (leave empty)
+Diet Brand: Purina Pro Plan
+Diet Type: (leave empty)
+Feeding Schedule: Twice daily: 7am, 6pm
+Behavior/Temperament: Very friendly, gentle, loves people and water
+Behavior Triggers: (leave empty)
+Bite History: No
+Behavior Notes: Excellent with kids. Loves swimming and retrieving.
+
+OWNERSHIP & PROVENANCE:
+Acquired From: private
+Breeder Name: (leave empty)
+Breeder Country: (leave empty)
+Breeder Contact: (leave empty)
+Rescue Name: (leave empty)
+Rescue Country: (leave empty)
+Rescue Contact: (leave empty)
+Acquisition Date: 2019-11-01
+Registration Registry: (leave empty)
+Registration Number: (leave empty)
+Insurance Provider: (leave empty)
+Insurance Policy Number: (leave empty)
+Insurance Emergency Hotline: (leave empty)
+
+CONTACTS & EMERGENCIES:
+Primary Vet Clinic Name: Hamburg Animal Care
+Primary Vet Phone: +49 40 12345678
+Primary Vet Address: (leave empty)
+Primary Vet Email: (leave empty)
+Emergency Clinic Name: Hamburg Emergency Vet
+Emergency Clinic Phone: (leave empty)
+Emergency Clinic Address: (leave empty)
+Alternate Emergency Contact Name: (leave empty)
+Alternate Emergency Contact Phone: (leave empty)
+Microchip Registry Name: (leave empty)
+Microchip Registry ID: (leave empty)
+Microchip Registry URL: (leave empty)
+
+TRAVEL & COMPLIANCE:
+Countries Visited: DE, DK, NL
+Intended Travel Countries: (leave empty)
+Travel Notes: (leave empty)
+
+PRIVACY & CONSENT:
+Data Processing Consent: Yes
+Emergency Sharing Enabled: Yes
+
+═══════════════════════════════════════════════════════════════════════════════
+PET 10: BANDIT - Ferret
+═══════════════════════════════════════════════════════════════════════════════
+
+BASICS:
+Owner Name: Amanda White
+Pet Type: Ferret
+Breed: Standard
+Pet Name: Bandit
+Date of Birth: 2022-11-05
+Sex: Male
+Neutered/Spayed: Yes
+Notes: Very playful and curious. Requires daily exercise and stimulation.
+
+ID & PASSPORT:
+Microchip Number: 982000901234567
+Microchip Implantation Date: 2022-11-15
+Microchip Location: (leave empty)
+EU Passport Number: (leave empty)
+Passport Issuing Country: (leave empty)
+Passport Issue Date: (leave empty)
+Primary Vet/Issuing Authority: (leave empty)
+Vet Contact: (leave empty)
+Tattoo ID: (leave empty)
+Tattoo Date: (leave empty)
+
+HEALTH & WELLNESS:
+Species-Specific ID: (leave empty)
+Color/Markings: Sable (brown with dark mask)
+Weight (kg): 1.2
+Weight Date: 2024-09-30
+Height/Withers (cm): (leave empty)
+Known Conditions: Insulinoma (monitored)
+Conditions Notes: (leave empty)
+Allergies: (leave empty)
+Current Medications: (leave empty)
+Past Surgeries: (leave empty)
+Diet Brand: Marshall Premium Ferret Diet
+Diet Type: Dry pellets
+Feeding Schedule: Free feeding (small portions, multiple times)
+Behavior/Temperament: Playful, curious, energetic, mischievous
+Behavior Triggers: (leave empty)
+Bite History: No
+Behavior Notes: Needs at least 4 hours out-of-cage time daily. Loves tunnels and toys.
+
+OWNERSHIP & PROVENANCE:
+Acquired From: breeder
+Breeder Name: (leave empty)
+Breeder Country: (leave empty)
+Breeder Contact: (leave empty)
+Rescue Name: (leave empty)
+Rescue Country: (leave empty)
+Rescue Contact: (leave empty)
+Acquisition Date: 2022-12-01
+Registration Registry: (leave empty)
+Registration Number: (leave empty)
+Insurance Provider: (leave empty)
+Insurance Policy Number: (leave empty)
+Insurance Emergency Hotline: (leave empty)
+
+CONTACTS & EMERGENCIES:
+Primary Vet Clinic Name: Exotic Pet Clinic
+Primary Vet Phone: +49 30 44444444
+Primary Vet Address: (leave empty)
+Primary Vet Email: (leave empty)
+Emergency Clinic Name: Berlin Exotic Emergency
+Emergency Clinic Phone: +49 30 55555555
+Emergency Clinic Address: (leave empty)
+Alternate Emergency Contact Name: (leave empty)
+Alternate Emergency Contact Phone: (leave empty)
+Microchip Registry Name: (leave empty)
+Microchip Registry ID: (leave empty)
+Microchip Registry URL: (leave empty)
+
+TRAVEL & COMPLIANCE:
+Countries Visited: (leave empty)
+Intended Travel Countries: (leave empty)
+Travel Notes: (leave empty)
+
+PRIVACY & CONSENT:
+Data Processing Consent: Yes
+Emergency Sharing Enabled: No
+
+================================================================================
+END OF DUMMY PET DATA
+================================================================================
+All 10 pets with comprehensive data provided above
+Copy individual field values as needed for testing
+================================================================================
+

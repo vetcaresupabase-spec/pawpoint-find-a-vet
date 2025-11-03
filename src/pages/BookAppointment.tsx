@@ -17,7 +17,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { format, addDays, startOfDay, isSameDay, setHours, setMinutes, isPast } from "date-fns";
-import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Euro } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Euro, Share2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { useActiveServices } from "@/hooks/useServices";
 import { PetOwnerAuthDialog } from "@/components/PetOwnerAuthDialog";
 
@@ -134,148 +135,82 @@ export default function BookAppointment() {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [selectedPetId, setSelectedPetId] = useState<string>("");
+  const [shareWithVet, setShareWithVet] = useState(false);
+  const [userPets, setUserPets] = useState<any[]>([]);
 
-  // Check authentication
+  // Check authentication and fetch pets
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+      
+      // Fetch user's pets if logged in
+      if (user) {
+        const { data: pets, error } = await supabase
+          .from("pets")
+          .select("id, name, pet_type, breed, default_sharing_enabled")
+          .eq("owner_id", user.id)
+          .order("created_at", { ascending: false });
+        
+        if (!error && pets) {
+          setUserPets(pets);
+          // Auto-select first pet if available
+          if (pets.length > 0) {
+            setSelectedPetId(pets[0].id);
+            setPetName(pets[0].name || "");
+            setPetType(pets[0].pet_type || "");
+            setShareWithVet(pets[0].default_sharing_enabled || false);
+          }
+        }
+      }
     };
     checkAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
+      
+      // Fetch pets when user logs in
+      if (session?.user) {
+        const { data: pets, error } = await supabase
+          .from("pets")
+          .select("id, name, pet_type, breed, default_sharing_enabled")
+          .eq("owner_id", session.user.id)
+          .order("created_at", { ascending: false });
+        
+        if (!error && pets) {
+          setUserPets(pets);
+          // Auto-select first pet if available
+          if (pets.length > 0) {
+            setSelectedPetId(pets[0].id);
+            setPetName(pets[0].name || "");
+            setPetType(pets[0].pet_type || "");
+            setShareWithVet(pets[0].default_sharing_enabled || false);
+          }
+        }
+      } else {
+        setUserPets([]);
+        setSelectedPetId("");
+        setShareWithVet(false);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Auto-continue booking after successful login
+  // Close login dialog after successful login and preserve booking state
+  // User will manually click "Book Appointment" button after login
   useEffect(() => {
     if (user && showLoginDialog) {
       setShowLoginDialog(false);
       
-      // If all required fields are filled, automatically proceed with booking
-      if (selectedServiceId && selectedSlot && petName) {
-        setTimeout(() => {
-          void (async () => {
-            setSubmitting(true);
-
-            // Always use 15-minute slot duration regardless of service duration
-            const duration = 15;
-
-            // Parse ISO datetime to get date and time components
-            const slotStart = new Date(selectedSlot.start);
-            const appointmentDate = format(slotStart, "yyyy-MM-dd");
-            const startTime = format(slotStart, "HH:mm:ss");
-            
-            const slotEnd = new Date(selectedSlot.end);
-            const endTime = format(slotEnd, "HH:mm:ss");
-
-            // Double-check that the slot is still available (prevent race conditions)
-            if (isSlotBooked(selectedSlot.start, selectedSlot.end, appointmentDate)) {
-              setSubmitting(false);
-              toast({
-                title: "Slot no longer available",
-                description: "This time slot has been booked by another user. Please select a different time.",
-                variant: "destructive",
-              });
-              // Refresh bookings and update slot availability
-              const today = format(new Date(), "yyyy-MM-dd");
-              const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
-              const { data: bookingsData } = await supabase
-                .from("bookings" as any)
-                .select("id, clinic_id, appointment_date, start_time, end_time, status")
-                .eq("clinic_id", clinicId)
-                .gte("appointment_date", today)
-                .lte("appointment_date", futureDate)
-                .in("status", ["pending", "confirmed", "checked_in"])
-                .order("appointment_date")
-                .order("start_time");
-              if (bookingsData) {
-                setExistingBookings(bookingsData as unknown as Booking[]);
-              }
-              return;
-            }
-
-            const { error } = await supabase.from("bookings" as any).insert({
-              clinic_id: clinicId,
-              service_id: selectedServiceId,
-              pet_owner_id: user.id,
-              pet_name: petName,
-              pet_type: petType || null,
-              appointment_date: appointmentDate,
-              start_time: startTime,
-              end_time: endTime,
-              duration_minutes: duration,
-              status: "pending",
-              notes: notes || null,
-            });
-
-            setSubmitting(false);
-
-            if (error) {
-              console.error("Booking error:", error);
-              // Check if error is due to unique constraint violation (double booking)
-              if (error.code === '23505' || error.message?.includes('unique') || error.message?.includes('duplicate')) {
-                toast({
-                  title: "Double booking prevented",
-                  description: "This time slot has already been booked. Please select a different time.",
-                  variant: "destructive",
-                });
-              } else {
-                toast({
-                  title: "Booking failed",
-                  description: error.message || "Could not create booking. Please try again.",
-                  variant: "destructive",
-                });
-              }
-              
-              // Refresh bookings to update availability
-              const today = format(new Date(), "yyyy-MM-dd");
-              const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
-              const { data: bookingsData } = await supabase
-                .from("bookings" as any)
-                .select("id, clinic_id, appointment_date, start_time, end_time, status")
-                .eq("clinic_id", clinicId)
-                .gte("appointment_date", today)
-                .lte("appointment_date", futureDate)
-                .in("status", ["pending", "confirmed", "checked_in"])
-                .order("appointment_date")
-                .order("start_time");
-              if (bookingsData) {
-                setExistingBookings(bookingsData as unknown as Booking[]);
-              }
-              return;
-            }
-
-            // Refresh bookings after successful booking
-            const today = format(new Date(), "yyyy-MM-dd");
-            const futureDate = format(addDays(new Date(), 30), "yyyy-MM-dd");
-            const { data: bookingsData } = await supabase
-              .from("bookings" as any)
-              .select("id, clinic_id, appointment_date, start_time, end_time, status")
-              .eq("clinic_id", clinicId)
-              .gte("appointment_date", today)
-              .lte("appointment_date", futureDate)
-              .in("status", ["pending", "confirmed", "checked_in"])
-              .order("appointment_date")
-              .order("start_time");
-            if (bookingsData) {
-              setExistingBookings(bookingsData as unknown as Booking[]);
-            }
-
-            toast({
-              title: "Booked!",
-              description: "Check your email for confirmation.",
-            });
-
-            navigate("/pet-owner-dashboard");
-          })();
-        }, 300);
-      }
+      // Show success message that user is logged in and can continue booking
+      toast({
+        title: "Welcome back!",
+        description: "You're now logged in. Fill in the booking details and click 'Book Appointment' to complete your booking.",
+      });
     }
-  }, [user, showLoginDialog, selectedServiceId, selectedSlot, petName, services, clinicId, petType, notes, navigate, existingBookings]);
+  }, [user, showLoginDialog]);
 
   // Fetch clinic, services, and exceptions
   useEffect(() => {
@@ -663,6 +598,10 @@ export default function BookAppointment() {
       duration_minutes: duration,
       status: "pending",
       notes: notes || null,
+      // Pet information sharing
+      shared_pet_id: selectedPetId || null,
+      pet_info_shared: shareWithVet && selectedPetId ? true : false,
+      pet_sharing_consent: shareWithVet,
     });
 
     setSubmitting(false);
@@ -820,23 +759,128 @@ export default function BookAppointment() {
                 </div>
 
                 {/* Pet Information */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Pet Name *</label>
-                  <Input
-                    value={petName}
-                    onChange={(e) => setPetName(e.target.value)}
-                    placeholder="e.g., Max"
-                    required
-                  />
-                </div>
+                {user && userPets.length > 0 ? (
+                  <>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Select Pet *</label>
+                      <Select 
+                        value={selectedPetId || "new"} 
+                        onValueChange={(value) => {
+                          if (value === "new") {
+                            setSelectedPetId("");
+                            setPetName("");
+                            setPetType("");
+                            setShareWithVet(false);
+                          } else {
+                            setSelectedPetId(value);
+                            const selectedPet = userPets.find(p => p.id === value);
+                            if (selectedPet) {
+                              setPetName(selectedPet.name || "");
+                              setPetType(selectedPet.pet_type || "");
+                              setShareWithVet(selectedPet.default_sharing_enabled || false);
+                            }
+                          }
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose your pet" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {userPets.map((pet) => (
+                            <SelectItem key={pet.id} value={pet.id}>
+                              {pet.name || "Unnamed Pet"} ({pet.pet_type}) - {pet.breed}
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="new">+ Add New Pet Details</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Pet Type</label>
-                  <Input
-                    value={petType}
-                    onChange={(e) => setPetType(e.target.value)}
-                    placeholder="e.g., Dog, Cat"
-                  />
+                    {/* Show manual input when "new" is selected or no pet is selected */}
+                    {!selectedPetId && (
+                      <>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Pet Name *</label>
+                          <Input
+                            value={petName}
+                            onChange={(e) => setPetName(e.target.value)}
+                            placeholder="e.g., Max"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Pet Type</label>
+                          <Input
+                            value={petType}
+                            onChange={(e) => setPetType(e.target.value)}
+                            placeholder="e.g., Dog, Cat"
+                          />
+                        </div>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Pet Name *</label>
+                      <Input
+                        value={petName}
+                        onChange={(e) => setPetName(e.target.value)}
+                        placeholder="e.g., Max"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Pet Type</label>
+                      <Input
+                        value={petType}
+                        onChange={(e) => setPetType(e.target.value)}
+                        placeholder="e.g., Dog, Cat"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* Pet Information Sharing - Show for all users */}
+                <div className={`p-3 border rounded-lg ${user ? 'bg-blue-50/50' : 'bg-gray-50/50'}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Share2 className={`h-4 w-4 ${user ? 'text-blue-600' : 'text-gray-400'}`} />
+                      <div>
+                        <p className={`text-sm font-medium ${user ? 'text-blue-900' : 'text-gray-700'}`}>
+                          Share Pet Details with Vet
+                        </p>
+                        <p className={`text-xs ${user ? 'text-blue-700' : 'text-gray-500'}`}>
+                          Allow the vet to view your pet's complete profile during the appointment
+                        </p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={user ? shareWithVet : false}
+                      onCheckedChange={(checked) => {
+                        if (!user) {
+                          // Show login dialog for non-logged-in users
+                          setShowLoginDialog(true);
+                        } else {
+                          setShareWithVet(checked);
+                        }
+                      }}
+                      disabled={!user}
+                      className={`${user ? 'data-[state=checked]:bg-blue-600' : 'opacity-50 cursor-not-allowed'}`}
+                    />
+                  </div>
+                  {user && shareWithVet && (
+                    <p className="text-xs text-blue-600 mt-2 pl-6">
+                      ✓ Vet will have access to medical history, allergies, and other important details
+                    </p>
+                  )}
+                  {!user && (
+                    <p className="text-xs text-gray-500 mt-2 pl-6">
+                      Please log in to share your pet's details with the vet
+                    </p>
+                  )}
                 </div>
 
                 {/* Notes */}
