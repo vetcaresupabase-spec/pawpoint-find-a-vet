@@ -136,7 +136,7 @@ export function PetOwnerAuthDialog({ open, onOpenChange }: PetOwnerAuthDialogPro
           <DialogDescription>
             {isLogin
               ? "Login to manage your pet's appointments"
-              : "Join PetFinder to book appointments with trusted vets"}
+              : "Join Pet2Vet.app to book appointments with trusted vets"}
           </DialogDescription>
         </DialogHeader>
 

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Search, Calendar, Bell, Heart, Users, Shield, Star } from "lucide-react";
+import { Search, Calendar, Bell, Heart, Users, Shield, Star, PawPrint } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { SearchBar } from "@/components/SearchBar";
@@ -16,7 +16,7 @@ const Index = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-primary/10">
+      <section className="relative overflow-hidden" style={{backgroundImage: 'linear-gradient(to right bottom, #F9F5F1, rgba(243, 227, 206, 0.3), rgba(63, 166, 166, 0.1))'}}>
         <div className="container grid lg:grid-cols-2 gap-12 items-center py-12 lg:py-20">
           <div className="space-y-6">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-foreground">
@@ -70,7 +70,11 @@ const Index = () => {
           
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-to-br from-primary/20 to-accent/20 rounded-3xl blur-3xl opacity-50" />
-            <img src={heroImage} alt="Happy pet owner with veterinarian and dog" className="relative rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]" />
+            <img 
+              src={heroImage} 
+              alt="Cheerful veterinarian with Golden Retriever, Beagle, cat, rabbit, parakeet, and goldfish in a modern veterinary clinic" 
+              className="relative rounded-2xl shadow-2xl w-full h-full object-contain" 
+            />
           </div>
         </div>
       </section>
@@ -129,7 +133,7 @@ const Index = () => {
             <div className="grid md:grid-cols-2 gap-0 items-stretch">
               <div className="p-8 lg:p-12 space-y-6 flex flex-col justify-center">
                 <h2 className="text-3xl lg:text-4xl font-bold">
-                  Grow your practice with PetFinder
+                  Grow your practice with Pet2Vet.app
                 </h2>
                 <p className="text-muted-foreground text-lg">
                   Simplify your schedule, reduce no-shows, and attract new clients. Join free for 3 months.
@@ -192,7 +196,7 @@ const Index = () => {
               Trusted by pet lovers across Europe
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              PetFinder makes accessing veterinary care fast and easy. Join thousands of pet owners keeping their companions healthy.
+              Pet2Vet.app makes accessing veterinary care fast and easy. Join thousands of pet owners keeping their companions healthy.
             </p>
             
             <div className="flex items-center justify-center gap-2 mb-6">
@@ -248,11 +252,11 @@ const Index = () => {
         <div className="container">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <Heart className="h-6 w-6 text-primary fill-primary" />
-              <span className="text-lg font-bold">PetFinder</span>
+              <PawPrint className="h-6 w-6 text-primary" />
+              <span className="text-lg font-bold">Pet2Vet<span className="text-muted-foreground">.app</span></span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2025 PetFinder. Caring for pets, one appointment at a time.
+              © 2025 Pet2Vet.app. Caring for pets, one appointment at a time.
             </p>
           </div>
         </div>

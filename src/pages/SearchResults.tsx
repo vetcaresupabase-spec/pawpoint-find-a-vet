@@ -249,7 +249,7 @@ const SearchResults = () => {
                       }}
                     >
                       <Calendar className="h-4 w-4 mr-2" />
-                      Book Appointment
+                      <span className="text-xs">Book Appointment</span>
                     </Button>
                     <Button 
                       variant="outline" 

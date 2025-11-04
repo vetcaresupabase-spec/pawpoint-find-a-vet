@@ -20,7 +20,8 @@ export async function searchClinics(params: {
   language?: string;
   onlyOpenNow?: boolean;
 }) {
-  let query = supabase.from("clinics").select("*", { count: "exact" });
+  // Only show active clinics in search
+  let query = supabase.from("clinics").select("*", { count: "exact" }).eq("is_active", true);
 
   if (params.city) {
     query = query.ilike("city", `%${params.city}%`);

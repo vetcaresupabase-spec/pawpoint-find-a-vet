@@ -429,8 +429,8 @@ export default function BookAppointment() {
       const slots: TimeSlot[] = [];
       const isToday = isSameDay(day, new Date());
       
-      // Generate slots from 8:00 to 18:00 in 15-minute intervals
-      for (let hour = 8; hour < 18; hour++) {
+      // Generate slots from 9:00 to 18:00 in 15-minute intervals
+      for (let hour = 9; hour < 18; hour++) {
         for (let minute of [0, 15, 30, 45]) {
           const slotDate = setMinutes(setHours(day, hour), minute);
           const slotEnd = new Date(slotDate.getTime() + 15 * 60 * 1000); // 15 min duration
@@ -682,38 +682,38 @@ export default function BookAppointment() {
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <Header />
 
-      <div className="container py-6">
-        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
+      <div className="container py-2">
+        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-1 text-xs h-8">
+          <ArrowLeft className="h-3 w-3 mr-1" />
           Back
         </Button>
 
-        <div className="grid lg:grid-cols-[350px_1fr] gap-6">
+        <div className="grid lg:grid-cols-[320px_1fr] gap-3">
           {/* Left Sidebar - Clinic Info & Form */}
-          <div className="space-y-4">
-            <Card className="p-6">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-teal-100 to-blue-100 flex items-center justify-center flex-shrink-0">
-                  <span className="text-2xl font-bold text-teal-600">
+          <div className="space-y-2">
+            <Card className="p-3">
+              <div className="flex items-start gap-2 mb-2">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-teal-100 to-blue-100 flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm font-bold text-teal-600">
                     {clinic.name.split(' ').map(w => w.charAt(0)).join('').slice(0, 2)}
                   </span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold">{clinic.name}</h2>
-                  <p className="text-sm text-muted-foreground">
+                  <h2 className="text-base font-bold">{clinic.name}</h2>
+                  <p className="text-xs text-muted-foreground">
                     {clinic.specialties?.join(", ") || "Veterinary Clinic"}
                   </p>
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
                     <MapPin className="h-3 w-3" />
                     <span>{clinic.address_line1}, {clinic.city}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {/* Service Selection with Categories */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Service *</label>
+                  <label className="text-sm font-medium mb-1.5 block">Service *</label>
                   <Select 
                     value={selectedServiceId} 
                     onValueChange={(value) => {
@@ -762,7 +762,7 @@ export default function BookAppointment() {
                 {user && userPets.length > 0 ? (
                   <>
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Select Pet *</label>
+                      <label className="text-sm font-medium mb-1.5 block">Select Pet *</label>
                       <Select 
                         value={selectedPetId || "new"} 
                         onValueChange={(value) => {
@@ -800,7 +800,7 @@ export default function BookAppointment() {
                     {!selectedPetId && (
                       <>
                         <div>
-                          <label className="text-sm font-medium mb-2 block">Pet Name *</label>
+                          <label className="text-sm font-medium mb-1.5 block">Pet Name *</label>
                           <Input
                             value={petName}
                             onChange={(e) => setPetName(e.target.value)}
@@ -810,7 +810,7 @@ export default function BookAppointment() {
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium mb-2 block">Pet Type</label>
+                          <label className="text-sm font-medium mb-1.5 block">Pet Type</label>
                           <Input
                             value={petType}
                             onChange={(e) => setPetType(e.target.value)}
@@ -823,7 +823,7 @@ export default function BookAppointment() {
                 ) : (
                   <>
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Pet Name *</label>
+                      <label className="text-sm font-medium mb-1.5 block">Pet Name *</label>
                       <Input
                         value={petName}
                         onChange={(e) => setPetName(e.target.value)}
@@ -833,7 +833,7 @@ export default function BookAppointment() {
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Pet Type</label>
+                      <label className="text-sm font-medium mb-1.5 block">Pet Type</label>
                       <Input
                         value={petType}
                         onChange={(e) => setPetType(e.target.value)}
@@ -844,16 +844,16 @@ export default function BookAppointment() {
                 )}
 
                 {/* Pet Information Sharing - Show for all users */}
-                <div className={`p-3 border rounded-lg ${user ? 'bg-blue-50/50' : 'bg-gray-50/50'}`}>
+                <div className={`p-1.5 border rounded-lg ${user ? 'bg-blue-50/50' : 'bg-gray-50/50'}`}>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Share2 className={`h-4 w-4 ${user ? 'text-blue-600' : 'text-gray-400'}`} />
+                    <div className="flex items-center gap-1.5">
+                      <Share2 className={`h-3.5 w-3.5 ${user ? 'text-blue-600' : 'text-gray-400'}`} />
                       <div>
-                        <p className={`text-sm font-medium ${user ? 'text-blue-900' : 'text-gray-700'}`}>
-                          Share Pet Details with Vet
+                        <p className={`text-xs font-medium ${user ? 'text-blue-900' : 'text-gray-700'}`}>
+                          Share Pet Details
                         </p>
                         <p className={`text-xs ${user ? 'text-blue-700' : 'text-gray-500'}`}>
-                          Allow the vet to view your pet's complete profile during the appointment
+                          Allow vet to view profile
                         </p>
                       </div>
                     </div>
@@ -872,35 +872,35 @@ export default function BookAppointment() {
                     />
                   </div>
                   {user && shareWithVet && (
-                    <p className="text-xs text-blue-600 mt-2 pl-6">
-                      ✓ Vet will have access to medical history, allergies, and other important details
+                    <p className="text-xs text-blue-600 mt-1 pl-5">
+                      ✓ Vet will have access to medical history
                     </p>
                   )}
                   {!user && (
-                    <p className="text-xs text-gray-500 mt-2 pl-6">
-                      Please log in to share your pet's details with the vet
+                    <p className="text-xs text-gray-500 mt-1 pl-5">
+                      Please log in to share details
                     </p>
                   )}
                 </div>
 
                 {/* Notes */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Additional Notes</label>
+                  <label className="text-xs font-medium mb-1 block">Additional Notes</label>
                   <Textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Any special requests or information"
-                    rows={3}
+                    rows={1}
+                    className="text-xs"
                   />
                 </div>
 
                 {/* Selected Slot Display */}
                 {selectedSlot && (
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm font-medium text-blue-900">Selected Appointment:</p>
-                    <p className="text-sm text-blue-700">
-                      {format(new Date(selectedSlot.start), "EEEE, MMMM d, yyyy")} at{" "}
-                      {formatTimeSlot(selectedSlot.start)}
+                  <div className="p-1.5 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-xs font-medium text-blue-900">Selected:</p>
+                    <p className="text-xs text-blue-700">
+                      {format(new Date(selectedSlot.start), "MMM d")} at {formatTimeSlot(selectedSlot.start)}
                     </p>
                   </div>
                 )}
@@ -908,33 +908,26 @@ export default function BookAppointment() {
                 {/* Submit Button */}
                 <Button
                   onClick={handleBookingAction}
-                  className="w-full bg-teal-600 hover:bg-teal-700"
-                  size="lg"
+                  className="w-full bg-teal-600 hover:bg-teal-700 h-9"
+                  size="sm"
                   disabled={submitting || !selectedServiceId || !selectedSlot || !petName}
                 >
-                  {submitting ? "Booking..." : user ? "Book appointment" : "Login to Book"}
+                  {submitting ? "Booking..." : user ? <span className="text-xs">Book Appointment</span> : "Login to Book"}
                 </Button>
                 
-                {/* Debug info */}
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <p>Service selected: {selectedServiceId ? "✓" : "✗"}</p>
-                  <p>Time slot selected: {selectedSlot ? "✓" : "✗"}</p>
-                  <p>Pet name: {petName ? "✓" : "✗"}</p>
-                </div>
-                
                 {!user && (
-                  <p className="text-xs text-center text-muted-foreground">
-                    You can view available slots, but login is required to complete booking
+                  <p className="text-xs text-center text-muted-foreground mt-1">
+                    Login required to complete booking
                   </p>
                 )}
               </div>
             </Card>
 
             {/* Payment Info */}
-            <Card className="p-4 bg-muted/50">
-              <div className="flex items-start gap-2">
-                <Euro className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div className="text-sm">
+            <Card className="p-2 bg-muted/50">
+              <div className="flex items-start gap-1.5">
+                <Euro className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <div className="text-xs">
                   <p className="font-medium">Payment Information</p>
                   <p className="text-muted-foreground">
                     Publicly and privately insured persons as well as self-payers
@@ -945,9 +938,9 @@ export default function BookAppointment() {
           </div>
 
           {/* Right Side - Calendar */}
-          <Card className="p-6" data-lov-id="src\pages\BookAppointment.tsx:367:10">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">
+          <Card className="p-3" data-lov-id="src\pages\BookAppointment.tsx:367:10">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-lg font-bold">
                 {format(currentWeekStart, "MMMM yyyy")}
               </h2>
               <div className="flex gap-2">
@@ -966,7 +959,7 @@ export default function BookAppointment() {
             </div>
 
             {/* Week Grid */}
-            <div className="grid grid-cols-7 gap-3" data-lov-id="src\pages\BookAppointment.tsx:383:12">
+            <div className="grid grid-cols-7 gap-1.5" data-lov-id="src\pages\BookAppointment.tsx:383:12">
               {weekDays.map((day) => {
                 const dayKey = format(day, "yyyy-MM-dd");
                 const slots = timeSlotsByDay.get(dayKey) || [];
@@ -981,12 +974,12 @@ export default function BookAppointment() {
                 return (
                   <div key={dayKey} className="flex flex-col">
                     {/* Day Header */}
-                    <div className="text-center mb-3">
-                      <div className={`text-sm font-medium ${isToday ? "text-primary" : "text-muted-foreground"}`}>
-                        {format(day, "EEEE")}
+                    <div className="text-center mb-1.5">
+                      <div className={`text-xs font-medium ${isToday ? "text-primary" : "text-muted-foreground"}`}>
+                        {format(day, "EEE")}
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {format(day, "MMM d")}
+                      <div className="text-xs text-muted-foreground">
+                        {format(day, "d")}
                       </div>
                       {/* Exception Badge - Only show for closed days */}
                       {exception && isClosed && (
@@ -998,17 +991,17 @@ export default function BookAppointment() {
 
                     {/* Closed Day Message */}
                     {isClosed ? (
-                      <div className="flex-1 flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <p className="text-sm text-gray-500 text-center font-medium mb-1">Unavailable</p>
+                      <div className="flex-1 flex flex-col items-center justify-center p-2 bg-gray-50 rounded-lg border border-gray-200">
+                        <p className="text-xs text-gray-500 text-center font-medium mb-0.5">Unavailable</p>
                         {exception.reason && (
                           <p className="text-xs text-gray-400 text-center">{exception.reason}</p>
                         )}
                       </div>
                     ) : (
                       /* Time Slots - Show all slots with booked ones marked as unavailable */
-                      <div className="space-y-2 flex-1 relative">
+                      <div className="space-y-1 flex-1 relative">
                         {slots.length === 0 ? (
-                          <div className="text-xs text-gray-400 text-center py-4">
+                          <div className="text-xs text-gray-400 text-center py-2">
                             No slots available
                           </div>
                         ) : (
@@ -1029,7 +1022,7 @@ export default function BookAppointment() {
                                 <button
                                   onClick={() => handleSlotClick(slot)}
                                   disabled={disabled}
-                                  className={`w-full px-3 py-2 text-sm rounded-md transition-all ${
+                                  className={`w-full px-1.5 py-1 text-xs rounded transition-all ${
                                     isSelected
                                       ? "bg-blue-600 text-white font-medium shadow-sm"
                                       : disabled

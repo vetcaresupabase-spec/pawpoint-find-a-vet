@@ -421,7 +421,7 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
               }}
             >
               <Calendar className="h-4 w-4 mr-2" />
-              Book Appointment
+              <span className="text-xs">Book Appointment</span>
             </Button>
           </div>
         </div>

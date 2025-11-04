@@ -27,7 +27,7 @@ const Privacy = () => {
                   <div>
                     <h2 className="text-2xl font-bold mb-3">Data Encryption</h2>
                     <p className="text-muted-foreground mb-3">
-                      All data transmitted through PetFinder is encrypted using industry-standard SSL/TLS protocols. 
+                      All data transmitted through Pet2Vet.app is encrypted using industry-standard SSL/TLS protocols. 
                       Your pet's medical records, personal information, and payment details are protected with 
                       end-to-end encryption.
                     </p>
@@ -48,7 +48,7 @@ const Privacy = () => {
                   <div>
                     <h2 className="text-2xl font-bold mb-3">GDPR Compliance</h2>
                     <p className="text-muted-foreground mb-3">
-                      PetFinder is fully compliant with the General Data Protection Regulation (GDPR) and other 
+                      Pet2Vet.app is fully compliant with the General Data Protection Regulation (GDPR) and other 
                       international privacy laws. We take your rights seriously.
                     </p>
                     <ul className="list-disc list-inside text-muted-foreground space-y-2">
@@ -147,8 +147,8 @@ const Privacy = () => {
                   please contact our Data Protection Officer.
                 </p>
                 <p className="text-muted-foreground">
-                  <strong>Email:</strong> privacy@petfinder.com<br />
-                  <strong>Last updated:</strong> October 2025
+                  <strong>Email:</strong> privacy@pet2vet.app<br />
+                  <strong>Last updated:</strong> November 4, 2025
                 </p>
               </CardContent>
             </Card>

@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Users, BellRing, Calendar, Star, Shield, TrendingUp, Lock, FileCheck, Database, Check } from "lucide-react";
 import { VetRegistrationDialog } from "@/components/VetRegistrationDialog";
 import { VetAuthDialog } from "@/components/VetAuthDialog";
+import heroImage from "@/assets/hero-image(1).jpg";
 const ForVets = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<"signup" | "demo">("signup");
@@ -87,13 +88,13 @@ const ForVets = () => {
   }];
   const faqs = [{
     question: "Can I integrate my existing calendar?",
-    answer: "Yes! PetFinder integrates with popular calendar systems including Google Calendar, Outlook, and Apple Calendar. You can also use our built-in calendar system."
+    answer: "Yes! Pet2Vet.app integrates with popular calendar systems including Google Calendar, Outlook, and Apple Calendar. You can also use our built-in calendar system."
   }, {
     question: "What happens after my free trial?",
     answer: "After your 3-month free trial, you can choose to continue with one of our paid plans or cancel anytime. No credit card required during the trial period."
   }, {
     question: "Do I need technical knowledge to use it?",
-    answer: "Not at all! PetFinder is designed to be user-friendly and intuitive. Our onboarding process guides you through setup, and our support team is always ready to help."
+    answer: "Not at all! Pet2Vet.app is designed to be user-friendly and intuitive. Our onboarding process guides you through setup, and our support team is always ready to help."
   }, {
     question: "Can multiple vets in one clinic share the same account?",
     answer: "Yes! Our Premium and Enterprise plans support multiple staff accounts, allowing each veterinarian to manage their own schedule within your clinic's profile."
@@ -113,7 +114,7 @@ const ForVets = () => {
                 Grow your clinic. Focus on care. We handle the rest.
               </h1>
               <p className="text-xl text-muted-foreground">
-                Join PetFinder and let pet owners find, book, and manage visits while you reduce no-shows and attract new clients.
+                Join Pet2Vet.app and let pet owners find, book, and manage visits while you reduce no-shows and attract new clients.
               </p>
             </div>
             <div className="flex flex-wrap gap-4">
@@ -132,8 +133,8 @@ const ForVets = () => {
             </p>
           </div>
           <div className="relative aspect-square lg:aspect-auto">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl animate-pulse" />
-            <img src="/placeholder.svg" alt="Veterinarian with pet" className="relative rounded-3xl shadow-2xl w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl blur-3xl opacity-50" />
+            <img src={heroImage} alt="Veterinarian with pets in modern clinic" className="relative rounded-3xl shadow-2xl w-full h-full object-contain" />
           </div>
         </div>
       </section>
@@ -142,7 +143,7 @@ const ForVets = () => {
       <section className="container py-20">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            Why veterinarians love PetFinder
+            Why veterinarians love Pet2Vet.app
           </h2>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -167,7 +168,7 @@ const ForVets = () => {
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[{
-            quote: "Since joining PetFinder, we've cut cancellations in half and gained new clients every week.",
+            quote: "Since joining Pet2Vet.app, we've cut cancellations in half and gained new clients every week.",
             author: "Dr. Marie Laurent",
             clinic: "Happy Paws Clinic, Paris"
           }, {
@@ -290,7 +291,7 @@ const ForVets = () => {
             Ready to simplify your clinic?
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
-            Join hundreds of veterinarians who trust PetFinder
+            Join hundreds of veterinarians who trust Pet2Vet.app
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-6">
             <Button size="lg" className="text-lg px-8" onClick={() => {

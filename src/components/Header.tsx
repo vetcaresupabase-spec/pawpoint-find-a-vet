@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { Heart } from "lucide-react";
+import { PawPrint, HelpCircle } from "lucide-react";
 import { VetRegistrationDialog } from "./VetRegistrationDialog";
 import { PetOwnerAuthDialog } from "./PetOwnerAuthDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,11 +34,11 @@ export const Header = () => {
   
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 relative">
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <Heart className="h-6 w-6 text-primary fill-primary" />
-            <span className="font-bold text-xl">PetFinder</span>
+            <PawPrint className="h-6 w-6 text-primary" />
+            <span className="font-bold text-xl">Pet2Vet<span className="text-muted-foreground">.app</span></span>
           </Link>
           
           <nav className="flex items-center gap-6">
@@ -97,6 +97,17 @@ export const Header = () => {
             )}
           </nav>
         </div>
+        
+        {/* Help section in corner */}
+        <Link 
+          to="/help" 
+          className={`absolute top-1/2 -translate-y-1/2 right-2 md:right-4 text-xs font-medium transition-colors hover:text-primary flex items-center gap-1 z-10 ${
+            location.pathname === "/help" ? "text-primary" : "text-muted-foreground"
+          }`}
+        >
+          <HelpCircle className="h-3.5 w-3.5" />
+          <span className="hidden lg:inline text-xs">Help</span>
+        </Link>
       </header>
       
       <VetRegistrationDialog 

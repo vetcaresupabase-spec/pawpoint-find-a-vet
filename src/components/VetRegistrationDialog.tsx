@@ -30,6 +30,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Shield, Lock, Star } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import heroVetDashboard from "@/assets/hero-vet-dashboard.jpg";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -40,6 +42,7 @@ const formSchema = z.object({
   clinicCity: z.string().min(2, "City is required"),
   mobile: z.string().min(10, "Valid mobile number is required"),
   email: z.string().email("Valid email address is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
   specialty: z.string().min(2, "Please specify your specialty"),
   workType: z.string().min(1, "Please select where you work"),
   consent: z.boolean().refine((val) => val === true, {
@@ -68,6 +71,7 @@ export function VetRegistrationDialog({ open, onOpenChange, mode = "signup" }: V
       clinicCity: "",
       mobile: "",
       email: "",
+      password: "",
       specialty: "",
       workType: "",
       consent: false,
@@ -77,21 +81,115 @@ export function VetRegistrationDialog({ open, onOpenChange, mode = "signup" }: V
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    console.log("Registration data:", values);
-    
-    toast({
-      title: "Welcome to PetFinder!",
-      description: "Your account has been created. Let's set up your clinic profile.",
-    });
-    
-    setIsSubmitting(false);
-    onOpenChange(false);
-    
-    // Navigate to onboarding
-    navigate("/vet-onboarding");
+    try {
+      // Create auth user first
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          data: {
+            role: "vet",
+            full_name: `${values.firstName} ${values.lastName}`,
+            clinic_name: values.clinicName,
+          },
+          emailRedirectTo: `${window.location.origin}/vet-dashboard`
+        }
+      });
+
+      if (authError) {
+        console.error("Auth error:", authError);
+        toast({
+          title: "Registration failed",
+          description: authError.message || "Failed to create account. Please try again.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!authData.user) {
+        toast({
+          title: "Registration failed",
+          description: "Could not create user account.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check if email confirmation is required
+      const requiresEmailConfirmation = !authData.session && authData.user;
+
+      // Create clinic record - make it visible in search even if email not confirmed
+      const { error: clinicError } = await supabase
+        .from("clinics")
+        .insert({
+          owner_id: authData.user.id,
+          name: values.clinicName,
+          address_line1: values.clinicAddress,
+          postal_code: values.clinicZip,
+          city: values.clinicCity,
+          phone: values.mobile,
+          email: values.email,
+          specialties: values.specialty.split(",").map(s => s.trim()),
+          verified: false, // Will be verified after onboarding
+          is_active: true, // Make visible in search
+        });
+
+      if (clinicError) {
+        console.error("Clinic creation error:", clinicError);
+        console.error("Clinic data attempted:", {
+          owner_id: authData.user.id,
+          name: values.clinicName,
+          city: values.clinicCity,
+          email: values.email,
+        });
+        
+        // More detailed error message
+        const errorMessage = clinicError.message || "Unknown error occurred";
+        toast({
+          title: "Registration partially completed",
+          description: `Account created but clinic setup failed: ${errorMessage}. Please try logging in and complete onboarding manually.`,
+          variant: "destructive",
+          duration: 10000,
+        });
+        setIsSubmitting(false);
+        onOpenChange(false);
+        return;
+      }
+
+      // Small delay to ensure clinic is committed to database
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      setIsSubmitting(false);
+      onOpenChange(false);
+
+      // Always navigate to onboarding - clinic is created and user can proceed
+      if (requiresEmailConfirmation) {
+        toast({
+          title: "Registration successful! 🎉",
+          description: `Your clinic "${values.clinicName}" has been registered and is now visible in search! Please check your email (${values.email}) and click the confirmation link. You can complete onboarding now or after confirming your email.`,
+          duration: 15000,
+        });
+      } else {
+        toast({
+          title: "Welcome to Pet2Vet.app! 🎉",
+          description: `Your clinic "${values.clinicName}" is now visible in search. Please complete onboarding to set up your full profile.`,
+          duration: 8000,
+        });
+      }
+      
+      // Navigate to onboarding - clinic is already created
+      navigate("/vet-onboarding");
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -102,7 +200,7 @@ export function VetRegistrationDialog({ open, onOpenChange, mode = "signup" }: V
           <div>
             <DialogHeader>
               <DialogTitle className="text-2xl md:text-3xl">
-                {mode === "demo" ? "Request a Demo" : "Join PetFinder — start free for 3 months"}
+                {mode === "demo" ? "Request a Demo" : "Join Pet2Vet.app — start free for 3 months"}
               </DialogTitle>
               <DialogDescription className="text-base">
                 We'll help you attract new clients, manage bookings, and simplify your daily work.
@@ -227,6 +325,20 @@ export function VetRegistrationDialog({ open, onOpenChange, mode = "signup" }: V
 
                 <FormField
                   control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="••••••••" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="specialty"
                   render={({ field }) => (
                     <FormItem>
@@ -297,11 +409,11 @@ export function VetRegistrationDialog({ open, onOpenChange, mode = "signup" }: V
               <h3 className="text-xl font-semibold mb-4">
                 Join hundreds of veterinarians already simplifying their daily work
               </h3>
-              <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg mb-6 flex items-center justify-center">
+              <div className="w-full rounded-lg mb-6 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
                 <img
-                  src="/placeholder.svg"
+                  src={heroVetDashboard}
                   alt="Veterinarian working"
-                  className="rounded-lg object-cover w-full h-full"
+                  className="w-full h-auto rounded-lg object-contain"
                 />
               </div>
             </div>
@@ -318,7 +430,7 @@ export function VetRegistrationDialog({ open, onOpenChange, mode = "signup" }: V
                 <Lock className="h-6 w-6 text-primary flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Secure Data Hosting</p>
-                  <p className="text-sm text-muted-foreground">Enterprise-grade security for peace of mind</p>
+                  <p className="text-sm text-muted-foreground">Your data is securely hosted in Germany</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,98 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Check, Calendar, MapPin, Clock, Globe, Upload, CheckCircle2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const VetOnboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [clinicId, setClinicId] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Fetch clinic ID on mount
+  useEffect(() => {
+    const fetchClinicId = async () => {
+      // Try multiple times with delay to handle async clinic creation
+      let attempts = 0;
+      const maxAttempts = 3;
+      
+      const tryFetch = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          console.log("No user found, redirecting to home");
+          navigate("/");
+          return;
+        }
+
+        console.log("Fetching clinic for user:", user.id, user.email);
+
+        // Try to fetch clinic by owner_id first
+        const { data: clinicData, error: clinicError } = await supabase
+          .from("clinics")
+          .select("id, name")
+          .eq("owner_id", user.id)
+          .maybeSingle(); // Use maybeSingle() instead of single() to handle no rows gracefully
+
+        if (clinicData && !clinicError) {
+          console.log("Found clinic by owner_id:", clinicData.id, clinicData.name);
+          setClinicId(clinicData.id);
+          return true;
+        }
+
+        if (clinicError && clinicError.code !== 'PGRST116') { // PGRST116 = no rows found
+          console.error("Error fetching clinic by owner_id:", clinicError);
+        }
+
+        console.log("Clinic not found by owner_id, trying by email...");
+        
+        // Try alternative: fetch by user email
+        const { data: clinicByEmail, error: emailError } = await supabase
+          .from("clinics")
+          .select("id, name")
+          .eq("email", user.email || "")
+          .maybeSingle(); // Use maybeSingle() instead of single()
+
+        if (clinicByEmail && !emailError) {
+          console.log("Found clinic by email:", clinicByEmail.id, clinicByEmail.name);
+          setClinicId(clinicByEmail.id);
+          return true;
+        }
+
+        if (emailError && emailError.code !== 'PGRST116') {
+          console.error("Error fetching clinic by email:", emailError);
+        }
+
+        console.log("Clinic not found, attempt", attempts + 1, "of", maxAttempts);
+        return false;
+      };
+
+      const fetchWithRetry = async () => {
+        for (attempts = 0; attempts < maxAttempts; attempts++) {
+          const found = await tryFetch();
+          if (found) return;
+          
+          if (attempts < maxAttempts - 1) {
+            // Wait before retrying (1 second, 2 seconds, etc.)
+            await new Promise(resolve => setTimeout(resolve, (attempts + 1) * 1000));
+          }
+        }
+
+        // If still not found after all attempts
+        const { data: { user } } = await supabase.auth.getUser();
+        console.error("No clinic found after all attempts for user:", user?.id, user?.email);
+        toast({
+          title: "Clinic not found",
+          description: "Please complete registration first. If you just registered, please wait a moment and refresh the page.",
+          variant: "destructive",
+          duration: 10000,
+        });
+      };
+
+      fetchWithRetry();
+    };
+
+    fetchClinicId();
+  }, [navigate]);
 
   const [clinicDetails, setClinicDetails] = useState({
     description: "",
@@ -50,12 +137,126 @@ const VetOnboarding = () => {
     }
   };
 
-  const completeOnboarding = () => {
-    toast({
-      title: "Your profile is live!",
-      description: "Pet owners can now find and book appointments with you.",
-    });
-    setIsCompleted(true);
+  const completeOnboarding = async () => {
+    // If clinicId is not set, try to fetch it again
+    let currentClinicId = clinicId;
+    
+    if (!currentClinicId) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        // Try to fetch clinic ID again
+        const { data: clinicData, error: clinicError } = await supabase
+          .from("clinics")
+          .select("id")
+          .eq("owner_id", user.id)
+          .maybeSingle();
+
+        if (clinicData && !clinicError) {
+          currentClinicId = clinicData.id;
+          setClinicId(clinicData.id);
+        } else {
+          // Try by email as fallback
+          const { data: clinicByEmail, error: emailError } = await supabase
+            .from("clinics")
+            .select("id")
+            .eq("email", user.email || "")
+            .maybeSingle();
+          
+          if (clinicByEmail && !emailError) {
+            currentClinicId = clinicByEmail.id;
+            setClinicId(clinicByEmail.id);
+          }
+        }
+      }
+    }
+
+    if (!currentClinicId) {
+      toast({
+        title: "Error",
+        description: "Clinic not found. Please make sure you've completed registration. If you just registered, please refresh the page.",
+        variant: "destructive",
+        duration: 10000,
+      });
+      return;
+    }
+
+    try {
+      // Update clinic with description, languages, and specialties
+      const { error: clinicError } = await supabase
+        .from("clinics")
+        .update({
+          description: clinicDetails.description,
+          languages: clinicDetails.languages,
+          specialties: clinicDetails.services,
+          verified: true,
+        })
+        .eq("id", currentClinicId);
+
+      if (clinicError) throw clinicError;
+
+      // Save working hours
+      const weekdayMap: { [key: string]: number } = {
+        monday: 1,
+        tuesday: 2,
+        wednesday: 3,
+        thursday: 4,
+        friday: 5,
+        saturday: 6,
+        sunday: 0,
+      };
+
+      const hoursToInsert = Object.entries(workingHours).map(([day, hours]) => ({
+        weekday: weekdayMap[day],
+        is_open: hours.enabled,
+        time_ranges: hours.enabled ? [{ start: hours.open, end: hours.close }] : [],
+      }));
+
+      // Delete existing hours and insert new ones
+      await supabase.from("clinic_hours_new").delete().eq("clinic_id", currentClinicId);
+      const { error: hoursError } = await supabase
+        .from("clinic_hours_new")
+        .insert(hoursToInsert.map(h => ({ ...h, clinic_id: currentClinicId })));
+
+      if (hoursError) throw hoursError;
+
+      // Create default services if none exist
+      const { data: existingServices } = await supabase
+        .from("clinic_services")
+        .select("id")
+        .eq("clinic_id", currentClinicId);
+
+      if (!existingServices || existingServices.length === 0) {
+        const defaultServices = [
+          { name: "General Consultation", category: "Consultation", duration_minutes: 30, price_min: 50, price_max: 80 },
+          { name: "Vaccination", category: "Vaccination", duration_minutes: 20, price_min: 40, price_max: 60 },
+          { name: "Check-up", category: "Examination", duration_minutes: 30, price_min: 45, price_max: 70 },
+        ];
+
+        const { error: servicesError } = await supabase
+          .from("clinic_services")
+          .insert(
+            defaultServices.map((service) => ({
+              clinic_id: currentClinicId,
+              ...service,
+            }))
+          );
+
+        if (servicesError) console.error("Services creation error:", servicesError);
+      }
+
+      toast({
+        title: "Your profile is live!",
+        description: "Pet owners can now find and book appointments with you.",
+      });
+      setIsCompleted(true);
+    } catch (error) {
+      console.error("Onboarding error:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to complete onboarding",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isCompleted) {

@@ -224,9 +224,27 @@ export function TreatmentForm({
         return;
       }
 
+      // Update the booking status to completed after successful treatment creation
+      if (bookingId) {
+        const { error: bookingError } = await supabase
+          .from("bookings")
+          .update({ 
+            status: "completed",
+            completed_at: new Date().toISOString()
+          })
+          .eq("id", bookingId);
+
+        if (bookingError) {
+          console.error("Error updating booking status:", bookingError);
+          // Don't fail the whole operation, just log the error
+        } else {
+          console.log("✅ Appointment marked as completed");
+        }
+      }
+
       toast({
-        title: "Treatment Recorded",
-        description: "Treatment has been successfully recorded and added to medical history.",
+        title: "Treatment Completed",
+        description: "Treatment has been successfully recorded and appointment marked as completed.",
       });
 
       form.reset();

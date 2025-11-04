@@ -73,7 +73,7 @@ const ClinicProfile = () => {
             onClick={() => navigate(`/book-appointment?clinicId=${id}`)}
           >
             <Calendar className="h-5 w-5 mr-2" />
-            Book Appointment
+            <span className="text-xs">Book Appointment</span>
           </Button>
         </div>
 
