@@ -31,7 +31,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Shield, Lock, Star } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import heroVetDashboard from "@/assets/hero-vet-dashboard.jpg";
+import heroVetDashboard from "@/assets/hero-image(1).jpg";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -413,7 +413,7 @@ export function VetRegistrationDialog({ open, onOpenChange, mode = "signup" }: V
                 <img
                   src={heroVetDashboard}
                   alt="Veterinarian working"
-                  className="w-full h-auto rounded-lg object-contain"
+                  className="w-full h-64 rounded-lg object-cover"
                 />
               </div>
             </div>

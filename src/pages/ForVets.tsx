@@ -6,7 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Users, BellRing, Calendar, Star, Shield, TrendingUp, Lock, FileCheck, Database, Check } from "lucide-react";
 import { VetRegistrationDialog } from "@/components/VetRegistrationDialog";
 import { VetAuthDialog } from "@/components/VetAuthDialog";
-import heroImage from "@/assets/hero-image(1).jpg";
+import heroImage from "@/assets/hero-vet-dashboard.jpg";
 const ForVets = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<"signup" | "demo">("signup");
@@ -132,9 +132,9 @@ const ForVets = () => {
               Already have an account? <button onClick={() => setAuthDialogOpen(true)} className="text-primary hover:underline">Log in here</button>
             </p>
           </div>
-          <div className="relative aspect-square lg:aspect-auto">
+          <div className="relative aspect-[4/3] lg:aspect-[4/5] max-w-sm mx-auto lg:max-w-md">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl blur-3xl opacity-50" />
-            <img src={heroImage} alt="Veterinarian with pets in modern clinic" className="relative rounded-3xl shadow-2xl w-full h-full object-contain" />
+            <img src={heroImage} alt="Veterinarian with pets in modern clinic" className="relative rounded-3xl shadow-2xl w-full h-full object-cover" />
           </div>
         </div>
       </section>
