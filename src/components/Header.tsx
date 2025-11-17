@@ -34,42 +34,46 @@ export const Header = () => {
   
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 relative">
-        <div className="container flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <PawPrint className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl">Pet2Vet<span className="text-muted-foreground">.app</span></span>
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 sm:h-16 items-center justify-between px-4 sm:px-6">
+          <Link to="/" className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            <PawPrint className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            <span className="font-bold text-base sm:text-xl whitespace-nowrap">Pet2Vet<span className="text-muted-foreground">.app</span></span>
           </Link>
           
-          <nav className="flex items-center gap-6">
+          <nav className="flex items-center gap-2 sm:gap-4 md:gap-6">
             <Link 
               to="/" 
-              className={`text-sm font-medium transition-colors hover:text-primary ${
+              className={`text-xs sm:text-sm font-medium transition-colors hover:text-primary whitespace-nowrap ${
                 location.pathname === "/" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              For Pet Owners
+              <span className="hidden sm:inline">For Pet Owners</span>
+              <span className="sm:hidden">Pet Owners</span>
             </Link>
             
             {/* Only show "For Vets" link if user is not logged in OR user is a vet */}
             {(!user || userRole === "vet") && (
               <Link 
                 to="/for-vets" 
-                className={`text-sm font-medium transition-colors hover:text-primary ${
+                className={`text-xs sm:text-sm font-medium transition-colors hover:text-primary whitespace-nowrap ${
                   isVetPage ? "text-primary" : "text-muted-foreground"
                 }`}
               >
-                For Vets
+                <span className="hidden sm:inline">For Vets</span>
+                <span className="sm:hidden">Vets</span>
               </Link>
             )}
             
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="sm" variant="outline">{user.email}</Button>
+                  <Button size="sm" variant="outline" className="text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3">
+                    <span className="max-w-[100px] sm:max-w-none truncate">{user.email}</span>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+                  <DropdownMenuLabel className="text-xs">{user.email}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to={userRole === "vet" ? "/vet-dashboard" : "/pet-owner-dashboard"}>Dashboard</Link>
@@ -85,29 +89,30 @@ export const Header = () => {
             ) : (
               <>
                 {isVetPage ? (
-                  <Button size="sm" onClick={() => setVetDialogOpen(true)}>
-                    Join as a Vet
+                  <Button size="sm" onClick={() => setVetDialogOpen(true)} className="text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-4 whitespace-nowrap">
+                    Join as Vet
                   </Button>
                 ) : (
-                  <Button size="sm" onClick={() => setPetOwnerDialogOpen(true)}>
+                  <Button size="sm" onClick={() => setPetOwnerDialogOpen(true)} className="text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4">
                     Log in
                   </Button>
                 )}
               </>
             )}
+            
+            {/* Help Icon */}
+            <Link 
+              to="/help" 
+              className={`flex items-center gap-1 text-xs font-medium transition-colors hover:text-primary flex-shrink-0 ${
+                location.pathname === "/help" ? "text-primary" : "text-muted-foreground"
+              }`}
+              title="Help"
+            >
+              <HelpCircle className="h-4 w-4 sm:h-4 sm:w-4" />
+              <span className="hidden lg:inline text-xs">Help</span>
+            </Link>
           </nav>
         </div>
-        
-        {/* Help section in corner */}
-        <Link 
-          to="/help" 
-          className={`absolute top-1/2 -translate-y-1/2 right-2 md:right-4 text-xs font-medium transition-colors hover:text-primary flex items-center gap-1 z-10 ${
-            location.pathname === "/help" ? "text-primary" : "text-muted-foreground"
-          }`}
-        >
-          <HelpCircle className="h-3.5 w-3.5" />
-          <span className="hidden lg:inline text-xs">Help</span>
-        </Link>
       </header>
       
       <VetRegistrationDialog 

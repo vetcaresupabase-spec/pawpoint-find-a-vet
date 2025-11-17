@@ -266,7 +266,7 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch }
   return (
     <div ref={resultsRef} className="w-full max-w-5xl mx-auto relative">
       <div className="bg-white rounded-2xl shadow-xl border border-border overflow-hidden">
-        <div className="flex flex-col sm:flex-row">
+        <div className="flex flex-col sm:flex-row sm:items-stretch">
           {/* Search Input - Name, field of expertise, institution */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 px-1.5 sm:px-3 md:px-4 lg:px-6 py-2.5 sm:py-3 md:py-3.5 lg:py-4 border-b sm:border-b-0 sm:border-r">
@@ -334,19 +334,18 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch }
           </div>
 
           {/* Search Button */}
-          <div className="sm:w-auto">
+          <div className="sm:w-auto w-full sm:flex-shrink-0 sm:flex sm:items-stretch">
             <Button
               onClick={handleSearch}
               disabled={isSearching}
-              size="lg"
-              className="w-full sm:w-auto h-full rounded-none sm:rounded-r-2xl px-8 text-base font-medium"
+              className="w-full sm:w-auto h-11 sm:h-full rounded-b-xl sm:rounded-l-none sm:rounded-r-2xl px-6 sm:px-10 md:px-12 lg:px-14 text-sm sm:text-base font-medium bg-primary hover:bg-primary/90 transition-all"
             >
               {isSearching ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
               ) : (
                 <>
-                  <Search className="h-5 w-5 sm:mr-2" />
-                  <span className="hidden sm:inline">Seek</span>
+                  <Search className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="ml-2">Search</span>
                 </>
               )}
             </Button>
