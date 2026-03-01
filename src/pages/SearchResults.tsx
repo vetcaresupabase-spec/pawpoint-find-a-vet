@@ -9,6 +9,8 @@ import { MapPin, Phone, Mail, CheckCircle2, Calendar } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Clinic } from "@/integrations/supabase/queries";
+import { useGoogleVetSearch } from "@/hooks/useGoogleVetSearch";
+import { GoogleVetCard } from "@/components/GoogleVetCard";
 
 interface ClinicSearchResult {
   id: string;
@@ -27,10 +29,16 @@ const SearchResults = () => {
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
+  // Google Vets Search
+  const { 
+    results: googleVets, 
+    loading: googleLoading, 
+    searchGoogleVets 
+  } = useGoogleVetSearch();
 
   useEffect(() => {
-    (async () => {
-      // Only search if we have search criteria
+    const performSearch = async () => {
       if (!petType && !location) {
         setClinics([]);
         return;
@@ -38,94 +46,37 @@ const SearchResults = () => {
 
       setLoading(true);
       try {
-        let searchResults: ClinicSearchResult[] = [];
-        const hasNameSearch = petType.trim().length >= 2;
-        const hasLocationSearch = location.trim().length >= 2;
+        // Simple direct query - fetch all active clinics matching criteria
+        let query = (supabase as any)
+          .from("clinics")
+          .select("*")
+          .eq("is_active", true);
 
-        if (hasLocationSearch) {
-          // Location-based search with radius expansion (same as SearchBar)
-          const isNearMe = location.toLowerCase() === "near me";
-          const cityOrPostcode = !isNearMe && location.trim().length >= 2 ? location.trim() : null;
-          
-          // Try to get user's geolocation if "Near me"
-          let coords: { lat: number; lng: number } | null = null;
-          if (isNearMe && "geolocation" in navigator) {
-            try {
-              const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, {
-                  enableHighAccuracy: false,
-                  maximumAge: 300000,
-                  timeout: 8000
-                });
-              });
-              coords = { lat: position.coords.latitude, lng: position.coords.longitude };
-            } catch (error) {
-              console.log("Geolocation failed, searching without coords");
-            }
-          }
-
-          // Search with radius expansion
-          const radii = [15000, 50000, 100000, 200000];
-          for (const radius of radii) {
-            const { data, error } = await (supabase as any).rpc("fn_search_clinics", {
-              in_lat: coords?.lat ?? null,
-              in_lng: coords?.lng ?? null,
-              in_city_or_postcode: cityOrPostcode,
-              in_radius_m: radius,
-              in_limit: 50,
-            });
-
-            if (!error && data && (data as any[]).length > 0) {
-              searchResults = data as ClinicSearchResult[];
-              break;
-            }
-          }
-        } else {
-          // Name-only search (no location)
-          const { data, error } = await (supabase as any)
-            .from("clinics")
-            .select("id, name, city, address_line1, postcode, specialties, phone, email, is_active")
-            .eq("is_active", true)
-            .limit(50);
-
-          if (!error && data) {
-            searchResults = (data as any[]).map((clinic: any) => ({
-              ...clinic,
-              distance_m: null,
-              specialties: clinic.specialties as string[]
-            }));
-          }
+        // Filter by city if location provided (skip "near me")
+        const locationTrimmed = location.trim().toLowerCase();
+        if (locationTrimmed && locationTrimmed !== "near me") {
+          query = query.ilike("city", `%${location.trim()}%`);
         }
 
-        // Apply name/expertise filter if provided
-        if (hasNameSearch && searchResults.length > 0) {
-          const searchLower = petType.toLowerCase();
-          searchResults = searchResults.filter(clinic => {
-            const nameMatch = clinic.name.toLowerCase().includes(searchLower);
-            const cityMatch = clinic.city.toLowerCase().includes(searchLower);
-            const specialtyMatch = clinic.specialties?.some(s => 
+        const { data, error } = await query.limit(50);
+
+        if (error) throw error;
+
+        let results = (data || []) as Clinic[];
+
+        // Client-side filter by pet type / name / specialty
+        if (petType && petType.trim().length >= 2) {
+          const searchLower = petType.trim().toLowerCase();
+          results = results.filter((c: any) => {
+            const nameMatch = c.name?.toLowerCase().includes(searchLower);
+            const specialtyMatch = (c.specialties || []).some((s: string) =>
               s.toLowerCase().includes(searchLower)
-            ) ?? false;
-            
-            return nameMatch || cityMatch || specialtyMatch;
+            );
+            return nameMatch || specialtyMatch;
           });
         }
 
-        // Convert to Clinic format
-        const clinicList: Clinic[] = await Promise.all(
-          searchResults.map(async (result) => {
-            // Fetch full clinic data
-            const { data: fullClinic } = await (supabase as any)
-              .from("clinics")
-              .select("*")
-              .eq("id", result.id)
-              .single();
-
-            return (fullClinic || result) as Clinic;
-          })
-        );
-
-        setClinics(clinicList);
+        setClinics(results);
       } catch (e: any) {
         console.error("Search error:", e);
         toast({ title: "Search failed", description: e.message });
@@ -133,8 +84,22 @@ const SearchResults = () => {
       } finally {
         setLoading(false);
       }
-    })();
-  }, [location, petType]);
+
+      // Google Places search (runs independently, non-blocking)
+      const googleParams: any = {};
+      if (petType && petType.trim()) {
+        googleParams.query = petType.trim();
+      }
+      if (location && location.trim()) {
+        googleParams.query = (googleParams.query ? googleParams.query + " " : "") + location.trim();
+      }
+      if (googleParams.query) {
+        searchGoogleVets(googleParams).catch(() => {});
+      }
+    };
+
+    performSearch();
+  }, [location, petType, searchGoogleVets]);
 
   const handleSearch = (search: string, loc: string) => {
     setSearchParams({ petType: search, location: loc });
@@ -272,7 +237,7 @@ const SearchResults = () => {
         </div>
 
         {/* No Results */}
-        {(!loading && clinics.length === 0) && (
+        {(!loading && clinics.length === 0 && !googleLoading && googleVets.length === 0) && (
           <Card className="p-12 text-center">
             <h2 className="text-2xl font-bold mb-2">No results found</h2>
             <p className="text-muted-foreground mb-6">
@@ -282,6 +247,35 @@ const SearchResults = () => {
               Back to Home
             </Button>
           </Card>
+        )}
+
+        {/* Google Vets Section */}
+        {(googleVets.length > 0 || googleLoading) && (
+          <div className="mt-12">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold mb-2">More Vets Nearby</h2>
+              <p className="text-muted-foreground">
+                {googleLoading 
+                  ? "Searching Google Maps..." 
+                  : `Found ${googleVets.length} additional vets from Google Maps`}
+              </p>
+            </div>
+
+            {googleLoading ? (
+              <Card className="p-8 text-center">
+                <div className="flex items-center justify-center gap-2">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                  <span className="text-muted-foreground">Loading Google results...</span>
+                </div>
+              </Card>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {googleVets.map((vet) => (
+                  <GoogleVetCard key={vet.google_place_id} clinic={vet} />
+                ))}
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>
