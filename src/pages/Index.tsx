@@ -1,16 +1,25 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Calendar, Bell, Heart, Users, Shield, Star, PawPrint } from "lucide-react";
+import { Search, Calendar, Bell, Heart, Users, Shield, Star, PawPrint, Stethoscope, TreePine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { SearchBar } from "@/components/SearchBar";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import heroImage from "@/assets/hero-image.jpg";
+
+type SearchMode = "vets" | "parks";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [searchMode, setSearchMode] = useState<SearchMode>("vets");
 
   const handleSearch = (search: string, location: string) => {
-    navigate(`/search?petType=${encodeURIComponent(search)}&location=${encodeURIComponent(location)}`);
+    if (searchMode === "parks") {
+      navigate(`/pet-parks?query=${encodeURIComponent(search)}&location=${encodeURIComponent(location)}`);
+    } else {
+      navigate(`/search?petType=${encodeURIComponent(search)}&location=${encodeURIComponent(location)}`);
+    }
   };
   return <div className="min-h-screen bg-background">
       <Header />
@@ -20,7 +29,7 @@ const Index = () => {
         <div className="container grid lg:grid-cols-2 gap-8 lg:gap-12 items-center py-8 sm:py-12 lg:py-20 px-4 sm:px-6">
           <div className="space-y-4 sm:space-y-6">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-foreground">
-              Find trusted vets near you
+              {searchMode === "parks" ? "Find pet parks near you" : "Find trusted vets near you"}
             </h1>
             
             <div className="space-y-2 sm:space-y-3">
@@ -44,9 +53,37 @@ const Index = () => {
               </div>
             </div>
             
+            {/* Mode Toggle */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSearchMode("vets")}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                  searchMode === "vets"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                )}
+              >
+                <Stethoscope className="h-4 w-4" />
+                Vets
+              </button>
+              <button
+                onClick={() => setSearchMode("parks")}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                  searchMode === "parks"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                )}
+              >
+                <TreePine className="h-4 w-4" />
+                Pet Parks
+              </button>
+            </div>
+
             {/* Search Bar */}
             <div className="max-w-3xl">
-              <SearchBar onSearch={handleSearch} />
+              <SearchBar onSearch={handleSearch} searchMode={searchMode} />
             </div>
             
             {/* Trust Indicators */}

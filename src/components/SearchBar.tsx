@@ -10,6 +10,7 @@ interface SearchBarProps {
   defaultSearch?: string;
   defaultLocation?: string;
   onSearch?: (search: string, location: string) => void;
+  searchMode?: "vets" | "parks";
 }
 
 interface ClinicSearchResult {
@@ -24,7 +25,7 @@ interface ClinicSearchResult {
 
 type FocusedField = 'name' | 'location' | null;
 
-export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch }: SearchBarProps) => {
+export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, searchMode = "vets" }: SearchBarProps) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState(defaultSearch);
   const [location, setLocation] = useState(defaultLocation);
@@ -208,8 +209,9 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch }
   const handleSearch = () => {
     if (onSearch) {
       onSearch(searchTerm, location);
+    } else if (searchMode === "parks") {
+      navigate(`/pet-parks?query=${encodeURIComponent(searchTerm)}&location=${encodeURIComponent(location)}`);
     } else {
-      // Navigate to search results page
       navigate(`/search?petType=${encodeURIComponent(searchTerm)}&location=${encodeURIComponent(location)}`);
     }
   };
@@ -274,7 +276,7 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch }
               <div className="flex-1 min-w-0">
                 <input
                   type="text"
-                  placeholder="Name, field of expertise, institution"
+                  placeholder={searchMode === "parks" ? "e.g. dog park, off-leash area" : "Name, field of expertise, institution"}
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
