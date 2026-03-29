@@ -4,6 +4,34 @@ All notable changes to this project are documented in this file.
 
 ---
 
+## [2026-03-15] — Google Places Pet Shop Search
+
+### Added
+- **`google_shops_cache` table** — Supabase migration for caching Google pet shop results (24hr TTL, hit tracking, RLS, cleanup function)
+- **`search-google-shops` Edge Function** — Server-side proxy for Google Places API (New) Text Search, filtered to `pet_store` type, 24hr caching
+- **`useGoogleShopSearch` React hook** — State management for shop search (results, loading, error, dataSource), 10s timeout, memoized with useCallback
+- **`PetShops.tsx` results page** — Dedicated `/pet-shops` route with shop cards (name, address, rating, open/closed, Pet Store badge, Directions, Save), loading skeletons, error/empty states, map placeholder
+- **`/pet-shops` route** in `App.tsx`
+- **`searchMode` extended** on `SearchBar` — now accepts `"vets" | "parks" | "shops"`, shops mode placeholder: "Food, toys, accessories..."
+- **Pet Shops toggle** on homepage (`Index.tsx`) — third pill button with ShoppingBag icon, dynamic heading "Find pet shops near you"
+
+### Documentation
+- Created `GOOGLE_SHOPS_INTEGRATION.md` — full implementation guide, architecture, testing steps
+
+### Unchanged (by design)
+- `search-google-vets` Edge Function
+- `search-google-parks` Edge Function
+- `useGoogleVetSearch` hook
+- `useGoogleParkSearch` hook
+- `GoogleVetCard` component
+- `SearchResults.tsx` and `/search` route
+- `PetParks.tsx` and `/pet-parks` route
+- `google_places_cache` table
+- `google_parks_cache` table
+- Default homepage experience (Vets mode)
+
+---
+
 ## [2026-03-10] — Google Places Pet Park Search
 
 ### Added
@@ -12,8 +40,8 @@ All notable changes to this project are documented in this file.
 - **`useGoogleParkSearch` React hook** — State management for park search (results, loading, error, dataSource), 10s timeout, memoized with useCallback
 - **`PetParks.tsx` results page** — Dedicated `/pet-parks` route with park cards (name, address, rating, open/closed, dog-friendly badge, Directions, Save), loading skeletons, error/empty states, map placeholder
 - **`/pet-parks` route** in `App.tsx`
-- **`searchMode` prop** on `SearchBar` — accepts `"vets"` (default) or `"parks"`, changes placeholder and navigation target
-- **Search mode toggle** on homepage (`Index.tsx`) — Vets / Pet Parks pill buttons, dynamic heading, conditional routing
+- **`searchMode` prop** on `SearchBar` — accepts `"vets"` (default), `"parks"`, or `"shops"`, changes placeholder and navigation target
+- **Search mode toggle** on homepage (`Index.tsx`) — Vets / Pet Parks / Pet Shops pill buttons, dynamic heading, conditional routing
 
 ### Documentation
 - Created `GOOGLE_PARKS_INTEGRATION.md` — full implementation guide, architecture diagram, testing steps, maintenance tasks
@@ -75,6 +103,7 @@ All notable changes to this project are documented in this file.
 | `/` | Index | Homepage with search, hero, features |
 | `/search` | SearchResults | Vet search results (PawPoint + Google) |
 | `/pet-parks` | PetParks | Park search results (Google Places) |
+| `/pet-shops` | PetShops | Pet shop search results (Google Places) |
 | `/clinic/:id` | ClinicProfile | Clinic details and booking |
 | `/book-appointment` | BookAppointment | Appointment booking flow |
 | `/for-vets` | ForVets | Vet partner landing page |
