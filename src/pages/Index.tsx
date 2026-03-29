@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import heroImage from "@/assets/hero-image.jpg";
 
-type SearchMode = "vets" | "parks";
+type SearchMode = "vets" | "parks" | "shops";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -17,6 +17,8 @@ const Index = () => {
   const handleSearch = (search: string, location: string) => {
     if (searchMode === "parks") {
       navigate(`/pet-parks?query=${encodeURIComponent(search)}&location=${encodeURIComponent(location)}`);
+    } else if (searchMode === "shops") {
+      navigate(`/pet-shops?query=${encodeURIComponent(search)}&location=${encodeURIComponent(location)}`);
     } else {
       navigate(`/search?petType=${encodeURIComponent(search)}&location=${encodeURIComponent(location)}`);
     }
@@ -29,7 +31,7 @@ const Index = () => {
         <div className="container grid lg:grid-cols-2 gap-8 lg:gap-12 items-center py-8 sm:py-12 lg:py-20 px-4 sm:px-6">
           <div className="space-y-4 sm:space-y-6">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-foreground">
-              {searchMode === "parks" ? "Find pet parks near you" : "Find trusted vets near you"}
+              {searchMode === "parks" ? "Find pet parks near you" : searchMode === "shops" ? "Find pet shops near you" : "Find trusted vets near you"}
             </h1>
             
             <div className="space-y-2 sm:space-y-3">
@@ -78,6 +80,18 @@ const Index = () => {
               >
                 <TreePine className="h-4 w-4" />
                 Pet Parks
+              </button>
+              <button
+                onClick={() => setSearchMode("shops")}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                  searchMode === "shops"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                )}
+              >
+                <span className="text-sm">🛍️</span>
+                Pet Shops
               </button>
             </div>
 

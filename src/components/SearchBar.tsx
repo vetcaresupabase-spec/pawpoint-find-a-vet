@@ -10,7 +10,7 @@ interface SearchBarProps {
   defaultSearch?: string;
   defaultLocation?: string;
   onSearch?: (search: string, location: string) => void;
-  searchMode?: "vets" | "parks";
+  searchMode?: "vets" | "parks" | "shops";
 }
 
 interface ClinicSearchResult {
@@ -211,6 +211,8 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
       onSearch(searchTerm, location);
     } else if (searchMode === "parks") {
       navigate(`/pet-parks?query=${encodeURIComponent(searchTerm)}&location=${encodeURIComponent(location)}`);
+    } else if (searchMode === "shops") {
+      navigate(`/pet-shops?query=${encodeURIComponent(searchTerm)}&location=${encodeURIComponent(location)}`);
     } else {
       navigate(`/search?petType=${encodeURIComponent(searchTerm)}&location=${encodeURIComponent(location)}`);
     }
@@ -276,7 +278,7 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
               <div className="flex-1 min-w-0">
                 <input
                   type="text"
-                  placeholder={searchMode === "parks" ? "e.g. dog park, off-leash area" : "Name, field of expertise, institution"}
+                  placeholder={searchMode === "parks" ? "e.g. dog park, off-leash area" : searchMode === "shops" ? "Food, toys, accessories..." : "Name, field of expertise, institution"}
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
