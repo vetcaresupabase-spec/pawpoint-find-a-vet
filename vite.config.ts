@@ -8,9 +8,12 @@ export default defineConfig(({ mode }) => ({
   // Set base path for GitHub Pages when env GITHUB_PAGES=true
   base: process.env.GITHUB_PAGES ? "/pawpoint-find-a-vet/" : "/",
   server: {
-    host: "127.0.0.1",
+    host: true,
     port: 8080,
     strictPort: true,
+  },
+  build: {
+    outDir: "dist",
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
