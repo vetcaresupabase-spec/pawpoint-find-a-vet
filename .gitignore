@@ -17,6 +17,11 @@ ios/Pods/
 android/.gradle/
 android/build/
 
+# App release binaries (tracked in releases/RELEASES.md)
+releases/android/*.apk
+releases/android/*.aab
+releases/ios/*.ipa
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
