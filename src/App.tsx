@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TranslationBanner } from "@/components/TranslationBanner";
 import { initialisePushNotifications } from "@/lib/notifications";
+import { supabase } from "@/integrations/supabase/client";
+import { FEATURES } from "@/config/features";
 import Index from "./pages/Index";
 import ForVets from "./pages/ForVets";
 import VetOnboarding from "./pages/VetOnboarding";
@@ -30,6 +32,33 @@ const App = () => {
     } catch (error) {
       console.error("[App] Push notification init failed:", error);
     }
+  }, []);
+
+  useEffect(() => {
+    if (!FEATURES.GAMIFICATION) return;
+
+    const trackLogin = async (userId: string) => {
+      try {
+        await supabase.rpc("record_user_action" as any, {
+          p_user_id: userId,
+          p_action: "DAILY_LOGIN",
+        });
+      } catch { /* non-critical */ }
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" && session?.user?.id) {
+          trackLogin(session.user.id);
+        }
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.id) trackLogin(session.user.id);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   return (

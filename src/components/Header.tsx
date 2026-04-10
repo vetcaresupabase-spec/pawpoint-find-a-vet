@@ -5,6 +5,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { PawPrint, HelpCircle } from "lucide-react";
 import { VetRegistrationDialog } from "./VetRegistrationDialog";
 import { PetOwnerAuthDialog } from "./PetOwnerAuthDialog";
+import { PointsBadge } from "./gamification/PointsBadge";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Header = () => {
@@ -65,6 +66,8 @@ export const Header = () => {
               </Link>
             )}
             
+            {user && <PointsBadge />}
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

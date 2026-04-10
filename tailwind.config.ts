@@ -68,25 +68,37 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "sparkle-1": {
+          "0%": { opacity: "0", transform: "scale(0) rotate(0deg)" },
+          "50%": { opacity: "1", transform: "scale(1) rotate(180deg)" },
+          "100%": { opacity: "0", transform: "scale(0) rotate(360deg)" },
+        },
+        "sparkle-2": {
+          "0%": { opacity: "0", transform: "scale(0) rotate(0deg)" },
+          "40%": { opacity: "0", transform: "scale(0)" },
+          "70%": { opacity: "1", transform: "scale(1.2) rotate(180deg)" },
+          "100%": { opacity: "0", transform: "scale(0) rotate(360deg)" },
+        },
+        "sparkle-3": {
+          "0%": { opacity: "0", transform: "scale(0) rotate(0deg)" },
+          "60%": { opacity: "0", transform: "scale(0)" },
+          "85%": { opacity: "1", transform: "scale(1) rotate(180deg)" },
+          "100%": { opacity: "0", transform: "scale(0) rotate(360deg)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "sparkle-1": "sparkle-1 1.5s ease-in-out infinite",
+        "sparkle-2": "sparkle-2 1.8s ease-in-out infinite",
+        "sparkle-3": "sparkle-3 2s ease-in-out infinite",
       },
     },
   },

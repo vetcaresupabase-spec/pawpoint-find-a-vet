@@ -13,8 +13,14 @@ import {
   Clock,
   MapPin,
   Plus,
+  Brain,
+  CheckCircle2,
+  Flame,
+  Star,
+  XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -24,6 +30,9 @@ import { EditPetDialog } from "@/components/EditPetDialog";
 import { PetCard } from "@/components/PetCard";
 import { TreatmentRecords } from "@/components/vet/TreatmentRecords";
 import { ExportMedicalRecordsPDF } from "@/components/pet-owner/ExportMedicalRecordsPDF";
+import { LeaderboardCard } from "@/components/gamification/LeaderboardCard";
+import { DailyQuizModal } from "@/components/gamification/DailyQuizModal";
+import { useGamification } from "@/hooks/useGamification";
 
 const PetOwnerDashboard = () => {
   const navigate = useNavigate();
@@ -36,6 +45,8 @@ const PetOwnerDashboard = () => {
   const [selectedPet, setSelectedPet] = useState<any>(null);
   const [selectedPetForRecords, setSelectedPetForRecords] = useState<any>(null);
   const [showMedicalRecords, setShowMedicalRecords] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
+  const { enabled: gamificationEnabled, dailyQuestion, answeredToday, quizLoading, stats } = useGamification();
 
   useEffect(() => {
     // Check if user is logged in
@@ -197,7 +208,7 @@ const PetOwnerDashboard = () => {
 
       <div className="container py-8">
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/search")}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
@@ -239,6 +250,92 @@ const PetOwnerDashboard = () => {
               </div>
             </CardContent>
           </Card>
+
+          {gamificationEnabled && (quizLoading ? (
+            <Card className="transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-3 w-36" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : dailyQuestion ? (
+            <Card
+              className="hover:shadow-lg transition-all duration-300 cursor-pointer border-primary/30 bg-primary/5 relative overflow-hidden"
+              onClick={() => setQuizOpen(true)}
+            >
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center relative">
+                    <Brain className="h-6 w-6 text-primary" />
+                    <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-primary animate-pulse" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold">Daily Quiz</p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {dailyQuestion.category} &middot; <span className="capitalize">{dailyQuestion.difficulty}</span>
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="inline-flex items-center gap-0.5 text-xs font-medium text-yellow-600 dark:text-yellow-400">
+                        <Star className="h-3 w-3 fill-current" />
+                        +10 pts
+                      </span>
+                      {stats && stats.current_streak > 0 && (
+                        <span className="inline-flex items-center gap-0.5 text-xs font-medium text-orange-500">
+                          <Flame className="h-3 w-3" />
+                          {stats.current_streak}-day streak
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : answeredToday ? (
+            <Card
+              className="hover:shadow-lg transition-all duration-300 cursor-pointer border-green-500/30 bg-green-50/50 dark:bg-green-950/20"
+              onClick={() => setQuizOpen(true)}
+            >
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                    {answeredToday.is_correct ? (
+                      <CheckCircle2 className="h-6 w-6 text-green-600" />
+                    ) : (
+                      <XCircle className="h-6 w-6 text-red-500" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold">Daily Quiz</p>
+                      <Badge variant={answeredToday.is_correct ? "default" : "destructive"} className="text-[10px] px-1.5 py-0">
+                        {answeredToday.is_correct ? "Correct" : "Incorrect"}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Tap to review your answer</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      {answeredToday.is_correct && (
+                        <span className="inline-flex items-center gap-0.5 text-xs font-medium text-yellow-600 dark:text-yellow-400">
+                          <Star className="h-3 w-3 fill-current" />
+                          +10 pts earned
+                        </span>
+                      )}
+                      {stats && stats.current_streak > 0 && (
+                        <span className="inline-flex items-center gap-0.5 text-xs font-medium text-orange-500">
+                          <Flame className="h-3 w-3" />
+                          {stats.current_streak}-day streak
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : null)}
         </div>
 
         {/* Medical Records Section */}
@@ -319,6 +416,13 @@ const PetOwnerDashboard = () => {
               )}
             </CardContent>
           </Card>
+        )}
+
+        {/* Gamification Leaderboard */}
+        {gamificationEnabled && (
+          <div className="mb-8">
+            <LeaderboardCard />
+          </div>
         )}
 
         {/* Main Content Tabs */}
@@ -506,6 +610,11 @@ const PetOwnerDashboard = () => {
         pet={selectedPet}
         onSuccess={handleAddPetSuccess}
       />
+
+      {/* Daily Quiz Modal */}
+      {gamificationEnabled && (
+        <DailyQuizModal open={quizOpen} onOpenChange={setQuizOpen} />
+      )}
     </div>
   );
 };
