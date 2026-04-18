@@ -476,12 +476,12 @@ export const OpeningHoursTab = ({ clinicId }: { clinicId: string }) => {
                 ))}
               </div>
 
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="mt-6 p-4 bg-primary/10 border border-primary/20 rounded-lg">
                 <div className="flex gap-3">
-                  <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-blue-900">
+                  <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-foreground">
                     <p className="font-medium mb-1">How it works:</p>
-                    <ul className="list-disc list-inside space-y-1 text-blue-800">
+                    <ul className="list-disc list-inside space-y-1 text-foreground">
                       <li>Toggle days on/off to control when you're available</li>
                       <li>Add multiple time ranges for split shifts (e.g., 9-12, 14-18)</li>
                       <li>Pet owners can only book during these hours</li>
@@ -613,8 +613,8 @@ export const OpeningHoursTab = ({ clinicId }: { clinicId: string }) => {
               </div>
             </div>
 
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-xs text-blue-900">
+            <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg">
+              <p className="text-xs text-foreground">
                 <strong>💡 Tip:</strong> Select the same date in both fields for a single day, 
                 or choose different dates to mark multiple days unavailable.
               </p>

@@ -38,6 +38,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Upload, X, Plus, Trash2 } from "lucide-react";
+import {
+  SectionProgressBar,
+  PET_FORM_SECTIONS,
+  checkSectionComplete,
+} from "@/components/SectionProgressBar";
 
 // Comprehensive Zod schema - same as AddPetDialogComprehensive
 const comprehensivePetSchema = z.object({
@@ -164,6 +169,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
   const [accordionValue, setAccordionValue] = useState("basics");
 
   const form = useForm<ComprehensivePetFormValues>({
+    mode: "onBlur",
     resolver: zodResolver(comprehensivePetSchema),
     defaultValues: {
       owner_name: "",
@@ -537,6 +543,15 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
           </DialogDescription>
         </DialogHeader>
 
+        <SectionProgressBar
+          sections={PET_FORM_SECTIONS.map((section) => ({
+            ...section,
+            isComplete: checkSectionComplete(section.fields, form.watch()),
+          }))}
+          activeSection={accordionValue}
+          onSectionClick={setAccordionValue}
+        />
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <Accordion 
@@ -559,7 +574,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                 <AccordionContent className="space-y-4 pt-4">
                   {/* Photo */}
                   <div className="space-y-2">
-                    <FormLabel>Pet Photo (Square Portrait)</FormLabel>
+                    <FormLabel>Pet Photo (Square Portrait) <span className="text-muted-foreground font-normal ml-1">(optional)</span></FormLabel>
                     <div className="flex items-start gap-4">
                       {photoPreview ? (
                         <div className="relative">
@@ -596,16 +611,14 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                   </div>
 
                   {/* Form Fields Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     {/* Owner Name */}
                     <FormField
                       control={form.control}
                       name="owner_name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Owner Name <span className="text-red-500">*</span>
-                          </FormLabel>
+                          <FormLabel>Owner Name</FormLabel>
                           <FormControl>
                             <Input placeholder="John Doe" {...field} />
                           </FormControl>
@@ -620,9 +633,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                       name="pet_type"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Pet Type <span className="text-red-500">*</span>
-                          </FormLabel>
+                          <FormLabel>Pet Type</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
@@ -647,9 +658,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                       name="breed"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Breed <span className="text-red-500">*</span>
-                          </FormLabel>
+                          <FormLabel>Breed</FormLabel>
                           <FormControl>
                             <Input placeholder="Golden Retriever" {...field} />
                           </FormControl>
@@ -664,9 +673,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Pet Name <span className="text-yellow-600">(Recommended)</span>
-                          </FormLabel>
+                          <FormLabel>Pet Name <span className="text-muted-foreground font-normal ml-1">(optional)</span></FormLabel>
                           <FormControl>
                             <Input placeholder="Max" {...field} />
                           </FormControl>
@@ -681,9 +688,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                       name="date_of_birth"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Date of Birth <span className="text-yellow-600">(Recommended)</span>
-                          </FormLabel>
+                          <FormLabel>Date of Birth <span className="text-muted-foreground font-normal ml-1">(optional)</span></FormLabel>
                           <FormControl>
                             <Input type="date" {...field} />
                           </FormControl>
@@ -750,7 +755,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Additional Notes</FormLabel>
+                        <FormLabel>Additional Notes <span className="text-muted-foreground font-normal ml-1">(optional)</span></FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Any special information about your pet..."
@@ -771,7 +776,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                   ID & Passport (EU Pet Passport)
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="microchip_number"
@@ -935,7 +940,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                   Health & Wellness
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="species_specific_id"
@@ -971,7 +976,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                         <FormItem>
                           <FormLabel>Weight (kg)</FormLabel>
                           <FormControl>
-                            <Input type="number" step="0.1" placeholder="25.5" {...field} />
+                            <Input type="number" inputMode="decimal" step="0.1" placeholder="25.5" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -999,7 +1004,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                         <FormItem>
                           <FormLabel>Height/Withers (cm)</FormLabel>
                           <FormControl>
-                            <Input type="number" step="0.1" placeholder="60.0" {...field} />
+                            <Input type="number" inputMode="decimal" step="0.1" placeholder="60.0" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -1099,7 +1104,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                     </Button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="diet_brand"
@@ -1218,7 +1223,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                 <AccordionContent className="space-y-4 pt-4">
                   <div className="space-y-4">
                     <h4 className="font-medium text-sm">Primary Veterinary Clinic</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="primary_vet_clinic_name"
@@ -1240,7 +1245,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                           <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                              <Input placeholder="+49 30 12345678" {...field} />
+                              <Input type="tel" inputMode="tel" placeholder="+49 30 12345678" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1251,7 +1256,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                         control={form.control}
                         name="primary_vet_address"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Address</FormLabel>
                             <FormControl>
                               <Input placeholder="Street address" {...field} />
@@ -1279,7 +1284,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
 
                   <div className="space-y-4">
                     <h4 className="font-medium text-sm">24/7 Emergency Clinic</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="emergency_clinic_name"
@@ -1301,7 +1306,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                           <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                              <Input placeholder="Emergency phone" {...field} />
+                              <Input type="tel" inputMode="tel" placeholder="Emergency phone" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1312,7 +1317,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                         control={form.control}
                         name="emergency_clinic_address"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Address</FormLabel>
                             <FormControl>
                               <Input placeholder="Emergency clinic address" {...field} />
@@ -1326,7 +1331,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
 
                   <div className="space-y-4">
                     <h4 className="font-medium text-sm">Microchip Registry</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="microchip_registry_name"
@@ -1359,7 +1364,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                         control={form.control}
                         name="microchip_registry_url"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Registry URL</FormLabel>
                             <FormControl>
                               <Input type="url" placeholder="https://..." {...field} />
@@ -1373,7 +1378,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
 
                   <div className="space-y-4">
                     <h4 className="font-medium text-sm">Alternate Emergency Contact</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="alternate_emergency_contact_name"
@@ -1395,7 +1400,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                           <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                              <Input placeholder="Phone number" {...field} />
+                              <Input type="tel" inputMode="tel" placeholder="Phone number" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1437,7 +1442,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                   />
 
                   {form.watch("acquired_from") === "breeder" && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg">
+                    <div className="grid grid-cols-1 gap-4 p-4 bg-blue-50 rounded-lg">
                       <FormField
                         control={form.control}
                         name="breeder_name"
@@ -1470,7 +1475,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                         control={form.control}
                         name="breeder_contact"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Breeder Contact</FormLabel>
                             <FormControl>
                               <Input placeholder="Phone or email" {...field} />
@@ -1483,7 +1488,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                   )}
 
                   {form.watch("acquired_from") === "rescue" && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-purple-50 rounded-lg">
+                    <div className="grid grid-cols-1 gap-4 p-4 bg-purple-50 rounded-lg">
                       <FormField
                         control={form.control}
                         name="rescue_name"
@@ -1516,7 +1521,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                         control={form.control}
                         name="rescue_contact"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Rescue Contact</FormLabel>
                             <FormControl>
                               <Input placeholder="Phone or email" {...field} />
@@ -1542,7 +1547,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                     )}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="registration_registry"
@@ -1574,7 +1579,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
 
                   <div className="space-y-4">
                     <h4 className="font-medium text-sm">Insurance</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="insurance_provider"
@@ -1607,7 +1612,7 @@ export function EditPetDialog({ open, onOpenChange, pet, onSuccess }: EditPetDia
                         control={form.control}
                         name="insurance_emergency_hotline"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Emergency Hotline</FormLabel>
                             <FormControl>
                               <Input placeholder="24/7 hotline number" {...field} />

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO } from "date-fns";
 import { Calendar, Stethoscope, FileText, User, Building2, AlertCircle, Edit, Printer } from "lucide-react";
 import {
@@ -57,10 +58,7 @@ export function TreatmentRecords({ petId, petName, readOnly = false }: Treatment
         p_pet_id: petId,
       });
 
-      if (error) {
-        console.error("Error fetching treatments:", error);
-        throw error;
-      }
+      if (error) throw error;
 
       // For each treatment, fetch full details if user has access
       const fullTreatments = await Promise.all(
@@ -108,8 +106,17 @@ export function TreatmentRecords({ petId, petName, readOnly = false }: Treatment
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="p-8 text-center">
-          <div className="text-muted-foreground">Loading treatment records...</div>
+        <CardContent className="p-6 space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex items-start gap-4 p-3 border rounded-lg">
+              <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-3 w-64" />
+              </div>
+              <Skeleton className="h-5 w-16 rounded-full" />
+            </div>
+          ))}
         </CardContent>
       </Card>
     );

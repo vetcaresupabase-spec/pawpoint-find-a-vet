@@ -27,7 +27,7 @@ const Index = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden" style={{backgroundImage: 'linear-gradient(to right bottom, #F9F5F1, rgba(243, 227, 206, 0.3), rgba(63, 166, 166, 0.1))'}}>
+      <section className="relative overflow-hidden bg-gradient-to-br from-background via-secondary/30 to-primary/10">
         <div className="container grid lg:grid-cols-2 gap-8 lg:gap-12 items-center py-8 sm:py-12 lg:py-20 px-4 sm:px-6">
           <div className="space-y-4 sm:space-y-6">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-foreground">
@@ -59,8 +59,9 @@ const Index = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => setSearchMode("vets")}
+                aria-pressed={searchMode === "vets"}
                 className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                  "flex items-center gap-1.5 px-4 min-h-[44px] rounded-full text-sm font-medium transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   searchMode === "vets"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-muted/60 text-muted-foreground hover:bg-muted"
@@ -71,8 +72,9 @@ const Index = () => {
               </button>
               <button
                 onClick={() => setSearchMode("parks")}
+                aria-pressed={searchMode === "parks"}
                 className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                  "flex items-center gap-1.5 px-4 min-h-[44px] rounded-full text-sm font-medium transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   searchMode === "parks"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-muted/60 text-muted-foreground hover:bg-muted"
@@ -83,8 +85,9 @@ const Index = () => {
               </button>
               <button
                 onClick={() => setSearchMode("shops")}
+                aria-pressed={searchMode === "shops"}
                 className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                  "flex items-center gap-1.5 px-4 min-h-[44px] rounded-full text-sm font-medium transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   searchMode === "shops"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-muted/60 text-muted-foreground hover:bg-muted"
@@ -121,7 +124,10 @@ const Index = () => {
             <img 
               src={heroImage} 
               alt="Cheerful veterinarian with Golden Retriever, Beagle, cat, rabbit, parakeet, and goldfish in a modern veterinary clinic" 
-              className="relative rounded-2xl shadow-2xl w-full h-full object-contain" 
+              className="relative rounded-2xl shadow-2xl w-full h-full object-contain"
+              width={600}
+              height={450}
+              loading="lazy"
             />
           </div>
         </div>
@@ -295,7 +301,7 @@ const Index = () => {
               <span className="text-base sm:text-lg font-bold">Pet2Vet<span className="text-muted-foreground">.app</span></span>
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground text-center">
-              © 2025 Pet2Vet.app. Caring for pets, one appointment at a time.
+              © {new Date().getFullYear()} Pet2Vet.app. Caring for pets, one appointment at a time.
             </p>
           </div>
         </div>

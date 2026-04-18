@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -18,7 +19,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Plus, Edit, Trash2, Clock, DollarSign } from "lucide-react";
+import { Plus, Edit, Trash2, Clock, DollarSign, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -146,10 +147,59 @@ export const ServicesTab = ({ clinicId }: { clinicId: string }) => {
     });
   };
 
+  const ITEMS_PER_PAGE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(services.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, services.length);
+  const paginatedServices = services.slice(startIndex, endIndex);
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-muted-foreground">Loading services...</div>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <Skeleton className="h-8 w-32 mb-2" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <Card>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="text-left p-4"><Skeleton className="h-4 w-24" /></th>
+                  <th className="text-left p-4"><Skeleton className="h-4 w-20" /></th>
+                  <th className="text-left p-4"><Skeleton className="h-4 w-16" /></th>
+                  <th className="text-left p-4"><Skeleton className="h-4 w-20" /></th>
+                  <th className="text-left p-4"><Skeleton className="h-4 w-14" /></th>
+                  <th className="text-right p-4"><Skeleton className="h-4 w-16 ml-auto" /></th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="border-b">
+                    <td className="p-4">
+                      <Skeleton className="h-4 w-40 mb-1" />
+                      <Skeleton className="h-3 w-56" />
+                    </td>
+                    <td className="p-4"><Skeleton className="h-4 w-28" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-20" /></td>
+                    <td className="p-4"><Skeleton className="h-6 w-10 rounded-full" /></td>
+                    <td className="p-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <Skeleton className="h-8 w-8" />
+                        <Skeleton className="h-8 w-8" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       </div>
     );
   }
@@ -182,9 +232,9 @@ export const ServicesTab = ({ clinicId }: { clinicId: string }) => {
         </Card>
       ) : (
         <Card>
-          <div className="overflow-x-auto">
+          <div className="max-h-[500px] overflow-y-auto">
             <table className="w-full">
-              <thead>
+              <thead className="sticky top-0 z-10 bg-background">
                 <tr className="border-b bg-muted/50">
                   <th className="text-left p-4 font-semibold">Service Name</th>
                   <th className="text-left p-4 font-semibold">Category</th>
@@ -195,7 +245,7 @@ export const ServicesTab = ({ clinicId }: { clinicId: string }) => {
                 </tr>
               </thead>
               <tbody>
-                {services.map((service) => (
+                {paginatedServices.map((service) => (
                   <tr 
                     key={service.id} 
                     className={`border-b hover:bg-muted/50 transition-colors ${!service.is_active ? 'opacity-50' : ''}`}
@@ -275,6 +325,45 @@ export const ServicesTab = ({ clinicId }: { clinicId: string }) => {
               </tbody>
             </table>
           </div>
+
+          {services.length > ITEMS_PER_PAGE && (
+            <div className="flex items-center justify-between border-t px-4 py-3">
+              <span className="text-sm text-muted-foreground">
+                Showing {startIndex + 1}-{endIndex} of {services.length} services
+              </span>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Prev
+                </Button>
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <Button
+                    key={i + 1}
+                    variant={currentPage === i + 1 ? "default" : "outline"}
+                    size="sm"
+                    className="w-8"
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </Card>
       )}
 

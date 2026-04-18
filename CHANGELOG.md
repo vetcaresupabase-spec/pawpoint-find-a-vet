@@ -4,6 +4,66 @@ All notable changes to this project are documented in this file.
 
 ---
 
+## [2026-04-18] — UI/UX Audit, Mobile Must-Haves & Release Signing
+
+### UI/UX Audit (WCAG 2.1 AA Compliance)
+- **Design tokens** — Standardized spacing, color, and typography across all components
+- **Interactive states** — Added proper hover, focus-visible, active, and disabled states to all interactive elements
+- **Skeleton loading** — Added loading skeletons to replace raw spinners on data-heavy pages
+- **Form validation** — Inline validation with blur-based triggering, `aria-invalid` and `aria-describedby` for accessibility
+- **Breadcrumbs** — Added `PageBreadcrumbs` component used on BookAppointment, SearchResults, ClinicProfile, and Account pages
+- **Skip-to-main** — Added keyboard-accessible skip link for screen reader users
+- **404 page** — Redesigned NotFound page with helpful navigation
+- **Section progress** — Added `SectionProgressBar` for multi-step pet forms (AddPetDialog, EditPetDialog)
+- **Toast improvements** — Always-visible close button with 44px touch target
+- **Focus management** — Consistent `focus-visible` ring styles across all interactive components
+
+### Mobile Must-Haves
+- **Touch targets** — All buttons, switches, inputs, selects, and icon buttons now meet 44x44px minimum (WCAG 2.5.5)
+- **Touch spacing** — Increased spacing between adjacent interactive elements (time slots, form fields)
+- **Hover alternatives** — Actions revealed on hover for desktop now always visible on mobile
+- **Font sizing** — `text-base` (16px) on mobile for all inputs/textareas/selects to prevent iOS auto-zoom
+- **Sticky CTAs** — Fixed bottom action bars on mobile for BookAppointment flow
+- **Safe area insets** — Added `viewport-fit=cover` and `env(safe-area-inset-*)` padding for notched devices
+- **Keyboard types** — `inputMode="tel"` for phone fields, `inputMode="decimal"` for weight/height fields
+- **Haptic feedback** — New `haptics.ts` utility with success/warning/error feedback on booking, pet deletion
+- **Offline banner** — New `OfflineBanner` component with real-time online/offline detection
+- **Keyboard avoidance** — Added `interactive-widget=resizes-content` viewport meta for proper keyboard handling
+
+### Android Release Signing
+- **Release keystore** — Generated signing key for APK Signature Scheme v2
+- **Gradle config** — Added `signingConfigs.release` in `build.gradle` with external `keystore.properties`
+- **JDK 17 compatibility** — Resolved Java/Kotlin compilation issues across Capacitor plugins
+- **Version bump** — Updated to v1.1 (versionCode 2)
+- **Security** — Added `keystore.properties` and `*.keystore` to `.gitignore`
+
+### New Files
+- `src/components/OfflineBanner.tsx` — Offline status indicator
+- `src/components/PageBreadcrumbs.tsx` — Reusable breadcrumb navigation
+- `src/components/SectionProgressBar.tsx` — Multi-step form progress indicator
+- `src/lib/haptics.ts` — Cross-platform haptic feedback utility
+- `_wip/` — Parked testing setup (vitest, component tests) for future completion
+
+### Modified Components (Touch Target & State Fixes)
+- `button.tsx`, `input.tsx`, `select.tsx`, `switch.tsx`, `textarea.tsx`, `toast.tsx`
+- `Header.tsx`, `PetCard.tsx`, `SearchBar.tsx`, `TranslationBanner.tsx`
+- `AddPetDialogComprehensive.tsx`, `EditPetDialog.tsx`, `VetRegistrationDialog.tsx`
+- `BookAppointment.tsx`, `PetOwnerDashboard.tsx`, `ClinicProfile.tsx`, `SearchResults.tsx`
+- `Account.tsx`, `Index.tsx`, `NotFound.tsx`, `Help.tsx`, `ForVets.tsx`
+- `VetDashboard.tsx` and vet sub-tabs (AnalyticsTab, ServicesTab, TodayTab, etc.)
+- Gamification components (DailyQuizModal, LeaderboardCard, PointsBadge)
+
+---
+
+## [2026-04-05] — Capacitor Native Builds & Gamification System
+
+### Added
+- **Capacitor integration** — Native iOS and Android project scaffolding
+- **Gamification system** — Points, streaks, daily quiz, leaderboard, feature flags
+- **Release APK** — Android release build pipeline with signing
+
+---
+
 ## [2026-03-15] — Google Places Pet Shop Search
 
 ### Added

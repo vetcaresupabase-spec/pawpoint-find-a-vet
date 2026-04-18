@@ -103,7 +103,7 @@ export function TranslationBanner({ onClose }: TranslationBannerProps) {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] bg-blue-600 text-white shadow-lg animate-in slide-in-from-top">
+    <div className="fixed top-0 left-0 right-0 z-[100] bg-primary text-white shadow-lg animate-in slide-in-from-top">
       <div className="container mx-auto px-4 py-3 max-w-7xl">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 flex-1">
@@ -121,14 +121,14 @@ export function TranslationBanner({ onClose }: TranslationBannerProps) {
             <Button
               onClick={handleTranslate}
               size="sm"
-              className="bg-white text-blue-600 hover:bg-blue-50 font-medium"
+              className="bg-background text-primary hover:bg-muted/50 font-medium"
             >
               <Languages className="h-4 w-4 mr-2" />
               Translate
             </Button>
             <button
               onClick={handleDismiss}
-              className="p-1 hover:bg-blue-700 rounded transition-colors"
+              className="p-1 hover:bg-primary/80 rounded transition-colors"
               aria-label="Dismiss"
             >
               <X className="h-5 w-5" />

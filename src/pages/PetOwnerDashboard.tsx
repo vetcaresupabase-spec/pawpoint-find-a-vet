@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
+import { triggerHaptic } from "@/lib/haptics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -22,6 +23,16 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -46,6 +57,7 @@ const PetOwnerDashboard = () => {
   const [selectedPetForRecords, setSelectedPetForRecords] = useState<any>(null);
   const [showMedicalRecords, setShowMedicalRecords] = useState(false);
   const [quizOpen, setQuizOpen] = useState(false);
+  const [deletePetId, setDeletePetId] = useState<string | null>(null);
   const { enabled: gamificationEnabled, dailyQuestion, answeredToday, quizLoading, stats } = useGamification();
 
   useEffect(() => {
@@ -101,10 +113,7 @@ const PetOwnerDashboard = () => {
         .order("appointment_date", { ascending: true })
         .order("start_time", { ascending: true });
       
-      if (error) {
-        console.error("Error fetching bookings:", error);
-        return [];
-      }
+      if (error) return [];
       
       return data || [];
     },
@@ -123,10 +132,7 @@ const PetOwnerDashboard = () => {
         .eq("owner_id", user.id)
         .order("created_at", { ascending: false });
       
-      if (error) {
-        console.error("Error fetching pets:", error);
-        return [];
-      }
+      if (error) return [];
       
       return data || [];
     },
@@ -147,17 +153,23 @@ const PetOwnerDashboard = () => {
     queryClient.invalidateQueries({ queryKey: ["userPets", user?.id] });
   };
 
-  const handleDeletePet = async (petId: string) => {
-    const confirmed = window.confirm("Are you sure you want to delete this pet? This action cannot be undone.");
-    
-    if (!confirmed) return;
+  const handleDeletePet = (petId: string) => {
+    triggerHaptic("warning");
+    setDeletePetId(petId);
+  };
+
+  const confirmDeletePet = async () => {
+    if (!deletePetId) return;
 
     const { error } = await supabase
       .from("pets")
       .delete()
-      .eq("id", petId);
+      .eq("id", deletePetId);
+
+    setDeletePetId(null);
 
     if (error) {
+      triggerHaptic("error");
       toast({
         title: "Failed to delete pet",
         description: error.message,
@@ -166,12 +178,12 @@ const PetOwnerDashboard = () => {
       return;
     }
 
+    triggerHaptic("success");
     toast({
       title: "Pet deleted",
       description: "Your pet has been removed from your profile",
     });
 
-    // Refresh pets list
     queryClient.invalidateQueries({ queryKey: ["userPets", user?.id] });
   };
 
@@ -179,8 +191,28 @@ const PetOwnerDashboard = () => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
         <Header />
-        <div className="container py-20 text-center">
-          <p>Loading...</p>
+        <div className="border-b bg-background/95">
+          <div className="container py-6 space-y-3">
+            <Skeleton className="h-9 w-64" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+        </div>
+        <div className="container py-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i}>
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-3 w-36" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -297,16 +329,16 @@ const PetOwnerDashboard = () => {
             </Card>
           ) : answeredToday ? (
             <Card
-              className="hover:shadow-lg transition-all duration-300 cursor-pointer border-green-500/30 bg-green-50/50 dark:bg-green-950/20"
+              className="hover:shadow-lg transition-all duration-300 cursor-pointer border-primary/30 bg-primary/10"
               onClick={() => setQuizOpen(true)}
             >
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
                     {answeredToday.is_correct ? (
-                      <CheckCircle2 className="h-6 w-6 text-green-600" />
+                      <CheckCircle2 className="h-6 w-6 text-primary" />
                     ) : (
-                      <XCircle className="h-6 w-6 text-red-500" />
+                      <XCircle className="h-6 w-6 text-destructive" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -346,8 +378,10 @@ const PetOwnerDashboard = () => {
             </CardHeader>
             <CardContent>
               {petsLoading ? (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">Loading pets...</p>
+                <div className="flex gap-2 py-4">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <Skeleton key={i} className="h-10 w-28 rounded-md" />
+                  ))}
                 </div>
               ) : pets.length > 0 ? (
                 <div className="space-y-6">
@@ -450,8 +484,22 @@ const PetOwnerDashboard = () => {
               </CardHeader>
               <CardContent>
                 {bookingsLoading ? (
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground">Loading appointments...</p>
+                  <div className="space-y-4 py-4">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i} className="flex items-center gap-4 p-4 border rounded-lg">
+                        <div className="text-center space-y-1">
+                          <Skeleton className="h-5 w-5 mx-auto" />
+                          <Skeleton className="h-4 w-10" />
+                          <Skeleton className="h-3 w-16" />
+                        </div>
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-40" />
+                          <Skeleton className="h-3 w-24" />
+                          <Skeleton className="h-3 w-32" />
+                        </div>
+                        <Skeleton className="h-6 w-20 rounded-full" />
+                      </div>
+                    ))}
                   </div>
                 ) : bookings.length > 0 ? (
                   <div className="space-y-4">
@@ -529,8 +577,18 @@ const PetOwnerDashboard = () => {
               </CardHeader>
               <CardContent>
                 {petsLoading ? (
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground">Loading pets...</p>
+                  <div className="grid grid-cols-1 gap-4">
+                    {Array.from({ length: 2 }).map((_, i) => (
+                      <div key={i} className="p-4 border rounded-lg space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="h-12 w-12 rounded-full" />
+                          <div className="space-y-2">
+                            <Skeleton className="h-5 w-32" />
+                            <Skeleton className="h-3 w-24" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ) : pets.length > 0 ? (
                   <div className="grid grid-cols-1 gap-4">
@@ -615,6 +673,24 @@ const PetOwnerDashboard = () => {
       {gamificationEnabled && (
         <DailyQuizModal open={quizOpen} onOpenChange={setQuizOpen} />
       )}
+
+      {/* Delete Pet Confirmation */}
+      <AlertDialog open={!!deletePetId} onOpenChange={(open) => !open && setDeletePetId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this pet?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. All data associated with this pet will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeletePet} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -84,10 +85,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
         .eq("appointment_date", today)
         .order("start_time");
       
-      if (error) {
-        console.error("Error fetching appointments:", error);
-        throw error;
-      }
+      if (error) throw error;
 
       // Map to expected format
       const mapped = (data || []).map((booking: any) => ({
@@ -106,12 +104,6 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
         shared_pet_id: booking.shared_pet_id,
         appointment_date: booking.appointment_date, // Added for pet record creation
       })) as TodayAppointment[];
-      
-      // Debug logging
-      const sharedCount = mapped.filter(apt => apt.pet_info_shared || apt.shared_pet_id).length;
-      if (sharedCount > 0) {
-        console.log(`✅ Found ${sharedCount} appointment(s) with shared pet information`);
-      }
       
       return mapped;
     },
@@ -142,10 +134,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
         .order("start_time")
         .limit(20);
       
-      if (error) {
-        console.error("Error fetching upcoming appointments:", error);
-        throw error;
-      }
+      if (error) throw error;
 
       const mapped = (data || []).map((booking: any) => ({
         ...booking,
@@ -154,12 +143,6 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
         pet_info_shared: booking.pet_info_shared === true || booking.pet_info_shared === 'true',
         shared_pet_id: booking.shared_pet_id,
       }));
-      
-      // Debug logging
-      const sharedCount = mapped.filter((apt: any) => apt.pet_info_shared || apt.shared_pet_id).length;
-      if (sharedCount > 0) {
-        console.log(`✅ Found ${sharedCount} upcoming appointment(s) with shared pet information`);
-      }
       
       return mapped;
     },
@@ -186,8 +169,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
         description: "Patient has been checked in successfully.",
       });
     },
-    onError: (error) => {
-      console.error("Check-in error:", error);
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to check in patient.",
@@ -217,8 +199,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
         description: "Appointment has been marked as no-show.",
       });
     },
-    onError: (error) => {
-      console.error("No-show error:", error);
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to mark as no-show.",
@@ -238,10 +219,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
         .eq("id", bookingId)
         .select();
       
-      if (error) {
-        console.error("Decline error details:", error);
-        throw new Error(error.message || "Failed to decline appointment");
-      }
+      if (error) throw new Error(error.message || "Failed to decline appointment");
       
       if (!data || data.length === 0) {
         throw new Error("No rows updated. Appointment may not exist or you may not have permission.");
@@ -260,7 +238,6 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
       });
     },
     onError: (error: Error) => {
-      console.error("Decline error:", error);
       toast({
         title: "Error",
         description: error.message || "Failed to decline appointment. Please try again.",
@@ -309,8 +286,31 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-muted-foreground">Loading...</div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-52" />
+          <div className="flex gap-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-8 w-20" />
+            ))}
+          </div>
+        </div>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Card key={i} className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-3 flex-1">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="space-y-1">
+                    <Skeleton className="h-4 w-36" />
+                    <Skeleton className="h-3 w-52" />
+                  </div>
+                </div>
+              </div>
+              <Skeleton className="h-9 w-24" />
+            </div>
+          </Card>
+        ))}
       </div>
     );
   }
@@ -389,7 +389,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                       <div className="text-muted-foreground flex items-center gap-1">
                         Pet
                         {apt.pet_info_shared && (
-                          <Share2 className="h-3 w-3 text-blue-600" title="Pet information shared" />
+                          <Share2 className="h-3 w-3 text-primary" title="Pet information shared" />
                         )}
                       </div>
                       <div className="font-medium">{apt.pet_name}</div>
@@ -426,7 +426,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                         bookingId: apt.id, 
                         petName: apt.pet_name 
                       })}
-                      className="bg-blue-600 hover:bg-blue-700 text-white border-0 shadow-sm"
+                      className="bg-primary hover:bg-primary/90 text-white border-0 shadow-sm"
                     >
                       <Eye className="h-4 w-4 mr-2" />
                       View Pet Details
@@ -439,16 +439,6 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                       size="sm"
                       variant="default"
                       onClick={async () => {
-                      // Debug: Log appointment data
-                      console.log("Starting treatment for appointment:", {
-                        id: apt.id,
-                        pet_name: apt.pet_name,
-                        pet_owner_id: apt.pet_owner_id,
-                        pet_type: apt.pet_type,
-                        shared_pet_id: apt.shared_pet_id,
-                        pet_info_shared: apt.pet_info_shared
-                      });
-                      
                       // Get pet_id - use shared_pet_id if available, otherwise create/find one
                       let petId = apt.shared_pet_id;
                       
@@ -476,13 +466,6 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                           );
                           
                           if (petError) {
-                            console.error("Error creating pet record:", petError);
-                            console.error("Appointment data:", {
-                              id: apt.id,
-                              pet_name: apt.pet_name,
-                              pet_owner_id: apt.pet_owner_id,
-                              pet_type: apt.pet_type,
-                            });
                             toast({
                               title: "Error",
                               description: `Failed to create pet record for treatment: ${petError.message || petError.details || 'Unknown error'}. Please try again.`,
@@ -493,8 +476,6 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                           
                           // The function returns the pet ID directly
                           petId = newPetId;
-                          
-                          console.log("✅ Successfully created pet record:", petId);
                           toast({
                             title: "Pet Record Created",
                             description: `Created pet record for ${apt.pet_name}. You can now start treatment.`,
@@ -510,7 +491,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                         petName: apt.pet_name,
                       });
                     }}
-                    className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm"
+                    className="bg-primary hover:bg-primary/90 text-white border-0 shadow-sm"
                   >
                     <Stethoscope className="h-4 w-4 mr-2" />
                     Start Treatment
@@ -529,7 +510,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                           description: `Treatment for ${apt.pet_name} has been completed. Check the Medical Records tab for details.`,
                         });
                       }}
-                      className="border-green-600 text-green-600 hover:bg-green-50"
+                      className="border-primary text-primary hover:bg-primary/10"
                     >
                       <Stethoscope className="h-4 w-4 mr-2" />
                       Treatment Complete
@@ -666,7 +647,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                         <div className="text-muted-foreground flex items-center gap-1">
                           Pet
                           {(apt.pet_info_shared || apt.shared_pet_id) && (
-                            <Share2 className="h-3 w-3 text-blue-600" title="Pet information shared" />
+                            <Share2 className="h-3 w-3 text-primary" title="Pet information shared" />
                           )}
                         </div>
                         <div className="font-medium">{apt.pet_name}</div>
@@ -690,7 +671,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                           bookingId: apt.id, 
                           petName: apt.pet_name 
                         })}
-                        className="bg-blue-600 hover:bg-blue-700 text-white border-0 shadow-sm"
+                        className="bg-primary hover:bg-primary/90 text-white border-0 shadow-sm"
                       >
                         <Eye className="h-4 w-4 mr-2" />
                         View Pet Details
@@ -730,7 +711,7 @@ export const TodayTab = ({ clinicId }: { clinicId: string }) => {
                           petName: apt.pet_name,
                         });
                       }}
-                      className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm"
+                      className="bg-primary hover:bg-primary/90 text-white border-0 shadow-sm"
                     >
                       <Stethoscope className="h-4 w-4 mr-2" />
                       Start Treatment

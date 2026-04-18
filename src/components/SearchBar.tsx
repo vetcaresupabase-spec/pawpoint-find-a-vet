@@ -53,7 +53,7 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
     const parts = text.split(regex);
     return parts.map((part, i) => {
       if (part.toLowerCase() === searchTerm.toLowerCase()) {
-        return <span key={i} className="text-blue-600 font-semibold">{part}</span>;
+        return <span key={i} className="text-primary font-semibold">{part}</span>;
       }
       return <span key={i}>{part}</span>;
     });
@@ -72,10 +72,8 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         setLocationStatus("granted");
         setLocation("Near me");
-        console.log("Geolocation acquired:", pos.coords.latitude, pos.coords.longitude);
       },
-      (error) => {
-        console.log("Geolocation denied or failed:", error.message);
+      () => {
         setLocationStatus("denied");
       },
       { enableHighAccuracy: false, maximumAge: 300000, timeout: 8000 }
@@ -175,8 +173,7 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
       setResults(searchResults.slice(0, 10));
       setShowResults(searchResults.length > 0);
       setSelectedIndex(-1);
-    } catch (error) {
-      console.error("Search exception:", error);
+    } catch {
       setResults([]);
       setShowResults(false);
     } finally {
@@ -256,11 +253,9 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
           setLocationStatus("granted");
           setLocation("Near me");
           setFocusedField('location');
-          console.log("Location acquired:", pos.coords.latitude, pos.coords.longitude);
         },
-        (error) => {
+        () => {
           setLocationStatus("denied");
-          console.error("Location error:", error.message);
         }
       );
     }
@@ -269,12 +264,12 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
 
   return (
     <div ref={resultsRef} className="w-full max-w-5xl mx-auto relative">
-      <div className="bg-white rounded-2xl shadow-xl border border-border overflow-hidden">
+      <div className="bg-background rounded-2xl shadow-xl border border-border overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-stretch">
           {/* Search Input - Name, field of expertise, institution */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 px-1.5 sm:px-3 md:px-4 lg:px-6 py-2.5 sm:py-3 md:py-3.5 lg:py-4 border-b sm:border-b-0 sm:border-r">
-              <Search className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 lg:h-5 lg:w-5 text-muted-foreground flex-shrink-0" />
+            <div className="flex items-center gap-2 sm:gap-2 md:gap-2 lg:gap-3 px-2 sm:px-3 md:px-4 lg:px-6 py-2.5 sm:py-3 md:py-3.5 lg:py-4 border-b sm:border-b-0 sm:border-r">
+              <Search className="h-4 w-4 sm:h-4 sm:w-4 md:h-4 md:w-4 lg:h-5 lg:w-5 text-muted-foreground flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <input
                   type="text"
@@ -291,7 +286,7 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
                     }
                   }}
                   onKeyDown={handleKeyDown}
-                  className="w-full bg-transparent border-0 outline-none focus:outline-none text-[9px] sm:text-[10px] md:text-xs lg:text-sm text-gray-900 placeholder:text-gray-600 placeholder:text-[7px] placeholder:sm:text-[8px] placeholder:md:text-[9px] placeholder:lg:text-[10px]"
+                  className="w-full bg-transparent border-0 outline-none focus:outline-none text-sm md:text-base text-foreground placeholder:text-muted-foreground placeholder:text-xs placeholder:sm:text-sm"
                 />
               </div>
             </div>
@@ -299,8 +294,8 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
 
           {/* Location Input with Geolocation */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 px-1.5 sm:px-3 md:px-4 lg:px-6 py-2.5 sm:py-3 md:py-3.5 lg:py-4">
-              <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 lg:h-5 lg:w-5 text-muted-foreground flex-shrink-0" />
+            <div className="flex items-center gap-2 sm:gap-2 md:gap-2 lg:gap-3 px-2 sm:px-3 md:px-4 lg:px-6 py-2.5 sm:py-3 md:py-3.5 lg:py-4">
+              <MapPin className="h-4 w-4 sm:h-4 sm:w-4 md:h-4 md:w-4 lg:h-5 lg:w-5 text-muted-foreground flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <input
                   type="text"
@@ -317,21 +312,22 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
                     }
                   }}
                   onKeyDown={handleKeyDown}
-                  className="w-full bg-transparent border-0 outline-none focus:outline-none text-[9px] sm:text-[10px] md:text-xs lg:text-sm text-gray-900 placeholder:text-gray-600 placeholder:text-[7px] placeholder:sm:text-[8px] placeholder:md:text-[9px] placeholder:lg:text-[10px]"
+                  className="w-full bg-transparent border-0 outline-none focus:outline-none text-sm md:text-base text-foreground placeholder:text-muted-foreground placeholder:text-xs placeholder:sm:text-sm"
                 />
               </div>
               <button
                 onClick={handleUseLocation}
                 className={cn(
-                  "text-muted-foreground hover:text-primary transition-colors flex-shrink-0",
+                  "min-h-[44px] min-w-[44px] flex items-center justify-center text-muted-foreground hover:text-primary transition-colors flex-shrink-0",
                   locationStatus === "granted" && "text-primary"
                 )}
                 title={coords ? "Location acquired" : "Get my location"}
+                aria-label={coords ? "Location acquired" : "Get my location"}
               >
                 {locationStatus === "loading" ? (
-                  <Loader2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 lg:h-5 lg:w-5 animate-spin" />
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  <Navigation className={cn("h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 lg:h-5 lg:w-5", coords && "fill-current")} />
+                  <Navigation className={cn("h-5 w-5", coords && "fill-current")} />
                 )}
               </button>
             </div>
@@ -359,9 +355,9 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
 
       {/* Single Unified Results Dropdown */}
       {showResults && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg border border-border shadow-2xl z-50 max-h-96 overflow-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-background rounded-lg border border-border shadow-2xl z-50 max-h-96 overflow-auto">
           {results.length === 0 ? (
-            <div className="p-6 text-center text-sm text-gray-600">
+            <div className="p-6 text-center text-sm text-muted-foreground">
               {isSearching ? (
                 <div className="flex items-center justify-center gap-2">
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -369,22 +365,22 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
                 </div>
               ) : (
                 <div>
-                  <p className="font-medium text-gray-900 mb-1">No clinics found</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-medium text-foreground mb-1">No clinics found</p>
+                  <p className="text-xs text-muted-foreground">
                     Try searching with a different name, specialty, or location
                   </p>
                 </div>
               )}
             </div>
           ) : (
-            <ul className="divide-y divide-gray-100">
+            <ul className="divide-y divide-border">
               {results.map((clinic, index) => (
                 <li
                   key={clinic.id}
                   className={cn(
                     "px-6 py-4 cursor-pointer transition-colors",
-                    "hover:bg-gray-50",
-                    selectedIndex === index && "bg-blue-50"
+                    "hover:bg-muted/50",
+                    selectedIndex === index && "bg-primary/10"
                   )}
                   onClick={() => handleClinicSelect(clinic.id)}
                   onMouseEnter={() => setSelectedIndex(index)}
@@ -396,22 +392,22 @@ export const SearchBar = ({ defaultSearch = "", defaultLocation = "", onSearch, 
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-base text-gray-900">
+                      <div className="font-semibold text-base text-foreground">
                         {highlightText(clinic.name, searchTerm)}
                       </div>
-                      <div className="text-sm text-gray-600 mt-0.5">
+                      <div className="text-sm text-muted-foreground mt-0.5">
                         {clinic.address_line1 && `${clinic.address_line1} • `}
                         {clinic.city}
                         {clinic.postcode && ` • ${clinic.postcode}`}
                       </div>
                       {clinic.specialties && clinic.specialties.length > 0 && (
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className="text-xs text-muted-foreground mt-1">
                           {clinic.specialties.slice(0, 3).join(" • ")}
                         </div>
                       )}
                     </div>
                     {formatDistance(clinic.distance_m) && (
-                      <div className="text-sm text-gray-700 font-semibold flex-shrink-0">
+                      <div className="text-sm text-foreground font-semibold flex-shrink-0">
                         {formatDistance(clinic.distance_m)}
                       </div>
                     )}

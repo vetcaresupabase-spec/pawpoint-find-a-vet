@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -38,6 +38,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Upload, X, Plus, Trash2 } from "lucide-react";
+import {
+  SectionProgressBar,
+  PET_FORM_SECTIONS,
+  checkSectionComplete,
+} from "@/components/SectionProgressBar";
 
 // Comprehensive Zod schema
 const comprehensivePetSchema = z.object({
@@ -153,6 +158,7 @@ export function AddPetDialogComprehensive({
   const [accordionValue, setAccordionValue] = useState("basics");
 
   const form = useForm<ComprehensivePetFormValues>({
+    mode: "onBlur",
     resolver: zodResolver(comprehensivePetSchema),
     defaultValues: {
       owner_name: "",
@@ -187,6 +193,72 @@ export function AddPetDialogComprehensive({
     control: form.control,
     name: "allergies",
   });
+
+  const DRAFT_KEY = "pet2vet_add_pet_draft";
+  const draftRestoredRef = useRef(false);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const saveDraft = useCallback(() => {
+    try {
+      const values = form.getValues();
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(values));
+    } catch {
+      // Silently ignore quota errors
+    }
+  }, [form]);
+
+  const clearDraft = useCallback(() => {
+    localStorage.removeItem(DRAFT_KEY);
+  }, []);
+
+  // Restore draft when dialog opens
+  useEffect(() => {
+    if (open && !draftRestoredRef.current) {
+      try {
+        const saved = localStorage.getItem(DRAFT_KEY);
+        if (saved) {
+          const draft = JSON.parse(saved) as Partial<ComprehensivePetFormValues>;
+          form.reset({ ...form.getValues(), ...draft });
+        }
+      } catch {
+        // Ignore malformed drafts
+      }
+      draftRestoredRef.current = true;
+    }
+    if (!open) {
+      draftRestoredRef.current = false;
+    }
+  }, [open, form]);
+
+  // Periodic autosave every 30 seconds while dialog is open
+  useEffect(() => {
+    if (open) {
+      intervalRef.current = setInterval(saveDraft, 30_000);
+    }
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [open, saveDraft]);
+
+  // Debounced save on every form value change
+  useEffect(() => {
+    if (!open) return;
+    const subscription = form.watch(() => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = setTimeout(saveDraft, 1_000);
+    });
+    return () => {
+      subscription.unsubscribe();
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+    };
+  }, [open, form, saveDraft]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -365,6 +437,7 @@ export function AddPetDialogComprehensive({
         description: `${values.name || "Your pet"} has been added to your profile`,
       });
 
+      clearDraft();
       form.reset();
       setPhotoFile(null);
       setPhotoPreview(null);
@@ -395,6 +468,15 @@ export function AddPetDialogComprehensive({
           </DialogDescription>
         </DialogHeader>
 
+        <SectionProgressBar
+          sections={PET_FORM_SECTIONS.map((section) => ({
+            ...section,
+            isComplete: checkSectionComplete(section.fields, form.watch()),
+          }))}
+          activeSection={accordionValue}
+          onSectionClick={setAccordionValue}
+        />
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <Accordion 
@@ -417,7 +499,7 @@ export function AddPetDialogComprehensive({
                 <AccordionContent className="space-y-4 pt-4">
                   {/* Photo */}
                   <div className="space-y-2">
-                    <FormLabel>Pet Photo (Square Portrait)</FormLabel>
+                    <FormLabel>Pet Photo (Square Portrait) <span className="text-muted-foreground font-normal ml-1">(optional)</span></FormLabel>
                     <div className="flex items-start gap-4">
                       {photoPreview ? (
                         <div className="relative">
@@ -453,15 +535,13 @@ export function AddPetDialogComprehensive({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="owner_name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Owner Name <span className="text-red-500">*</span>
-                          </FormLabel>
+                          <FormLabel>Owner Name</FormLabel>
                           <FormControl>
                             <Input placeholder="John Doe" {...field} />
                           </FormControl>
@@ -475,9 +555,7 @@ export function AddPetDialogComprehensive({
                       name="pet_type"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Pet Type <span className="text-red-500">*</span>
-                          </FormLabel>
+                          <FormLabel>Pet Type</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
@@ -501,9 +579,7 @@ export function AddPetDialogComprehensive({
                       name="breed"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Breed <span className="text-red-500">*</span>
-                          </FormLabel>
+                          <FormLabel>Breed</FormLabel>
                           <FormControl>
                             <Input placeholder="Golden Retriever" {...field} />
                           </FormControl>
@@ -517,9 +593,7 @@ export function AddPetDialogComprehensive({
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Pet Name <span className="text-yellow-600">(Recommended)</span>
-                          </FormLabel>
+                          <FormLabel>Pet Name <span className="text-muted-foreground font-normal ml-1">(optional)</span></FormLabel>
                           <FormControl>
                             <Input placeholder="Max" {...field} />
                           </FormControl>
@@ -533,9 +607,7 @@ export function AddPetDialogComprehensive({
                       name="date_of_birth"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            Date of Birth <span className="text-yellow-600">(Recommended)</span>
-                          </FormLabel>
+                          <FormLabel>Date of Birth <span className="text-muted-foreground font-normal ml-1">(optional)</span></FormLabel>
                           <FormControl>
                             <Input type="date" {...field} />
                           </FormControl>
@@ -602,7 +674,7 @@ export function AddPetDialogComprehensive({
                   ID & Passport (EU Pet Passport)
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="microchip_number"
@@ -766,7 +838,7 @@ export function AddPetDialogComprehensive({
                   Health & Wellness
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="species_specific_id"
@@ -802,7 +874,7 @@ export function AddPetDialogComprehensive({
                         <FormItem>
                           <FormLabel>Weight (kg)</FormLabel>
                           <FormControl>
-                            <Input type="number" step="0.1" placeholder="25.5" {...field} />
+                            <Input type="number" inputMode="decimal" step="0.1" placeholder="25.5" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -830,7 +902,7 @@ export function AddPetDialogComprehensive({
                         <FormItem>
                           <FormLabel>Height/Withers (cm)</FormLabel>
                           <FormControl>
-                            <Input type="number" step="0.1" placeholder="60.0" {...field} />
+                            <Input type="number" inputMode="decimal" step="0.1" placeholder="60.0" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -930,7 +1002,7 @@ export function AddPetDialogComprehensive({
                     </Button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="diet_brand"
@@ -1049,7 +1121,7 @@ export function AddPetDialogComprehensive({
                 <AccordionContent className="space-y-4 pt-4">
                   <div className="space-y-4">
                     <h4 className="font-medium text-sm">Primary Veterinary Clinic</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="primary_vet_clinic_name"
@@ -1071,7 +1143,7 @@ export function AddPetDialogComprehensive({
                           <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                              <Input placeholder="+49 30 12345678" {...field} />
+                              <Input type="tel" inputMode="tel" placeholder="+49 30 12345678" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1082,7 +1154,7 @@ export function AddPetDialogComprehensive({
                         control={form.control}
                         name="primary_vet_address"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Address</FormLabel>
                             <FormControl>
                               <Input placeholder="Street address" {...field} />
@@ -1110,7 +1182,7 @@ export function AddPetDialogComprehensive({
 
                   <div className="space-y-4">
                     <h4 className="font-medium text-sm">24/7 Emergency Clinic</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="emergency_clinic_name"
@@ -1132,7 +1204,7 @@ export function AddPetDialogComprehensive({
                           <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                              <Input placeholder="Emergency phone" {...field} />
+                              <Input type="tel" inputMode="tel" placeholder="Emergency phone" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1143,7 +1215,7 @@ export function AddPetDialogComprehensive({
                         control={form.control}
                         name="emergency_clinic_address"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Address</FormLabel>
                             <FormControl>
                               <Input placeholder="Emergency clinic address" {...field} />
@@ -1157,7 +1229,7 @@ export function AddPetDialogComprehensive({
 
                   <div className="space-y-4">
                     <h4 className="font-medium text-sm">Microchip Registry</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="microchip_registry_name"
@@ -1190,7 +1262,7 @@ export function AddPetDialogComprehensive({
                         control={form.control}
                         name="microchip_registry_url"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Registry URL</FormLabel>
                             <FormControl>
                               <Input type="url" placeholder="https://..." {...field} />
@@ -1204,7 +1276,7 @@ export function AddPetDialogComprehensive({
 
                   <div className="space-y-4">
                     <h4 className="font-medium text-sm">Alternate Emergency Contact</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="alternate_emergency_contact_name"
@@ -1226,7 +1298,7 @@ export function AddPetDialogComprehensive({
                           <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                              <Input placeholder="Phone number" {...field} />
+                              <Input type="tel" inputMode="tel" placeholder="Phone number" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1268,7 +1340,7 @@ export function AddPetDialogComprehensive({
                   />
 
                   {form.watch("acquired_from") === "breeder" && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg">
+                    <div className="grid grid-cols-1 gap-4 p-4 bg-blue-50 rounded-lg">
                       <FormField
                         control={form.control}
                         name="breeder_name"
@@ -1301,7 +1373,7 @@ export function AddPetDialogComprehensive({
                         control={form.control}
                         name="breeder_contact"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Breeder Contact</FormLabel>
                             <FormControl>
                               <Input placeholder="Phone or email" {...field} />
@@ -1314,7 +1386,7 @@ export function AddPetDialogComprehensive({
                   )}
 
                   {form.watch("acquired_from") === "rescue" && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-purple-50 rounded-lg">
+                    <div className="grid grid-cols-1 gap-4 p-4 bg-purple-50 rounded-lg">
                       <FormField
                         control={form.control}
                         name="rescue_name"
@@ -1347,7 +1419,7 @@ export function AddPetDialogComprehensive({
                         control={form.control}
                         name="rescue_contact"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Rescue Contact</FormLabel>
                             <FormControl>
                               <Input placeholder="Phone or email" {...field} />
@@ -1373,7 +1445,7 @@ export function AddPetDialogComprehensive({
                     )}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="registration_registry"
@@ -1405,7 +1477,7 @@ export function AddPetDialogComprehensive({
 
                   <div className="space-y-4">
                     <h4 className="font-medium text-sm">Insurance</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="insurance_provider"
@@ -1438,7 +1510,7 @@ export function AddPetDialogComprehensive({
                         control={form.control}
                         name="insurance_emergency_hotline"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel>Emergency Hotline</FormLabel>
                             <FormControl>
                               <Input placeholder="24/7 hotline number" {...field} />
@@ -1537,7 +1609,7 @@ export function AddPetDialogComprehensive({
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Additional Notes</FormLabel>
+                  <FormLabel>Additional Notes <span className="text-muted-foreground font-normal ml-1">(optional)</span></FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Any other information you'd like to add..."

@@ -134,7 +134,7 @@ const ForVets = () => {
           </div>
           <div className="relative aspect-[4/3] lg:aspect-[4/5] max-w-sm mx-auto lg:max-w-md">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl blur-3xl opacity-50" />
-            <img src={heroImage} alt="Veterinarian with pets in modern clinic" className="relative rounded-3xl shadow-2xl w-full h-full object-cover" />
+            <img src={heroImage} alt="Veterinarian with pets in modern clinic" className="relative rounded-3xl shadow-2xl w-full h-full object-cover" width={500} height={625} loading="lazy" />
           </div>
         </div>
       </section>

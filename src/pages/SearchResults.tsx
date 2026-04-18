@@ -5,8 +5,10 @@ import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Phone, Mail, CheckCircle2, Calendar } from "lucide-react";
+import { MapPin, Phone, Mail, CheckCircle2, Calendar, SearchX } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
+import { PageBreadcrumbs } from "@/components/PageBreadcrumbs";
 import { supabase } from "@/integrations/supabase/client";
 import { Clinic } from "@/integrations/supabase/queries";
 import { useGoogleVetSearch } from "@/hooks/useGoogleVetSearch";
@@ -78,7 +80,6 @@ const SearchResults = () => {
 
         setClinics(results);
       } catch (e: any) {
-        console.error("Search error:", e);
         toast({ title: "Search failed", description: e.message });
         setClinics([]);
       } finally {
@@ -121,25 +122,53 @@ const SearchResults = () => {
       </section>
 
       <div className="container py-8">
+        <PageBreadcrumbs items={[{ label: "Search Results" }]} className="mb-4" />
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">Clinics {location && `in ${location}`}</h1>
           <p className="text-muted-foreground">{loading ? "Searching..." : `Found ${clinics.length} clinics`}</p>
         </div>
 
+        {loading && (
+          <div className="grid gap-4" data-testid="search-skeletons">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="border-l-4 border-l-transparent">
+                <CardContent className="p-0">
+                  <div className="grid md:grid-cols-[140px_1fr_200px] gap-4">
+                    <Skeleton className="aspect-square rounded-tl-lg" />
+                    <div className="py-4 space-y-3">
+                      <Skeleton className="h-6 w-48" />
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-4 w-64" />
+                      <Skeleton className="h-4 w-40" />
+                    </div>
+                    <div className="flex flex-col justify-center p-4 gap-2">
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
         <div className="grid gap-4">
           {clinics.map((c) => (
             <Card 
               key={c.id} 
-              className="hover:shadow-xl transition-all cursor-pointer border-l-4 border-l-transparent hover:border-l-primary"
+              tabIndex={0}
+              role="article"
+              className="hover:shadow-xl transition-all cursor-pointer border-l-4 border-l-transparent hover:border-l-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               onClick={() => navigate(`/clinic/${c.id}`)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(`/clinic/${c.id}`); } }}
             >
               <CardContent className="p-0">
                 <div className="grid md:grid-cols-[140px_1fr_200px] gap-4">
                   {/* Clinic Profile Picture */}
                   <div className="relative">
-                    <div className="aspect-square rounded-tl-lg bg-gradient-to-br from-teal-100 to-blue-100 overflow-hidden flex items-center justify-center">
-                      <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center shadow-md">
-                        <span className="text-4xl font-bold text-teal-600">
+                    <div className="aspect-square rounded-tl-lg bg-gradient-to-br from-primary/10 to-accent/10 overflow-hidden flex items-center justify-center">
+                      <div className="w-24 h-24 rounded-full bg-card flex items-center justify-center shadow-md">
+                        <span className="text-4xl font-bold text-primary">
                           {c.name.split(' ').map(word => word.charAt(0)).join('').slice(0, 2)}
                         </span>
                       </div>
@@ -151,18 +180,18 @@ const SearchResults = () => {
                     <div className="flex items-start gap-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h2 className="text-xl font-bold text-gray-900">{c.name}</h2>
+                          <h2 className="text-xl font-bold text-foreground">{c.name}</h2>
                           {c.verified && (
-                            <CheckCircle2 className="h-5 w-5 text-green-600" />
+                            <CheckCircle2 className="h-5 w-5 text-primary" />
                           )}
                         </div>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                           {(c.specialties || []).join(", ") || "Veterinary Clinic"}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4 flex-shrink-0" />
                       <span>{c.address_line1}, {c.city}</span>
                     </div>
@@ -172,7 +201,7 @@ const SearchResults = () => {
                         {c.languages.map((lang, idx) => (
                           <span 
                             key={idx}
-                            className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded"
+                            className="text-xs px-2 py-0.5 bg-muted text-muted-foreground rounded"
                           >
                             {lang}
                           </span>
@@ -184,7 +213,7 @@ const SearchResults = () => {
                       {c.phone && (
                         <a 
                           href={`tel:${c.phone}`} 
-                          className="text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                          className="text-primary hover:text-primary/80 flex items-center gap-1"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Phone className="h-3.5 w-3.5" />
@@ -194,7 +223,7 @@ const SearchResults = () => {
                       {c.email && (
                         <a 
                           href={`mailto:${c.email}`} 
-                          className="text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                          className="text-primary hover:text-primary/80 flex items-center gap-1"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Mail className="h-3.5 w-3.5" />
@@ -205,9 +234,9 @@ const SearchResults = () => {
                   </div>
 
                   {/* Booking Actions */}
-                  <div className="flex flex-col justify-center p-4 gap-2 bg-gray-50">
+                  <div className="flex flex-col justify-center p-4 gap-2 bg-muted/50">
                     <Button 
-                      className="w-full bg-teal-600 hover:bg-teal-700"
+                      className="w-full"
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate(`/book-appointment?clinicId=${c.id}`);
@@ -239,6 +268,7 @@ const SearchResults = () => {
         {/* No Results */}
         {(!loading && clinics.length === 0 && !googleLoading && googleVets.length === 0) && (
           <Card className="p-12 text-center">
+            <SearchX className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">No results found</h2>
             <p className="text-muted-foreground mb-6">
               Try adjusting your search criteria or location
@@ -262,12 +292,19 @@ const SearchResults = () => {
             </div>
 
             {googleLoading ? (
-              <Card className="p-8 text-center">
-                <div className="flex items-center justify-center gap-2">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                  <span className="text-muted-foreground">Loading Google results...</span>
-                </div>
-              </Card>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Card key={i} className="p-4 space-y-3">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <div className="flex gap-2 pt-2">
+                      <Skeleton className="h-9 w-28" />
+                      <Skeleton className="h-9 w-20" />
+                    </div>
+                  </Card>
+                ))}
+              </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {googleVets.map((vet) => (

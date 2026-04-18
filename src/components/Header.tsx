@@ -35,6 +35,12 @@ export const Header = () => {
   
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 sm:h-16 items-center justify-between px-4 sm:px-6">
           <Link to="/" className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
@@ -45,7 +51,8 @@ export const Header = () => {
           <nav className="flex items-center gap-2 sm:gap-4 md:gap-6">
             <Link 
               to="/" 
-              className={`text-xs sm:text-sm font-medium transition-colors hover:text-primary whitespace-nowrap ${
+              aria-current={location.pathname === "/" ? "page" : undefined}
+              className={`min-h-[44px] flex items-center text-xs sm:text-sm font-medium transition-colors hover:text-primary whitespace-nowrap ${
                 location.pathname === "/" ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -57,7 +64,8 @@ export const Header = () => {
             {(!user || userRole === "vet") && (
               <Link 
                 to="/for-vets" 
-                className={`text-xs sm:text-sm font-medium transition-colors hover:text-primary whitespace-nowrap ${
+                aria-current={isVetPage ? "page" : undefined}
+                className={`min-h-[44px] flex items-center text-xs sm:text-sm font-medium transition-colors hover:text-primary whitespace-nowrap ${
                   isVetPage ? "text-primary" : "text-muted-foreground"
                 }`}
               >
@@ -71,7 +79,7 @@ export const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="sm" variant="outline" className="text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3">
+                  <Button size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3" aria-label="Account menu">
                     <span className="max-w-[100px] sm:max-w-none truncate">{user.email}</span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -92,11 +100,11 @@ export const Header = () => {
             ) : (
               <>
                 {isVetPage ? (
-                  <Button size="sm" onClick={() => setVetDialogOpen(true)} className="text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-4 whitespace-nowrap">
+                  <Button size="sm" onClick={() => setVetDialogOpen(true)} className="text-xs sm:text-sm px-2 sm:px-4 whitespace-nowrap">
                     Join as Vet
                   </Button>
                 ) : (
-                  <Button size="sm" onClick={() => setPetOwnerDialogOpen(true)} className="text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4">
+                  <Button size="sm" onClick={() => setPetOwnerDialogOpen(true)} className="text-xs sm:text-sm px-3 sm:px-4">
                     Log in
                   </Button>
                 )}
@@ -106,12 +114,14 @@ export const Header = () => {
             {/* Help Icon */}
             <Link 
               to="/help" 
-              className={`flex items-center gap-1 text-xs font-medium transition-colors hover:text-primary flex-shrink-0 ${
+              aria-current={location.pathname === "/help" ? "page" : undefined}
+              aria-label="Help"
+              className={`flex items-center justify-center gap-1 min-h-[44px] min-w-[44px] text-xs font-medium transition-colors hover:text-primary flex-shrink-0 ${
                 location.pathname === "/help" ? "text-primary" : "text-muted-foreground"
               }`}
               title="Help"
             >
-              <HelpCircle className="h-4 w-4 sm:h-4 sm:w-4" />
+              <HelpCircle className="h-5 w-5" />
               <span className="hidden lg:inline text-xs">Help</span>
             </Link>
           </nav>

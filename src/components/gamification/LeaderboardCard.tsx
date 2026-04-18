@@ -11,7 +11,7 @@ import { useGamification } from "@/hooks/useGamification";
 
 const RANK_STYLES: Record<number, { icon: typeof Trophy; color: string }> = {
   1: { icon: Trophy, color: "text-yellow-500" },
-  2: { icon: Medal, color: "text-gray-400" },
+  2: { icon: Medal, color: "text-muted-foreground" },
   3: { icon: Medal, color: "text-amber-700" },
 };
 

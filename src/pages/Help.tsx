@@ -107,7 +107,7 @@ const Help = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="border-b bg-gradient-to-br from-[#F9F5F1] via-[#F3E3CE]/30 to-[#3FA6A6]/10">
+      <section className="border-b bg-gradient-to-br from-background via-secondary/30 to-primary/10">
         <div className="container py-16">
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">

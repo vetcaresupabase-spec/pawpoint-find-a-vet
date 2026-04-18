@@ -90,7 +90,7 @@ export function GoogleVetCard({ clinic }: GoogleVetCardProps) {
             <Clock className="h-4 w-4 text-muted-foreground" />
             <span
               className={
-                clinic.is_open_now ? "text-green-600 font-medium" : "text-red-600"
+                clinic.is_open_now ? "text-primary font-medium" : "text-destructive"
               }
             >
               {clinic.is_open_now ? "Open now" : "Closed"}

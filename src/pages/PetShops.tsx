@@ -51,7 +51,7 @@ const PetShops = () => {
             className={`h-3.5 w-3.5 ${
               i < fullStars
                 ? "fill-yellow-400 text-yellow-400"
-                : "fill-gray-200 text-gray-200"
+                : "fill-muted text-muted"
             }`}
           />
         ))}
@@ -150,7 +150,7 @@ const PetShops = () => {
                     {/* Badges */}
                     <div className="flex flex-wrap gap-1.5">
                       {shop.is_open_now !== null && (
-                        <Badge variant={shop.is_open_now ? "default" : "secondary"} className={`text-xs ${shop.is_open_now ? "bg-green-600" : ""}`}>
+                        <Badge variant={shop.is_open_now ? "default" : "secondary"} className={`text-xs ${shop.is_open_now ? "bg-primary" : ""}`}>
                           <Clock className="h-3 w-3 mr-1" />
                           {shop.is_open_now ? "Open now" : "Closed"}
                         </Badge>

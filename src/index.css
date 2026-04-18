@@ -24,7 +24,7 @@ All colors MUST be HSL.
     --secondary-foreground: 210 29% 20%;
 
     --muted: 35 30% 90%;
-    --muted-foreground: 210 15% 45%;
+    --muted-foreground: 210 15% 40%;
 
     --accent: 180 45% 45%;
     --accent-foreground: 0 0% 100%;
@@ -108,5 +108,24 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 }

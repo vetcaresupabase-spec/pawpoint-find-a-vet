@@ -61,6 +61,7 @@ export function VetRegistrationDialog({ open, onOpenChange, mode = "signup" }: V
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
+    mode: "onBlur",
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: "",
@@ -302,7 +303,7 @@ export function VetRegistrationDialog({ open, onOpenChange, mode = "signup" }: V
                     <FormItem>
                       <FormLabel>Mobile Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="+49 123 456 7890" {...field} />
+                        <Input type="tel" inputMode="tel" placeholder="+49 123 456 7890" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

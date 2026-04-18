@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { triggerHaptic } from "@/lib/haptics";
 import {
   Select,
   SelectContent,
@@ -17,10 +18,12 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { format, addDays, startOfDay, isSameDay, setHours, setMinutes, isPast } from "date-fns";
-import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Euro, Share2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Euro, Share2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { useActiveServices } from "@/hooks/useServices";
 import { PetOwnerAuthDialog } from "@/components/PetOwnerAuthDialog";
+import { PageBreadcrumbs } from "@/components/PageBreadcrumbs";
 
 // Service categories
 const ALLOWED_CATEGORIES = [
@@ -138,6 +141,7 @@ export default function BookAppointment() {
   const [selectedPetId, setSelectedPetId] = useState<string>("");
   const [shareWithVet, setShareWithVet] = useState(false);
   const [userPets, setUserPets] = useState<any[]>([]);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Check authentication and fetch pets
   useEffect(() => {
@@ -251,7 +255,6 @@ export default function BookAppointment() {
 
       if (!exceptionsError && exceptionsData) {
         setExceptions(exceptionsData as unknown as ClinicException[]);
-        console.log("Loaded exceptions:", exceptionsData);
       }
 
       // Fetch regular hours
@@ -263,7 +266,6 @@ export default function BookAppointment() {
 
       if (!hoursError && hoursData) {
         setClinicHours(hoursData as unknown as ClinicHours[]);
-        console.log("Loaded clinic hours:", hoursData);
       }
 
       // Fetch existing bookings (only pending, confirmed, and checked_in statuses)
@@ -287,27 +289,10 @@ export default function BookAppointment() {
         .order("start_time");
 
       if (bookingsError) {
-        console.error("❌ Error loading bookings:", bookingsError);
-        console.error("💡 If you see a permission denied error, run this SQL in Supabase:");
-        console.error("   See file: ENABLE_PUBLIC_BOOKING_AVAILABILITY.sql");
-        
-        // Show toast to help diagnose the issue
-        if (bookingsError.code === 'PGRST116' || bookingsError.message?.includes('permission') || bookingsError.message?.includes('policy')) {
-          console.error("🚨 RLS POLICY MISSING: Anonymous users cannot see bookings");
-          console.error("🚨 This causes all slots to appear available for non-logged-in users");
-        }
-        
-        // Set empty array so slots won't be incorrectly marked as available
         setExistingBookings([]);
       } else if (bookingsData) {
         setExistingBookings(bookingsData as unknown as Booking[]);
-        console.log(`✅ Loaded ${bookingsData.length} existing bookings for availability checking`);
-        if (bookingsData.length === 0) {
-          console.log("ℹ️ No bookings found - all slots should be available");
-        }
       } else {
-        // No error but no data - might be RLS blocking silently
-        console.warn("⚠️ No bookings data returned, but no error either. Checking RLS policy...");
         setExistingBookings([]);
       }
     };
@@ -376,10 +361,6 @@ export default function BookAppointment() {
       // slotStart < bookingEnd AND slotEnd > bookingStart
       const overlap = slotStartTime.getTime() < bookingEnd.getTime() && 
                      slotEndTime.getTime() > bookingStart.getTime();
-      
-      if (overlap) {
-        console.log(`🚫 Slot blocked - ${format(slotStartTime, 'HH:mm')} overlaps with booking ${format(bookingStart, 'HH:mm')}-${format(bookingEnd, 'HH:mm')}`);
-      }
       
       return overlap;
     });
@@ -454,8 +435,7 @@ export default function BookAppointment() {
           
           // Check if slot is already booked
           if (available && isSlotBooked(startISO, endISO, dayKey)) {
-            available = false; // Mark as unavailable if already booked
-            console.log(`🔒 Marking slot ${formatTimeSlot(startISO)} on ${dayKey} as booked`);
+            available = false;
           }
           
           slots.push({
@@ -495,12 +475,6 @@ export default function BookAppointment() {
     return acc;
   }, {} as Record<string, Service[]>);
 
-  console.log("Grouped services:", groupedServices);
-  console.log("Services count:", services.length);
-  console.log("Selected service ID:", selectedServiceId);
-  console.log("Selected slot:", selectedSlot);
-  console.log("Pet name:", petName);
-
   const handlePreviousWeek = () => {
     const newWeekStart = addDays(currentWeekStart, -7);
     const today = startOfToday();
@@ -527,6 +501,7 @@ export default function BookAppointment() {
   const handleSlotClick = (slot: TimeSlot) => {
     if (slot.available && !isPastSlot(slot.start)) {
       setSelectedSlot(slot);
+      setFieldErrors(prev => { const n = {...prev}; delete n.slot; return n; });
     }
   };
 
@@ -538,14 +513,16 @@ export default function BookAppointment() {
     }
 
     // User is logged in: validate and book
-    if (!selectedServiceId || !selectedSlot || !petName) {
-      toast({
-        title: "Missing information",
-        description: "Please select a service, time slot, and enter your pet's name.",
-        variant: "destructive",
-      });
+    const errors: Record<string, string> = {};
+    if (!selectedServiceId) errors.service = "Please select a service";
+    if (!selectedSlot) errors.slot = "Please select a time slot";
+    if (!petName.trim()) errors.petName = "Pet name is required";
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      triggerHaptic("error");
       return;
     }
+    setFieldErrors({});
 
     setSubmitting(true);
 
@@ -607,7 +584,6 @@ export default function BookAppointment() {
     setSubmitting(false);
 
     if (error) {
-      console.error("Booking error:", error);
       // Check if error is due to unique constraint violation (double booking)
       if (error.code === '23505' || error.message?.includes('unique') || error.message?.includes('duplicate')) {
         toast({
@@ -657,6 +633,7 @@ export default function BookAppointment() {
       setExistingBookings(bookingsData as unknown as Booking[]);
     }
 
+    triggerHaptic("success");
     toast({
       title: "Booked!",
       description: "Check your email for confirmation.",
@@ -669,8 +646,25 @@ export default function BookAppointment() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
         <Header />
-        <div className="container py-20 text-center">
-          <p>Loading...</p>
+        <div className="container py-8 space-y-6">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-9 w-9 rounded-md" />
+            <div className="space-y-2 flex-1">
+              <Skeleton className="h-7 w-48" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </div>
+          <Skeleton className="h-10 w-full max-w-xs" />
+          <div className="grid grid-cols-7 gap-2">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div key={i} className="space-y-2">
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -682,19 +676,23 @@ export default function BookAppointment() {
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <Header />
 
-      <div className="container py-2">
-        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-1 text-xs h-8">
-          <ArrowLeft className="h-3 w-3 mr-1" />
-          Back
-        </Button>
+      <div className="container py-2 pb-20 md:pb-2">
+        <PageBreadcrumbs
+          items={[
+            { label: "Search", href: "/search" },
+            { label: clinic.name, href: `/clinic/${clinicId}` },
+            { label: "Book Appointment" },
+          ]}
+          className="mb-2"
+        />
 
         <div className="grid lg:grid-cols-[320px_1fr] gap-3">
           {/* Left Sidebar - Clinic Info & Form */}
           <div className="space-y-2">
             <Card className="p-3">
               <div className="flex items-start gap-2 mb-2">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-teal-100 to-blue-100 flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-bold text-teal-600">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm font-bold text-primary">
                     {clinic.name.split(' ').map(w => w.charAt(0)).join('').slice(0, 2)}
                   </span>
                 </div>
@@ -713,13 +711,10 @@ export default function BookAppointment() {
               <div className="space-y-2">
                 {/* Service Selection with Categories */}
                 <div>
-                  <label className="text-sm font-medium mb-1.5 block">Service *</label>
+                  <label className="text-sm font-medium mb-1.5 block">Service</label>
                   <Select 
                     value={selectedServiceId} 
-                    onValueChange={(value) => {
-                      console.log("Service selected:", value);
-                      setSelectedServiceId(value);
-                    }}
+                    onValueChange={(v) => { setSelectedServiceId(v); setFieldErrors(prev => { const n = {...prev}; delete n.service; return n; }); }}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a service" />
@@ -751,7 +746,10 @@ export default function BookAppointment() {
                       )}
                     </SelectContent>
                   </Select>
-                  {services.length > 0 && (
+                  {fieldErrors.service && (
+                    <p className="text-xs text-destructive mt-1">{fieldErrors.service}</p>
+                  )}
+                  {services.length > 0 && !fieldErrors.service && (
                     <p className="text-xs text-muted-foreground mt-1">
                       {services.length} service{services.length !== 1 ? 's' : ''} available
                     </p>
@@ -762,7 +760,7 @@ export default function BookAppointment() {
                 {user && userPets.length > 0 ? (
                   <>
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Select Pet *</label>
+                      <label className="text-sm font-medium mb-1.5 block">Select Pet</label>
                       <Select 
                         value={selectedPetId || "new"} 
                         onValueChange={(value) => {
@@ -800,17 +798,21 @@ export default function BookAppointment() {
                     {!selectedPetId && (
                       <>
                         <div>
-                          <label className="text-sm font-medium mb-1.5 block">Pet Name *</label>
+                          <label className="text-sm font-medium mb-1.5 block">Pet Name</label>
                           <Input
                             value={petName}
-                            onChange={(e) => setPetName(e.target.value)}
+                            onChange={(e) => { setPetName(e.target.value); setFieldErrors(prev => { const n = {...prev}; delete n.petName; return n; }); }}
                             placeholder="e.g., Max"
                             required
+                            className={fieldErrors.petName ? "border-destructive" : ""}
+                            aria-invalid={!!fieldErrors.petName}
+                            aria-describedby={fieldErrors.petName ? "pet-name-error-1" : undefined}
                           />
+                          {fieldErrors.petName && <p id="pet-name-error-1" className="text-xs text-destructive mt-1">{fieldErrors.petName}</p>}
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium mb-1.5 block">Pet Type</label>
+                          <label className="text-sm font-medium mb-1.5 block">Pet Type <span className="text-muted-foreground font-normal ml-1">(optional)</span></label>
                           <Input
                             value={petType}
                             onChange={(e) => setPetType(e.target.value)}
@@ -823,17 +825,21 @@ export default function BookAppointment() {
                 ) : (
                   <>
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Pet Name *</label>
+                      <label className="text-sm font-medium mb-1.5 block">Pet Name</label>
                       <Input
                         value={petName}
-                        onChange={(e) => setPetName(e.target.value)}
+                        onChange={(e) => { setPetName(e.target.value); setFieldErrors(prev => { const n = {...prev}; delete n.petName; return n; }); }}
                         placeholder="e.g., Max"
                         required
+                        className={fieldErrors.petName ? "border-destructive" : ""}
+                        aria-invalid={!!fieldErrors.petName}
+                        aria-describedby={fieldErrors.petName ? "pet-name-error-2" : undefined}
                       />
+                      {fieldErrors.petName && <p id="pet-name-error-2" className="text-xs text-destructive mt-1">{fieldErrors.petName}</p>}
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Pet Type</label>
+                      <label className="text-sm font-medium mb-1.5 block">Pet Type <span className="text-muted-foreground font-normal ml-1">(optional)</span></label>
                       <Input
                         value={petType}
                         onChange={(e) => setPetType(e.target.value)}
@@ -844,15 +850,15 @@ export default function BookAppointment() {
                 )}
 
                 {/* Pet Information Sharing - Show for all users */}
-                <div className={`p-1.5 border rounded-lg ${user ? 'bg-blue-50/50' : 'bg-gray-50/50'}`}>
+                <div className={`p-1.5 border rounded-lg ${user ? 'bg-primary/5' : 'bg-muted/50'}`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
-                      <Share2 className={`h-3.5 w-3.5 ${user ? 'text-blue-600' : 'text-gray-400'}`} />
+                      <Share2 className={`h-3.5 w-3.5 ${user ? 'text-primary' : 'text-muted-foreground'}`} />
                       <div>
-                        <p className={`text-xs font-medium ${user ? 'text-blue-900' : 'text-gray-700'}`}>
+                        <p className={`text-xs font-medium ${user ? 'text-foreground' : 'text-muted-foreground'}`}>
                           Share Pet Details
                         </p>
-                        <p className={`text-xs ${user ? 'text-blue-700' : 'text-gray-500'}`}>
+                        <p className={`text-xs ${user ? 'text-muted-foreground' : 'text-muted-foreground/70'}`}>
                           Allow vet to view profile
                         </p>
                       </div>
@@ -861,23 +867,22 @@ export default function BookAppointment() {
                       checked={user ? shareWithVet : false}
                       onCheckedChange={(checked) => {
                         if (!user) {
-                          // Show login dialog for non-logged-in users
                           setShowLoginDialog(true);
                         } else {
                           setShareWithVet(checked);
                         }
                       }}
                       disabled={!user}
-                      className={`${user ? 'data-[state=checked]:bg-blue-600' : 'opacity-50 cursor-not-allowed'}`}
+                      className={`${!user ? 'opacity-50 cursor-not-allowed' : ''}`}
                     />
                   </div>
                   {user && shareWithVet && (
-                    <p className="text-xs text-blue-600 mt-1 pl-5">
-                      ✓ Vet will have access to medical history
+                    <p className="text-xs text-primary mt-1 pl-5">
+                      Vet will have access to medical history
                     </p>
                   )}
                   {!user && (
-                    <p className="text-xs text-gray-500 mt-1 pl-5">
+                    <p className="text-xs text-muted-foreground mt-1 pl-5">
                       Please log in to share details
                     </p>
                   )}
@@ -885,7 +890,7 @@ export default function BookAppointment() {
 
                 {/* Notes */}
                 <div>
-                  <label className="text-xs font-medium mb-1 block">Additional Notes</label>
+                  <label className="text-xs font-medium mb-1 block">Additional Notes <span className="text-muted-foreground font-normal ml-1">(optional)</span></label>
                   <Textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
@@ -896,30 +901,32 @@ export default function BookAppointment() {
                 </div>
 
                 {/* Selected Slot Display */}
-                {selectedSlot && (
-                  <div className="p-1.5 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-xs font-medium text-blue-900">Selected:</p>
-                    <p className="text-xs text-blue-700">
+                {selectedSlot ? (
+                  <div className="p-1.5 bg-primary/10 border border-primary/20 rounded-lg">
+                    <p className="text-xs font-medium text-foreground">Selected:</p>
+                    <p className="text-xs text-primary">
                       {format(new Date(selectedSlot.start), "MMM d")} at {formatTimeSlot(selectedSlot.start)}
                     </p>
                   </div>
-                )}
+                ) : fieldErrors.slot ? (
+                  <p className="text-xs text-destructive">{fieldErrors.slot}</p>
+                ) : null}
 
-                {/* Submit Button */}
-                <Button
-                  onClick={handleBookingAction}
-                  className="w-full bg-teal-600 hover:bg-teal-700 h-9"
-                  size="sm"
-                  disabled={submitting || !selectedServiceId || !selectedSlot || !petName}
-                >
-                  {submitting ? "Booking..." : user ? <span className="text-xs">Book Appointment</span> : "Login to Book"}
-                </Button>
-                
-                {!user && (
-                  <p className="text-xs text-center text-muted-foreground mt-1">
-                    Login required to complete booking
-                  </p>
-                )}
+                {/* Submit Button — visible only on md+ (mobile gets sticky bar) */}
+                <div className="hidden md:block">
+                  <Button
+                    onClick={handleBookingAction}
+                    className="w-full"
+                    disabled={submitting || !selectedServiceId || !selectedSlot || !petName}
+                  >
+                    {submitting ? "Booking..." : user ? "Book Appointment" : "Login to Book"}
+                  </Button>
+                  {!user && (
+                    <p className="text-xs text-center text-muted-foreground mt-1">
+                      Login required to complete booking
+                    </p>
+                  )}
+                </div>
               </div>
             </Card>
 
@@ -947,12 +954,13 @@ export default function BookAppointment() {
                 <Button 
                   variant="outline" 
                   size="icon" 
+                  aria-label="Previous week"
                   onClick={handlePreviousWeek}
                   disabled={isFirstWeek}
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" size="icon" onClick={handleNextWeek}>
+                <Button variant="outline" size="icon" aria-label="Next week" onClick={handleNextWeek}>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
@@ -991,17 +999,17 @@ export default function BookAppointment() {
 
                     {/* Closed Day Message */}
                     {isClosed ? (
-                      <div className="flex-1 flex flex-col items-center justify-center p-2 bg-gray-50 rounded-lg border border-gray-200">
-                        <p className="text-xs text-gray-500 text-center font-medium mb-0.5">Unavailable</p>
+                      <div className="flex-1 flex flex-col items-center justify-center p-2 bg-muted/50 rounded-lg border border-border">
+                        <p className="text-xs text-muted-foreground text-center font-medium mb-0.5">Unavailable</p>
                         {exception.reason && (
-                          <p className="text-xs text-gray-400 text-center">{exception.reason}</p>
+                          <p className="text-xs text-muted-foreground text-center">{exception.reason}</p>
                         )}
                       </div>
                     ) : (
                       /* Time Slots - Show all slots with booked ones marked as unavailable */
-                      <div className="space-y-1 flex-1 relative">
+                      <div className="space-y-2 flex-1 relative">
                         {slots.length === 0 ? (
-                          <div className="text-xs text-gray-400 text-center py-2">
+                          <div className="text-xs text-muted-foreground text-center py-2">
                             No slots available
                           </div>
                         ) : (
@@ -1022,16 +1030,16 @@ export default function BookAppointment() {
                                 <button
                                   onClick={() => handleSlotClick(slot)}
                                   disabled={disabled}
-                                  className={`w-full px-1.5 py-1 text-xs rounded transition-all ${
+                                  className={`w-full px-1.5 py-1 text-xs rounded transition-all active:scale-95 ${
                                     isSelected
-                                      ? "bg-blue-600 text-white font-medium shadow-sm"
+                                      ? "bg-primary text-primary-foreground font-medium shadow-sm"
                                       : disabled
                                       ? isInBlockedRange
                                         ? "bg-amber-50 text-amber-600 cursor-not-allowed border border-amber-200"
-                                        : "bg-gray-50 text-gray-400 cursor-not-allowed"
+                                        : "bg-muted/50 text-muted-foreground cursor-not-allowed"
                                       : slot.available
-                                      ? "bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 hover:border-blue-300"
-                                      : "bg-gray-50 text-gray-400 cursor-not-allowed"
+                                      ? "bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/30"
+                                      : "bg-muted/50 text-muted-foreground cursor-not-allowed"
                                   }`}
                                 >
                                   {isInBlockedRange ? formatTimeSlot(slot.start) : (slot.available ? formatTimeSlot(slot.start) : "—")}
@@ -1089,7 +1097,7 @@ export default function BookAppointment() {
                       setExpandedDays(newExpanded);
                     }
                   }}
-                  className="text-sm text-blue-600 hover:text-blue-700 hover:underline font-medium"
+                  className="text-sm text-primary hover:text-primary/80 hover:underline font-medium"
                 >
                   {weekDays.some(day => expandedDays.has(format(day, "yyyy-MM-dd")))
                     ? "Show fewer"
@@ -1099,6 +1107,17 @@ export default function BookAppointment() {
             )}
           </Card>
         </div>
+      </div>
+
+      {/* Mobile Sticky CTA */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/95 backdrop-blur border-t p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+        <Button
+          onClick={handleBookingAction}
+          className="w-full"
+          disabled={submitting || !selectedServiceId || !selectedSlot || !petName}
+        >
+          {submitting ? "Booking..." : user ? "Book Appointment" : "Login to Book"}
+        </Button>
       </div>
 
       {/* Login Dialog */}

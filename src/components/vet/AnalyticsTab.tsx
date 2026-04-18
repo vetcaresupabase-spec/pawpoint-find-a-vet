@@ -63,14 +63,14 @@ export const AnalyticsTab = ({ clinicId }: { clinicId: string }) => {
       value: analytics?.total_appointments || 0,
       subtitle: "Last 30 days",
       icon: Calendar,
-      color: "text-blue-600",
+      color: "text-primary",
     },
     {
       title: "This Week",
       value: analytics?.last_7_days || 0,
       subtitle: "Last 7 days",
       icon: TrendingUp,
-      color: "text-green-600",
+      color: "text-primary",
     },
     {
       title: "Unique Pet Owners",
@@ -84,7 +84,7 @@ export const AnalyticsTab = ({ clinicId }: { clinicId: string }) => {
       value: analytics?.failed_appointments || 0,
       subtitle: "Canceled or no-show",
       icon: XCircle,
-      color: "text-red-600",
+      color: "text-destructive",
     },
   ];
 

@@ -13,7 +13,6 @@ import { AnalyticsTab } from "@/components/vet/AnalyticsTab";
 import {
   Calendar,
   Bell,
-  DollarSign,
   Clock,
   Briefcase,
   Users,
@@ -23,6 +22,7 @@ import {
   Mail,
   Edit,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 
 interface ClinicData {
@@ -94,8 +94,31 @@ const VetDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-muted-foreground">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+        <Header />
+        <div className="border-b bg-background/95">
+          <div className="container py-6 space-y-4">
+            <Skeleton className="h-9 w-64" />
+            <Skeleton className="h-4 w-48" />
+            <div className="p-4 rounded-lg border max-w-2xl space-y-3">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
+          </div>
+        </div>
+        <div className="container py-8 space-y-6">
+          <Skeleton className="h-10 w-96" />
+          <div className="grid md:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Card key={i}><CardContent className="p-6 space-y-3">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-8 w-16" />
+                <Skeleton className="h-4 w-32" />
+              </CardContent></Card>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -127,7 +150,7 @@ const VetDashboard = () => {
                         size="sm"
                         className="h-6 w-6 p-0"
                         onClick={() => navigate("/vet-onboarding")}
-                        title="Edit profile"
+                        aria-label="Edit clinic profile"
                       >
                         <Edit className="h-3.5 w-3.5" />
                       </Button>

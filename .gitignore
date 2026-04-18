@@ -17,6 +17,11 @@ ios/Pods/
 android/.gradle/
 android/build/
 
+# Android release signing (NEVER commit these)
+android/keystore.properties
+android/app/*.keystore
+android/app/*.jks
+
 # App release binaries (tracked in releases/RELEASES.md)
 releases/android/*.apk
 releases/android/*.aab

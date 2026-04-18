@@ -85,7 +85,6 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
         .single();
 
       if (bookingError || !booking || !booking.shared_pet_id || !booking.pet_info_shared) {
-        console.error('Booking not found or pet not shared:', bookingError);
         setPetInfo(null);
         setLoading(false);
         return;
@@ -103,7 +102,6 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
       }
 
       // Fallback: Fetch pet directly if RPC function fails
-      console.warn('RPC function failed, trying direct fetch:', rpcError);
       const { data: petData, error: petError } = await supabase
         .from("pets")
         .select("*")
@@ -111,7 +109,6 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
         .single();
 
       if (petError || !petData) {
-        console.error('Error fetching pet directly:', petError);
         toast({
           title: "Error",
           description: "Failed to load pet information.",
@@ -173,8 +170,7 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
       };
 
       setPetInfo(transformedPetInfo);
-    } catch (error) {
-      console.error('Error fetching pet info:', error);
+    } catch {
       toast({
         title: "Error",
         description: "Failed to load pet information.",
@@ -205,13 +201,13 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
   const getPetTypeColor = (type: string) => {
     switch (type) {
       case "Dog":
-        return "bg-blue-500/10 text-blue-700 border-blue-200/50";
+        return "bg-primary/10 text-primary border-primary/20";
       case "Cat":
-        return "bg-purple-500/10 text-purple-700 border-purple-200/50";
+        return "bg-accent/10 text-accent-foreground border-accent/20";
       case "Ferret":
-        return "bg-orange-500/10 text-orange-700 border-orange-200/50";
+        return "bg-secondary text-secondary-foreground border-secondary";
       default:
-        return "bg-gray-500/10 text-gray-700 border-gray-200/50";
+        return "bg-muted text-muted-foreground border-border";
     }
   };
 
@@ -254,7 +250,7 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                 <div className="flex flex-row gap-4">
                   {/* Photo */}
                   <div className="flex-shrink-0">
-                    <div className="w-24 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
+                    <div className="w-24 h-32 bg-gradient-to-br from-muted to-muted/80 rounded-lg overflow-hidden border-2 border-border shadow-md">
                       <img
                         src={petInfo.photo_url || defaultPhoto}
                         alt={petInfo.name || "Pet"}
@@ -270,42 +266,42 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
 
                   {/* Basic Info */}
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                    <h3 className="text-2xl font-bold text-foreground mb-1">
                       {petInfo.name || "Unnamed Pet"}
                     </h3>
-                    <p className="text-lg text-gray-600 font-medium mb-4">{petInfo.breed}</p>
+                    <p className="text-lg text-muted-foreground font-medium mb-4">{petInfo.breed}</p>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-gray-400" />
+                        <User className="h-4 w-4 text-muted-foreground" />
                         <div>
-                          <p className="text-xs text-gray-500">Owner</p>
+                          <p className="text-xs text-muted-foreground">Owner</p>
                           <p className="text-sm font-semibold">{petInfo.owner_name}</p>
                         </div>
                       </div>
 
                       {petInfo.date_of_birth && (
                         <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-gray-400" />
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
                           <div>
-                            <p className="text-xs text-gray-500">Age</p>
+                            <p className="text-xs text-muted-foreground">Age</p>
                             <p className="text-sm font-semibold">{calculateAge(petInfo.date_of_birth)}</p>
                           </div>
                         </div>
                       )}
 
                       <div className="flex items-center gap-2">
-                        <Heart className="h-4 w-4 text-gray-400" />
+                        <Heart className="h-4 w-4 text-muted-foreground" />
                         <div>
-                          <p className="text-xs text-gray-500">Sex</p>
+                          <p className="text-xs text-muted-foreground">Sex</p>
                           <p className="text-sm font-semibold">{petInfo.sex}</p>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <Sparkles className="h-4 w-4 text-gray-400" />
+                        <Sparkles className="h-4 w-4 text-muted-foreground" />
                         <div>
-                          <p className="text-xs text-gray-500">Neutered/Spayed</p>
+                          <p className="text-xs text-muted-foreground">Neutered/Spayed</p>
                           <p className="text-sm font-semibold">{petInfo.neutered_spayed}</p>
                         </div>
                       </div>
@@ -329,9 +325,9 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                 {/* Health Alerts */}
                 {((petInfo.known_conditions && petInfo.known_conditions.length > 0) || 
                   (petInfo.allergies && petInfo.allergies.length > 0)) && (
-                  <Card className="border-red-200 bg-red-50/50">
+                  <Card className="border-destructive/20 bg-destructive/5">
                     <CardHeader>
-                      <CardTitle className="text-red-800 flex items-center gap-2">
+                      <CardTitle className="text-destructive flex items-center gap-2">
                         <AlertTriangle className="h-5 w-5" />
                         Health Alerts
                       </CardTitle>
@@ -339,10 +335,10 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                     <CardContent className="space-y-3">
                       {petInfo.known_conditions && petInfo.known_conditions.length > 0 && (
                         <div>
-                          <p className="text-sm font-medium text-red-700 mb-2">Known Conditions</p>
+                          <p className="text-sm font-medium text-destructive mb-2">Known Conditions</p>
                           <div className="flex flex-wrap gap-2">
                             {petInfo.known_conditions.map((condition, idx) => (
-                              <Badge key={idx} variant="outline" className="bg-red-100 text-red-800 border-red-300">
+                              <Badge key={idx} variant="outline" className="bg-destructive/10 text-destructive border-destructive/20">
                                 {condition}
                               </Badge>
                             ))}
@@ -352,10 +348,10 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                       
                       {petInfo.allergies && petInfo.allergies.length > 0 && (
                         <div>
-                          <p className="text-sm font-medium text-red-700 mb-2">Allergies</p>
+                          <p className="text-sm font-medium text-destructive mb-2">Allergies</p>
                           <div className="flex flex-wrap gap-2">
                             {petInfo.allergies.map((allergy, idx) => (
-                              <Badge key={idx} variant="outline" className="bg-red-100 text-red-800 border-red-300">
+                              <Badge key={idx} variant="outline" className="bg-destructive/10 text-destructive border-destructive/20">
                                 {allergy}
                               </Badge>
                             ))}
@@ -392,7 +388,7 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                     <Card>
                       <CardContent className="p-4">
                         <div className="flex items-center gap-3">
-                          <Shield className="h-5 w-5 text-blue-600" />
+                          <Shield className="h-5 w-5 text-primary" />
                           <div>
                             <p className="font-medium">Microchip</p>
                             <p className="text-sm font-mono text-muted-foreground">{petInfo.microchip_number}</p>
@@ -406,7 +402,7 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                     <Card>
                       <CardContent className="p-4">
                         <div className="flex items-center gap-3">
-                          <FileText className="h-5 w-5 text-green-600" />
+                          <FileText className="h-5 w-5 text-primary" />
                           <div>
                             <p className="font-medium">EU Pet Passport</p>
                             <p className="text-sm text-muted-foreground">{petInfo.eu_passport_number}</p>
@@ -425,7 +421,7 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                     <Card>
                       <CardContent className="p-4">
                         <div className="flex items-start gap-3">
-                          <Stethoscope className="h-5 w-5 text-blue-600 mt-0.5" />
+                          <Stethoscope className="h-5 w-5 text-primary mt-0.5" />
                           <div>
                             <p className="font-medium">Primary Vet</p>
                             <p className="text-sm text-muted-foreground">{petInfo.primary_vet_clinic_name}</p>
@@ -445,7 +441,7 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                     <Card>
                       <CardContent className="p-4">
                         <div className="flex items-start gap-3">
-                          <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
+                          <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
                           <div>
                             <p className="font-medium">Emergency Clinic</p>
                             <p className="text-sm text-muted-foreground">{petInfo.emergency_clinic_name}</p>
@@ -470,7 +466,7 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                     <Card>
                       <CardContent className="p-4">
                         <div className="flex items-center gap-3">
-                          <Scale className="h-5 w-5 text-gray-600" />
+                          <Scale className="h-5 w-5 text-muted-foreground" />
                           <div>
                             <p className="font-medium">Weight</p>
                             <p className="text-sm text-muted-foreground">{petInfo.weight_kg} kg</p>
@@ -491,7 +487,7 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                       <CardContent className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="h-5 w-5 flex items-center justify-center">
-                            <span className="text-gray-600 text-sm">📏</span>
+                            <span className="text-muted-foreground text-sm">📏</span>
                           </div>
                           <div>
                             <p className="font-medium">Height</p>
@@ -507,7 +503,7 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                       <CardContent className="p-4">
                         <div className="flex items-start gap-3">
                           <div className="h-5 w-5 flex items-center justify-center mt-0.5">
-                            <span className="text-gray-600 text-sm">🎨</span>
+                            <span className="text-muted-foreground text-sm">🎨</span>
                           </div>
                           <div>
                             <p className="font-medium">Color & Markings</p>
@@ -540,9 +536,9 @@ export function PetDetailsDialog({ open, onOpenChange, bookingId, petName }: Pet
                   <div className="flex items-center justify-between">
                     <p className="font-medium">Profile Completeness</p>
                     <div className="flex items-center gap-3">
-                      <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-blue-500 transition-all"
+                          className="h-full bg-primary transition-all"
                           style={{ width: `${petInfo.completeness_score}%` }}
                         />
                       </div>

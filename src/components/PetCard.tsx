@@ -74,13 +74,13 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
   const getPetTypeColor = (type: string) => {
     switch (type) {
       case "Dog":
-        return "bg-blue-500/10 text-blue-700 border-blue-200/50";
+        return "bg-primary/10 text-primary border-primary/20";
       case "Cat":
-        return "bg-purple-500/10 text-purple-700 border-purple-200/50";
+        return "bg-accent/10 text-accent-foreground border-accent/20";
       case "Ferret":
-        return "bg-orange-500/10 text-orange-700 border-orange-200/50";
+        return "bg-secondary text-secondary-foreground border-secondary";
       default:
-        return "bg-gray-500/10 text-gray-700 border-gray-200/50";
+        return "bg-muted text-muted-foreground border-border";
     }
   };
 
@@ -94,7 +94,6 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
       });
 
       if (error) {
-        console.error('Error updating sharing preference:', error);
         toast({
           title: "Error",
           description: "Failed to update sharing preference. Please try again.",
@@ -112,8 +111,7 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
           ? "Vets will be able to view this pet's details during appointments."
           : "Pet details will not be shared with vets during appointments.",
       });
-    } catch (error) {
-      console.error('Error updating sharing preference:', error);
+    } catch {
       toast({
         title: "Error",
         description: "Failed to update sharing preference. Please try again.",
@@ -123,11 +121,11 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200/50 bg-gradient-to-br from-white to-gray-50/50">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border border-border bg-gradient-to-br from-background to-muted/50">
       <div className="flex flex-row gap-4 p-4">
         {/* Passport-sized Photo Section */}
         <div className="flex-shrink-0 relative">
-          <div className="w-24 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
+          <div className="w-24 h-32 bg-gradient-to-br from-muted to-muted/80 rounded-lg overflow-hidden border-2 border-border shadow-md">
             <img
               src={pet.photo_url || defaultPhoto}
               alt={pet.name || "Pet"}
@@ -148,10 +146,10 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
           {/* Header with Name and Actions */}
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
-              <h3 className="text-xl font-bold text-gray-900 truncate">
+              <h3 className="text-xl font-bold text-foreground truncate">
                 {pet.name || "Unnamed Pet"}
               </h3>
-              <p className="text-sm text-gray-500 font-medium mt-0.5">{pet.breed}</p>
+              <p className="text-sm text-muted-foreground font-medium mt-0.5">{pet.breed}</p>
             </div>
             
             {/* Actions Menu */}
@@ -160,7 +158,7 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                  className="text-muted-foreground hover:text-foreground hover:bg-muted"
                 >
                   <MoreVertical className="h-4 w-4" />
                 </Button>
@@ -172,7 +170,7 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => onDelete?.(pet.id)}
-                  className="text-red-600 cursor-pointer focus:text-red-600"
+                  className="text-destructive cursor-pointer focus:text-destructive"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete Pet
@@ -187,65 +185,65 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
               {/* Owner */}
               <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <div className="min-w-0">
-                  <p className="text-xs text-gray-500">Owner</p>
-                  <p className="text-sm font-semibold text-gray-900 truncate">{pet.owner_name}</p>
+                  <p className="text-xs text-muted-foreground">Owner</p>
+                  <p className="text-sm font-semibold text-foreground truncate">{pet.owner_name}</p>
                 </div>
               </div>
 
               {/* Age */}
               {pet.date_of_birth && (
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                  <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-xs text-gray-500">Age</p>
-                    <p className="text-sm font-semibold text-gray-900">{calculateAge(pet.date_of_birth)}</p>
+                    <p className="text-xs text-muted-foreground">Age</p>
+                    <p className="text-sm font-semibold text-foreground">{calculateAge(pet.date_of_birth)}</p>
                   </div>
                 </div>
               )}
 
               {/* Sex */}
               <div className="flex items-center gap-2">
-                <Heart className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                <Heart className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <div className="min-w-0">
-                  <p className="text-xs text-gray-500">Sex</p>
-                  <p className="text-sm font-semibold text-gray-900">{pet.sex}</p>
+                  <p className="text-xs text-muted-foreground">Sex</p>
+                  <p className="text-sm font-semibold text-foreground">{pet.sex}</p>
                 </div>
               </div>
 
               {/* Neutered/Spayed */}
               <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                <Sparkles className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <div className="min-w-0">
-                  <p className="text-xs text-gray-500">Neutered/Spayed</p>
-                  <p className="text-sm font-semibold text-gray-900">{pet.neutered_spayed}</p>
+                  <p className="text-xs text-muted-foreground">Neutered/Spayed</p>
+                  <p className="text-sm font-semibold text-foreground">{pet.neutered_spayed}</p>
                 </div>
               </div>
             </div>
 
             {/* Extended Information - Only show if available */}
             {(pet.color_markings || pet.weight_kg || pet.height_withers_cm) && (
-              <div className="pt-2 border-t border-gray-100">
+              <div className="pt-2 border-t border-border">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                   {pet.color_markings && (
                     <div className="flex items-center gap-2">
                       <div className="h-4 w-4 flex items-center justify-center flex-shrink-0">
-                        <span className="text-gray-400 text-xs">🎨</span>
+                        <span className="text-muted-foreground text-xs">🎨</span>
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs text-gray-500">Color</p>
-                        <p className="text-sm font-semibold text-gray-900 truncate">{pet.color_markings}</p>
+                        <p className="text-xs text-muted-foreground">Color</p>
+                        <p className="text-sm font-semibold text-foreground truncate">{pet.color_markings}</p>
                       </div>
                     </div>
                   )}
                   
                   {pet.weight_kg && (
                     <div className="flex items-center gap-2">
-                      <Scale className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <Scale className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-xs text-gray-500">Weight</p>
-                        <p className="text-sm font-semibold text-gray-900">{pet.weight_kg} kg</p>
+                        <p className="text-xs text-muted-foreground">Weight</p>
+                        <p className="text-sm font-semibold text-foreground">{pet.weight_kg} kg</p>
                       </div>
                     </div>
                   )}
@@ -253,11 +251,11 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
                   {pet.height_withers_cm && (
                     <div className="flex items-center gap-2">
                       <div className="h-4 w-4 flex items-center justify-center flex-shrink-0">
-                        <span className="text-gray-400 text-xs">📏</span>
+                        <span className="text-muted-foreground text-xs">📏</span>
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs text-gray-500">Height</p>
-                        <p className="text-sm font-semibold text-gray-900">{pet.height_withers_cm} cm</p>
+                        <p className="text-xs text-muted-foreground">Height</p>
+                        <p className="text-sm font-semibold text-foreground">{pet.height_withers_cm} cm</p>
                       </div>
                     </div>
                   )}
@@ -267,24 +265,24 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
 
             {/* ID & Legal - Show if microchip or passport exists */}
             {(pet.microchip_number || pet.eu_passport_number) && (
-              <div className="pt-2 border-t border-gray-100">
+              <div className="pt-2 border-t border-border">
                 <div className="grid grid-cols-1 gap-y-2">
                   {pet.microchip_number && (
                     <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <Shield className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-xs text-gray-500">Microchip</p>
-                        <p className="text-sm font-semibold text-gray-900 font-mono">{pet.microchip_number}</p>
+                        <p className="text-xs text-muted-foreground">Microchip</p>
+                        <p className="text-sm font-semibold text-foreground font-mono">{pet.microchip_number}</p>
                       </div>
                     </div>
                   )}
                   
                   {pet.eu_passport_number && (
                     <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-xs text-gray-500">EU Passport</p>
-                        <p className="text-sm font-semibold text-gray-900">{pet.eu_passport_number}</p>
+                        <p className="text-xs text-muted-foreground">EU Passport</p>
+                        <p className="text-sm font-semibold text-foreground">{pet.eu_passport_number}</p>
                       </div>
                     </div>
                   )}
@@ -295,11 +293,11 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
             {/* Health Alerts - Show if conditions or allergies exist */}
             {((pet.known_conditions && pet.known_conditions.length > 0) || 
               (pet.allergies && pet.allergies.length > 0)) && (
-              <div className="pt-2 border-t border-gray-100">
+              <div className="pt-2 border-t border-border">
                 <div className="space-y-1">
                   {pet.known_conditions && pet.known_conditions.length > 0 && (
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">Conditions</p>
+                      <p className="text-xs text-muted-foreground mb-1">Conditions</p>
                       <div className="flex flex-wrap gap-1">
                         {pet.known_conditions.slice(0, 3).map((condition, idx) => (
                           <Badge key={idx} variant="outline" className="text-xs">
@@ -317,15 +315,15 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
                   
                   {pet.allergies && pet.allergies.length > 0 && (
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">Allergies</p>
+                      <p className="text-xs text-muted-foreground mb-1">Allergies</p>
                       <div className="flex flex-wrap gap-1">
                         {pet.allergies.slice(0, 3).map((allergy, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">
+                          <Badge key={idx} variant="outline" className="text-xs bg-destructive/10 text-destructive border-destructive/20">
                             {allergy}
                           </Badge>
                         ))}
                         {pet.allergies.length > 3 && (
-                          <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">
+                          <Badge variant="outline" className="text-xs bg-destructive/10 text-destructive border-destructive/20">
                             +{pet.allergies.length - 3}
                           </Badge>
                         )}
@@ -338,24 +336,24 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
 
             {/* Contacts & Services - Show if available */}
             {(pet.primary_vet_clinic_name || pet.emergency_clinic_name || pet.insurance_provider) && (
-              <div className="pt-2 border-t border-gray-100">
+              <div className="pt-2 border-t border-border">
                 <div className="grid grid-cols-1 gap-y-2">
                   {pet.primary_vet_clinic_name && (
                     <div className="flex items-center gap-2">
-                      <Stethoscope className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <Stethoscope className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-xs text-gray-500">Primary Vet</p>
-                        <p className="text-sm font-semibold text-gray-900 truncate">{pet.primary_vet_clinic_name}</p>
+                        <p className="text-xs text-muted-foreground">Primary Vet</p>
+                        <p className="text-sm font-semibold text-foreground truncate">{pet.primary_vet_clinic_name}</p>
                       </div>
                     </div>
                   )}
                   
                   {pet.insurance_provider && (
                     <div className="flex items-center gap-2">
-                      <CreditCard className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <CreditCard className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-xs text-gray-500">Insurance</p>
-                        <p className="text-sm font-semibold text-gray-900 truncate">{pet.insurance_provider}</p>
+                        <p className="text-xs text-muted-foreground">Insurance</p>
+                        <p className="text-sm font-semibold text-foreground truncate">{pet.insurance_provider}</p>
                       </div>
                     </div>
                   )}
@@ -365,17 +363,17 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
 
             {/* Completeness Score */}
             {pet.completeness_score !== undefined && (
-              <div className="pt-2 border-t border-gray-100">
+              <div className="pt-2 border-t border-border">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-500">Profile Completeness</p>
+                  <p className="text-xs text-muted-foreground">Profile Completeness</p>
                   <div className="flex items-center gap-2">
-                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-blue-500 transition-all"
+                        className="h-full bg-primary transition-all"
                         style={{ width: `${pet.completeness_score}%` }}
                       />
                     </div>
-                    <span className="text-xs font-semibold text-gray-700">{pet.completeness_score}%</span>
+                    <span className="text-xs font-semibold text-foreground">{pet.completeness_score}%</span>
                   </div>
                 </div>
               </div>
@@ -384,26 +382,26 @@ export function PetCard({ pet, onEdit, onDelete, onSharingChange }: PetCardProps
 
           {/* Notes Preview */}
           {pet.notes && (
-            <div className="pt-2 border-t border-gray-200">
-              <p className="text-xs font-medium text-gray-500 mb-1">Notes</p>
-              <p className="text-sm text-gray-700 line-clamp-2 leading-relaxed">{pet.notes}</p>
+            <div className="pt-2 border-t border-border">
+              <p className="text-xs font-medium text-muted-foreground mb-1">Notes</p>
+              <p className="text-sm text-foreground line-clamp-2 leading-relaxed">{pet.notes}</p>
             </div>
             )}
 
           {/* Pet Information Sharing */}
-          <div className="pt-2 border-t border-gray-100">
+          <div className="pt-2 border-t border-border">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Share2 className="h-4 w-4 text-gray-400" />
+                <Share2 className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-xs font-medium text-gray-700">Share with Vets</p>
-                  <p className="text-xs text-gray-500">Allow vets to view pet details during appointments</p>
+                  <p className="text-xs font-medium text-foreground">Share with Vets</p>
+                  <p className="text-xs text-muted-foreground">Allow vets to view pet details during appointments</p>
                 </div>
               </div>
               <Switch
                 checked={sharingEnabled}
                 onCheckedChange={handleSharingToggle}
-                className="data-[state=checked]:bg-green-600"
+                className="data-[state=checked]:bg-primary"
               />
             </div>
           </div>

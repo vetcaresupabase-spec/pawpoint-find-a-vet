@@ -4,9 +4,46 @@ import { Header } from "@/components/Header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { getClinicProfile, placeHold, confirmAppointment } from "@/integrations/supabase/queries";
-import { Calendar } from "lucide-react";
+import { Calendar, AlertCircle } from "lucide-react";
+import { PageBreadcrumbs } from "@/components/PageBreadcrumbs";
+
+const ClinicProfileSkeleton = () => (
+  <div className="container py-8 space-y-6">
+    <div className="flex items-center justify-between">
+      <Skeleton className="h-9 w-64" />
+      <Skeleton className="h-10 w-44" />
+    </div>
+    <Card>
+      <CardContent className="p-6 space-y-3">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="h-4 w-2/3" />
+      </CardContent>
+    </Card>
+    <div className="grid md:grid-cols-2 gap-6">
+      <Card>
+        <CardContent className="p-6 space-y-3">
+          <Skeleton className="h-5 w-24" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="p-6 space-y-3">
+          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+);
 
 const ClinicProfile = () => {
   const { id } = useParams();
@@ -57,8 +94,30 @@ const ClinicProfile = () => {
     }
   };
 
-  if (loading) return <div className="p-6">Loading...</div>;
-  if (!data?.clinic) return <div className="p-6">Not found</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+        <Header />
+        <ClinicProfileSkeleton />
+      </div>
+    );
+  }
+
+  if (!data?.clinic) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+        <Header />
+        <div className="container flex flex-col items-center justify-center py-20">
+          <AlertCircle className="h-12 w-12 text-muted-foreground/40 mb-4" />
+          <h2 className="text-xl font-semibold mb-2">Clinic not found</h2>
+          <p className="text-muted-foreground mb-6">
+            The clinic you're looking for doesn't exist or has been removed.
+          </p>
+          <Button onClick={() => navigate("/")}>Back to Home</Button>
+        </div>
+      </div>
+    );
+  }
 
   const { clinic, services, hours, photos, reviews } = data;
 
@@ -66,6 +125,7 @@ const ClinicProfile = () => {
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <Header />
       <div className="container py-8 space-y-6">
+        <PageBreadcrumbs items={[{ label: "Search", href: "/search" }, { label: clinic.name }]} className="mb-2" />
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">{clinic.name}</h1>
           <Button
@@ -119,8 +179,14 @@ const ClinicProfile = () => {
           <CardContent className="p-6 space-y-4">
             <h2 className="font-semibold">Book an appointment</h2>
             <div className="grid md:grid-cols-2 gap-4">
-              <Input type="datetime-local" value={start} onChange={e => setStart(e.target.value)} />
-              <Input type="datetime-local" value={end} onChange={e => setEnd(e.target.value)} />
+              <div>
+                <label htmlFor="start-time" className="text-sm font-medium text-muted-foreground mb-1 block">Start time</label>
+                <Input id="start-time" type="datetime-local" value={start} onChange={e => setStart(e.target.value)} />
+              </div>
+              <div>
+                <label htmlFor="end-time" className="text-sm font-medium text-muted-foreground mb-1 block">End time</label>
+                <Input id="end-time" type="datetime-local" value={end} onChange={e => setEnd(e.target.value)} />
+              </div>
             </div>
             <div className="flex gap-3">
               <Button onClick={onHold}>Place hold</Button>
@@ -147,9 +213,3 @@ const ClinicProfile = () => {
 };
 
 export default ClinicProfile;
-
-
-
-
-
-

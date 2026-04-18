@@ -88,7 +88,6 @@ export function EditTreatmentDialog({
       onOpenChange(false);
       if (onSuccess) onSuccess();
     } catch (error: any) {
-      console.error("Error updating treatment:", error);
       toast({
         title: "Update Failed",
         description: error.message || "Failed to update treatment record.",
@@ -218,7 +217,7 @@ export function EditTreatmentDialog({
               placeholder="Explain why you're editing this record (e.g., 'Correcting medication dosage typo' or 'Adding additional findings from follow-up call')"
               rows={2}
               required
-              className="bg-white"
+              className="bg-background"
             />
             <p className="text-xs text-amber-700">
               All amendments are logged for audit purposes. Please be specific about what changed and why.

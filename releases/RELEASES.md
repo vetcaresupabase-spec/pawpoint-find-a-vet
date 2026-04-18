@@ -8,12 +8,34 @@ All app builds are tracked here. Each release follows semantic versioning: `MAJO
 
 | Platform | Version | Build Type | File | Date |
 |----------|---------|-----------|------|------|
+| Android | 1.1 | Release (signed) | `releases/android/pet2vet_v1.1_release.apk` | 2026-04-18 |
 | Android | 1.0.0 | Debug | `android/Pet2Vet-v1.0.0-debug.apk` | 2026-04-05 |
 | iOS | — | Not yet built | Requires Mac with Xcode | — |
 
 ---
 
 ## Version History
+
+### v1.1 — 2026-04-18 (UI/UX Audit + Mobile Must-Haves + Release Signing)
+
+**What's new:**
+- Full UI/UX audit against WCAG 2.1 AA, Apple HIG, and Material 3 guidelines
+- Mobile must-haves: 44px touch targets, safe area insets, sticky CTAs, haptic feedback
+- Offline detection banner
+- Breadcrumb navigation on key pages
+- Form progress indicators for multi-step forms
+- Keyboard-appropriate input modes (tel, decimal)
+- Release signing with APK Signature Scheme v2 (fixes Google Play Protect blocking)
+
+**Build details:**
+- Capacitor 8.3.0
+- Android target: API 36, Min SDK: 24 (Android 7.0+)
+- Signed with v2 APK Signature Scheme
+- Universal build (all CPU architectures)
+- App ID: `app.pet2vet.mvp`
+- versionCode: 2, versionName: 1.1
+
+---
 
 ### v1.0.0 — 2026-04-05 (Initial Native Build)
 

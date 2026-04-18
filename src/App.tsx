@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TranslationBanner } from "@/components/TranslationBanner";
+import { OfflineBanner } from "@/components/OfflineBanner";
 import { initialisePushNotifications } from "@/lib/notifications";
 import { supabase } from "@/integrations/supabase/client";
 import { FEATURES } from "@/config/features";
@@ -64,27 +65,30 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <OfflineBanner />
         <TranslationBanner />
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/for-vets" element={<ForVets />} />
-            <Route path="/vet-onboarding" element={<VetOnboarding />} />
-            <Route path="/vet-dashboard" element={<VetDashboard />} />
-            <Route path="/pet-owner-dashboard" element={<PetOwnerDashboard />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="/clinic/:id" element={<ClinicProfile />} />
-            <Route path="/book-appointment" element={<BookAppointment />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/pet-parks" element={<PetParks />} />
-            <Route path="/pet-shops" element={<PetShops />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <main id="main-content">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/for-vets" element={<ForVets />} />
+              <Route path="/vet-onboarding" element={<VetOnboarding />} />
+              <Route path="/vet-dashboard" element={<VetDashboard />} />
+              <Route path="/pet-owner-dashboard" element={<PetOwnerDashboard />} />
+              <Route path="/search" element={<SearchResults />} />
+              <Route path="/clinic/:id" element={<ClinicProfile />} />
+              <Route path="/book-appointment" element={<BookAppointment />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/help" element={<Help />} />
+              <Route path="/pet-parks" element={<PetParks />} />
+              <Route path="/pet-shops" element={<PetShops />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
